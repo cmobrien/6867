@@ -1,8 +1,9 @@
 import pdb
 import random
-#import pylab as pl
+import pylab as pl
 from scipy.optimize import fmin_bfgs
 import numpy as np
+import sys
 
 INFINITY = 10000000
 
@@ -127,12 +128,20 @@ def validateData():
 
 #print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
 
-def ridge_regression(data_matrix, y, lamda):
-    A = data_matrix
-    AT = data_matrix.T
-    I = np.identity(A.shape[1])
-    return np.dot(np.dot(np.linalg.inv(np.dot(AT, A) + lamda * I), AT), y)
-    
+def ridge_regression(X, order, y, lamda):
+    A = designMatrix(X, order)
+    Z, averages = centralizedDataMatrix(A)
+    I = np.identity(Z.shape[1])
+    w = np.dot(np.dot(np.linalg.inv(np.dot(Z.T, Z) + lamda * I), Z.T), y)
+    w_list = [k[0] for k in w.tolist()]
+    print np.array(w_list)
+    print np.array(averages)
+    y_ave = (sum([val[0] for val in y]) / float(y.shape[0]))
+    print y_ave
+    w_0 = y_ave - np.dot(np.array(w_list), np.array(averages))
+    return [w_0] + w_list
+
+
 #print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
 
 def minimizeL1Norm(data_matrix, y):
@@ -150,4 +159,28 @@ def minimizeQuadraticErrorWithWeightPunishment(data_matrix, y, lamda, q=1):
         return sum([sum([j**2 for j in i]) for i in errorVector]) + lamda*sum([abs(i)**q for i in weight])
     
     return findMin(quadraticErrorPlusWeightPunishment, np.array([0]*data_matrix.shape[1]), dumbGradient)
+
+#print minimizeQuadraticErrorWithWeightPunishment(np.array([[1],[1],[2]]), np.array([[6],[7],[8]]), 1, 3)
+
+
+def centralizedDataMatrix(dataMatrix):
+  centralized = []
+  averages = []
+  X = dataMatrix.tolist()
+  for i in range(1, len(X[0])):
+    averages.append(sum([X[j][i] for j in range(len(X))]) / float(len(X)))
+  for row_num in range(len(X)):
+    row = dataMatrix[row_num:row_num + 1,1:].tolist()[0]
+    centralized.append([row[k] - averages[k] for k in range(len(row))])
+  return np.array(centralized), averages
+
+#print centralizedDataMatrix(designMatrix([1, 2, 3], 3))
+
+if __name__ == "__main__":
+  X_val, Y_val = validateData()
+  X, Y = regressAData()
+  w = ridge_regression(X.T.tolist()[0], int(sys.argv[1]), Y, int(sys.argv[2]))
+  print testPlot(X, Y, np.array(w))
+  print testPlot(X_val, Y_val, np.array(w))
+
 
