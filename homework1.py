@@ -78,3 +78,12 @@ def validateData():
     return getData('regress_validate.txt')
 
 print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
+
+def ridge_regression(data_matrix, y, lamda):
+    A = data_matrix
+    AT = data_matrix.T
+    I = numpy.identity(A.shape[1])
+    return np.dot(np.dot(np.linalg.inv(np.dot(AT, A) + lamda * I), AT), y)
+    
+print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
+
