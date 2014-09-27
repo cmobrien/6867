@@ -3,8 +3,56 @@ import random
 import pylab as pl
 from scipy.optimize import fmin_bfgs
 import numpy as np
-import gradient_descent
 import sys
+
+INFINITY = 10000000
+
+def findMin(f, guess, gradient, step_size = 0.1, convergence_criterion = 0.1):
+  oldLocation = guess  
+  bestDirection = gradient(f, guess)  
+  currentLocation = guess + bestDirection * step_size
+  
+  endCounter = 0
+  
+  while np.linalg.norm(f(currentLocation) - f(oldLocation)) > convergence_criterion and endCounter < 10000:
+    # terminate if we didn't move much
+    bestDirection = gradient(f, currentLocation)
+    
+    oldLocation = currentLocation
+    
+    currentLocation = currentLocation + bestDirection * step_size\
+    
+    endCounter += 1
+    
+    print currentLocation
+  
+  return currentLocation
+
+def dumbGradient(f, currentLocation):
+  bestScore = INFINITY
+  bestDirection = None
+  
+  # dimensionality of problem
+  d = len(currentLocation)
+  
+  for dimension in range(d):
+  # iterate over each of the standard basis vectors
+    
+    basisVector = np.array([0]*dimension + [1] + [0]*(d-dimension-1))
+    currentScore = f(currentLocation + basisVector)
+    
+    if currentScore < bestScore:
+      bestDirection = basisVector
+      bestScore = currentScore
+      
+    basisVector = np.array([0]*dimension + [-1] + [0]*(d-dimension-1))
+    currentScore = f(currentLocation + basisVector)
+    
+    if currentScore < bestScore:
+      bestDirection = basisVector
+      bestScore = currentScore
+      
+  return bestDirection
 
 def designMatrix(X, order):
   return np.array([[x ** i for i in range(order + 1)] for x in X])
@@ -80,17 +128,46 @@ def validateData():
 
 #print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
 
-def ridge_regression(data_matrix, y, lamda):
-    A = data_matrix
-    AT = data_matrix.T
-    I = np.identity(A.shape[1])
-    return np.dot(np.dot(np.linalg.inv(np.dot(AT, A) + lamda * I), AT), y)
+def ridge_regression(X, order, y, lamda):
+    A = designMatrix(X, order)
+    Z, averages = centralizedDataMatrix(A)
+    I = np.identity(Z.shape[1])
+    w = np.dot(np.dot(np.linalg.inv(np.dot(Z.T, Z) + lamda * I), Z.T), y)
+    w_list = [k[0] for k in w.tolist()]
+    print np.array(w_list)
+    print np.array(averages)
+    y_ave = (sum([val[0] for val in y]) / float(y.shape[0]))
+    print y_ave
+    w_0 = y_ave - np.dot(np.array(w_list), np.array(averages))
+    return [w_0] + w_list
 
+
+#print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
+
+def minimizeL1Norm(data_matrix, y):
+    
+    def absoluteError(weight):
+        errorVector = np.dot(data_matrix, weight) - y
+        return sum([sum([abs(j) for j in i]) for i in errorVector])
+    
+    return findMin(absoluteError, np.array([0]*data_matrix.shape[1]), dumbGradient) 
+
+def centralizedDataMatrix(dataMatrix):
+  centralized = []
+  averages = []
+  X = dataMatrix.tolist()
+  for i in range(1, len(X[0])):
+    averages.append(sum([X[j][i] for j in range(len(X))]) / float(len(X)))
+  for row_num in range(len(X)):
+    row = dataMatrix[row_num:row_num + 1,1:].tolist()[0]
+    centralized.append([row[k] - averages[k] for k in range(len(row))])
+  return np.array(centralized), averages
+
+#print centralizedDataMatrix(designMatrix([1, 2, 3], 3))
 
 if __name__ == "__main__":
   X_val, Y_val = validateData()
   X, Y = regressAData()
-  w = ridge_regression(designMatrix(X.T.tolist()[0], int(sys.argv[1])), Y, int(sys.argv[2]))
-  w = [k[0] for k in w.tolist()]
+  w = ridge_regression(X.T.tolist()[0], int(sys.argv[1]), Y, int(sys.argv[2]))
   print testPlot(X, Y, np.array(w))
   print testPlot(X_val, Y_val, np.array(w))
