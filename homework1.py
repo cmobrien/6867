@@ -4,6 +4,7 @@ import pylab as pl
 from scipy.optimize import fmin_bfgs
 import numpy as np
 import gradient_descent
+import sys
 
 def designMatrix(X, order):
   return np.array([[x ** i for i in range(order + 1)] for x in X])
@@ -50,7 +51,7 @@ def bishopCurveData():
     # y = sin(2 pi x) + N(0,0.3),
     return getData('curvefitting.txt')
 
-X, Y = bishopCurveData()
+#X, Y = bishopCurveData()
 #regressionPlot(X, Y, 3)
 #regressionPlot(X, Y, 9)
 
@@ -64,8 +65,8 @@ def SSE(X, Y):
 
 #print SSE([1, 2, 3], [2, 3, 4])([0, 1, 1])
 
-f = SSE(X, Y)
-testPlot(X, Y, gradient_descent.findMin(f, [0.0, 0.0, 0.0, 17.0], gradient_descent.gradient))
+#f = SSE(X, Y)
+#testPlot(X, Y, gradient_descent.findMin(f, [0.0, 0.0, 0.0, 17.0], gradient_descent.gradient))
     
 #testPlot(np.array([[0], [1], [2]]), np.array([[1], [2], [5]]), gradient_descent.findMin(SSE([0, 1, 2], [1, 2, 5]), [0, 0, 1], gradient_descent.gradient))
 def regressAData():
@@ -77,4 +78,19 @@ def regressBData():
 def validateData():
     return getData('regress_validate.txt')
 
-print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
+#print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
+
+def ridge_regression(data_matrix, y, lamda):
+    A = data_matrix
+    AT = data_matrix.T
+    I = np.identity(A.shape[1])
+    return np.dot(np.dot(np.linalg.inv(np.dot(AT, A) + lamda * I), AT), y)
+
+
+if __name__ == "__main__":
+  X_val, Y_val = validateData()
+  X, Y = regressAData()
+  w = ridge_regression(designMatrix(X.T.tolist()[0], int(sys.argv[1])), Y, int(sys.argv[2]))
+  w = [k[0] for k in w.tolist()]
+  print testPlot(X, Y, np.array(w))
+  print testPlot(X_val, Y_val, np.array(w))
