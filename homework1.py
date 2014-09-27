@@ -87,3 +87,13 @@ def ridge_regression(data_matrix, y, lamda):
     
 print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
 
+def minimizeL1Norm(data_matrix, y, lamda):
+    
+    def absoluteError(weight):
+        errorVector = np.dot(data_matrix, weight) - y
+        return sum([abs(i) for i in errorVector])
+    
+    return gradient_descent.findMin(absoluteError, np.array([0]*data_matrix.shape[1]), gradient_descent.dumbGradient) 
+
+print minimizeL1Norm(np.array([[1],[1],[2]], [[1],[2],[3]]))
+
