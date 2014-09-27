@@ -151,8 +151,3 @@ def minimizeQuadraticErrorWithWeightPunishment(data_matrix, y, lamda, q=1):
     
     return findMin(quadraticErrorPlusWeightPunishment, np.array([0]*data_matrix.shape[1]), dumbGradient)
 
-print minimizeQuadraticErrorWithWeightPunishment(np.array([[1],[1],[2]]), np.array([[6],[7],[8]]), 1, 3)
-
-
-
-
