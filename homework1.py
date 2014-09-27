@@ -1,9 +1,57 @@
 import pdb
 import random
-import pylab as pl
+#import pylab as pl
 from scipy.optimize import fmin_bfgs
 import numpy as np
-import gradient_descent
+
+INFINITY = 10000000
+
+def findMin(f, guess, gradient, step_size = 0.1, convergence_criterion = 0.1):
+  oldLocation = guess  
+  bestDirection = gradient(f, guess)  
+  currentLocation = guess + bestDirection * step_size
+  
+  endCounter = 0
+  
+  while np.linalg.norm(f(currentLocation) - f(oldLocation)) > convergence_criterion and endCounter < 10000:
+    # terminate if we didn't move much
+    bestDirection = gradient(f, currentLocation)
+    
+    oldLocation = currentLocation
+    
+    currentLocation = currentLocation + bestDirection * step_size\
+    
+    endCounter += 1
+    
+    print currentLocation
+  
+  return currentLocation
+
+def dumbGradient(f, currentLocation):
+  bestScore = INFINITY
+  bestDirection = None
+  
+  # dimensionality of problem
+  d = len(currentLocation)
+  
+  for dimension in range(d):
+  # iterate over each of the standard basis vectors
+    
+    basisVector = np.array([0]*dimension + [1] + [0]*(d-dimension-1))
+    currentScore = f(currentLocation + basisVector)
+    
+    if currentScore < bestScore:
+      bestDirection = basisVector
+      bestScore = currentScore
+      
+    basisVector = np.array([0]*dimension + [-1] + [0]*(d-dimension-1))
+    currentScore = f(currentLocation + basisVector)
+    
+    if currentScore < bestScore:
+      bestDirection = basisVector
+      bestScore = currentScore
+      
+  return bestDirection
 
 def designMatrix(X, order):
   return np.array([[x ** i for i in range(order + 1)] for x in X])
@@ -50,7 +98,7 @@ def bishopCurveData():
     # y = sin(2 pi x) + N(0,0.3),
     return getData('curvefitting.txt')
 
-X, Y = bishopCurveData()
+#X, Y = bishopCurveData()
 #regressionPlot(X, Y, 3)
 #regressionPlot(X, Y, 9)
 
@@ -64,8 +112,8 @@ def SSE(X, Y):
 
 #print SSE([1, 2, 3], [2, 3, 4])([0, 1, 1])
 
-f = SSE(X, Y)
-testPlot(X, Y, gradient_descent.findMin(f, [0.0, 0.0, 0.0, 17.0], gradient_descent.gradient))
+#f = SSE(X, Y)
+#testPlot(X, Y, gradient_descent.findMin(f, [0.0, 0.0, 0.0, 17.0], gradient_descent.gradient))
     
 #testPlot(np.array([[0], [1], [2]]), np.array([[1], [2], [5]]), gradient_descent.findMin(SSE([0, 1, 2], [1, 2, 5]), [0, 0, 1], gradient_descent.gradient))
 def regressAData():
@@ -77,23 +125,22 @@ def regressBData():
 def validateData():
     return getData('regress_validate.txt')
 
-print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
+#print fmin_bfgs(f, [0.0, 0.0, 0.0, 0.0])
 
 def ridge_regression(data_matrix, y, lamda):
     A = data_matrix
     AT = data_matrix.T
-    I = numpy.identity(A.shape[1])
+    I = np.identity(A.shape[1])
     return np.dot(np.dot(np.linalg.inv(np.dot(AT, A) + lamda * I), AT), y)
     
-print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
+#print ridge_regression(np.array([[1,2,3],[2,4,6],[3,6,9]]), [4,8,12], 0)    
 
-def minimizeL1Norm(data_matrix, y, lamda):
+def minimizeL1Norm(data_matrix, y):
     
     def absoluteError(weight):
         errorVector = np.dot(data_matrix, weight) - y
-        return sum([abs(i) for i in errorVector])
+        return sum([sum([abs(j) for j in i]) for i in errorVector])
     
-    return gradient_descent.findMin(absoluteError, np.array([0]*data_matrix.shape[1]), gradient_descent.dumbGradient) 
+    return findMin(absoluteError, np.array([0]*data_matrix.shape[1]), dumbGradient) 
 
-print minimizeL1Norm(np.array([[1],[1],[2]], [[1],[2],[3]]))
 
