@@ -143,4 +143,16 @@ def minimizeL1Norm(data_matrix, y):
     
     return findMin(absoluteError, np.array([0]*data_matrix.shape[1]), dumbGradient) 
 
+def minimizeQuadraticErrorWithWeightPunishment(data_matrix, y, lamda, q=1):
+    
+    def quadraticErrorPlusWeightPunishment(weight):
+        errorVector = np.dot(data_matrix, weight) - y
+        return sum([sum([j**2 for j in i]) for i in errorVector]) + lamda*sum([abs(i)**q for i in weight])
+    
+    return findMin(quadraticErrorPlusWeightPunishment, np.array([0]*data_matrix.shape[1]), dumbGradient)
+
+print minimizeQuadraticErrorWithWeightPunishment(np.array([[1],[1],[2]]), np.array([[6],[7],[8]]), 1, 3)
+
+
+
 
