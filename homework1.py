@@ -1,6 +1,6 @@
 import pdb
 import random
-import pylab as pl
+#import pylab as pl
 from scipy.optimize import fmin_bfgs
 import numpy as np
 import sys
@@ -8,6 +8,9 @@ import sys
 INFINITY = 10000000
 
 def findMin(f, guess, gradient, step_size = 0.1, convergence_criterion = 0.1):
+
+  functionCalls = 0
+
   oldLocation = guess  
   bestDirection = gradient(f, guess)  
   currentLocation = guess + bestDirection * step_size
@@ -15,17 +18,22 @@ def findMin(f, guess, gradient, step_size = 0.1, convergence_criterion = 0.1):
   endCounter = 0
   
   while np.linalg.norm(f(currentLocation) - f(oldLocation)) > convergence_criterion and endCounter < 10000:
+    
+    functionCalls += 2 # 2 function calls for the while loop
+  
     # terminate if we didn't move much
     bestDirection = gradient(f, currentLocation)
+    functionCalls += 2 ** len(currentLocation) # 2^d function calls to try each cardinal direction
     
     oldLocation = currentLocation
     
-    currentLocation = currentLocation + bestDirection * step_size\
+    currentLocation = currentLocation + bestDirection * step_size
     
     endCounter += 1
     
-    print currentLocation
+    #print currentLocation
   
+  print "The dumb gradient descent function took", functionCalls, "function calls."
   return currentLocation
 
 def dumbGradient(f, currentLocation):
@@ -176,11 +184,16 @@ def centralizedDataMatrix(dataMatrix):
 
 #print centralizedDataMatrix(designMatrix([1, 2, 3], 3))
 
-if __name__ == "__main__":
+if __name__ != "__main__":
   X_val, Y_val = validateData()
   X, Y = regressAData()
   w = ridge_regression(X.T.tolist()[0], int(sys.argv[1]), Y, int(sys.argv[2]))
   print testPlot(X, Y, np.array(w))
   print testPlot(X_val, Y_val, np.array(w))
 
-
+if __name__ == "__main__":
+  
+  quadraticBowl = lambda x: x[0]**2 + x[1]**2 
+    
+  print fmin_bfgs(quadraticBowl, np.array([6, 10]), norm=-float("Inf"), full_output=True)[4]
+  findMin(quadraticBowl, np.array([6, 10]), dumbGradient, step_size=1, convergence_criterion=1)

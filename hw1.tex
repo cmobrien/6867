@@ -29,7 +29,7 @@ See attached code.
 
 \subsection{Part 4}
 
-% NEEDS WRITING
+Our gradient descent procedure, with a step size of 0.1 and convergence criterion of 0.1, took 360 function calls to converge to the correct solution in the quadratic bowl, whereas the scipy optimizer fmin_bfgs took 16 function calls. When we increased the step size and convergence criterion to 1, our procedure instead took 30 function calls; however, this number is somewhat misleading, because had we chosen the initial guess (or the solution!) to not be integers, our algorithm would have converged to a substantially inferior result. Moreover, as we made the initial guess be farther and farther from the true solution, our optimizer took longer and longer to converge, whereas the scipy optimizer did not use more function calls. It would seem, therefore, that the scipy optimizer is much faster and more effective than our optimizer, particularly for guesses distant from the solution.
 
 \section{Problem 2}
 
