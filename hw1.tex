@@ -1,19 +1,67 @@
-\documentclass[12pt]{article}
+\documentclass{sigchi}
 
-\usepackage{amsmath}    % need for subequations
-\usepackage{graphicx}   % need for figures
-\usepackage{verbatim}   % useful for program listings
-\usepackage{color}      % use if color is used in text
-\usepackage{subfigure}  % use for side-by-side figures
-\usepackage{hyperref}   % use for hypertext links, including those to external documents and URLs
+% Use this command to override the default ACM copyright statement (e.g. for preprints). 
+% Consult the conference website for the camera-ready copyright statement.
+
+
+% Arabic page numbers for submission. 
+% Remove this line to eliminate page numbers for the camera ready copy
+%\pagenumbering{arabic}
+
+
+% Load basic packages
+\usepackage{balance}  % to better equalize the last page
+\usepackage{graphics} % for EPS, load graphicx instead
+\usepackage{times}    % comment if you want LaTeX's default font
+\usepackage{url}      % llt: nicely formatted URLs
+
+% llt: Define a global style for URLs, rather that the default one
+\makeatletter
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\bf\ttfamily}}}
+\makeatother
+\urlstyle{leo}
+
+
+% To make various LaTeX processors do the right thing with page size.
+\def\pprw{8.5in}
+\def\pprh{11in}
+\special{papersize=\pprw,\pprh}
+\setlength{\paperwidth}{\pprw}
+\setlength{\paperheight}{\pprh}
+\setlength{\pdfpagewidth}{\pprw}
+\setlength{\pdfpageheight}{\pprh}
+
+% Make sure hyperref comes last of your loaded packages, 
+% to give it a fighting chance of not being over-written, 
+% since its job is to redefine many LaTeX commands.
+%\usepackage[pdftex]{hyperref}
+%\hypersetup{
+%pdftitle={L@S 2014 Work-in-Progress Format},
+%pdfauthor={LaTeX},
+%pdfkeywords={SIGCHI, proceedings, archival format},
+%bookmarksnumbered,
+%pdfstartview={FitH},
+%colorlinks,
+%citecolor=black,
+%filecolor=black,
+%linkcolor=black,
+%urlcolor=black,
+%breaklinks=true,
+%}
+
+% create a shortcut to typeset table headings
+\newcommand\tabhead[1]{\small\textbf{#1}}
 
 \begin{document}
 
-\section{Problem 1}
+\title{Homework 1}
 
-\subsection{Part 1}
 
-See attached code.
+\maketitle
+
+\section{Gradient Descent}
+
 
 \subsection{Part 2}
 
@@ -29,9 +77,9 @@ See attached code.
 
 \subsection{Part 4}
 
-Our gradient descent procedure, with a step size of 0.1 and convergence criterion of 0.1, took 360 function calls to converge to the correct solution in the quadratic bowl, whereas the scipy optimizer fmin_bfgs took 16 function calls. When we increased the step size and convergence criterion to 1, our procedure instead took 30 function calls; however, this number is somewhat misleading, because had we chosen the initial guess (or the solution!) to not be integers, our algorithm would have converged to a substantially inferior result. Moreover, as we made the initial guess be farther and farther from the true solution, our optimizer took longer and longer to converge, whereas the scipy optimizer did not use more function calls. It would seem, therefore, that the scipy optimizer is much faster and more effective than our optimizer, particularly for guesses distant from the solution.
+Our gradient descent procedure, with a step size of 0.1 and convergence criterion of 0.1, took 360 function calls to converge to the correct solution in the quadratic bowl, whereas the scipy optimizer fmin\_bfgs took 16 function calls. When we increased the step size and convergence criterion to 1, our procedure instead took 30 function calls; however, this number is somewhat misleading, because had we chosen the initial guess (or the solution!) to not be integers, our algorithm would have converged to a substantially inferior result. Moreover, as we made the initial guess be farther and farther from the true solution, our optimizer took longer and longer to converge, whereas the scipy optimizer did not use more function calls. It would seem, therefore, that the scipy optimizer is much faster and more effective than our optimizer, particularly for guesses distant from the solution.
 
-\section{Problem 2}
+\section{Linear Basis Function Regression}
 
 \subsection{Part 1}
 
@@ -45,7 +93,7 @@ See attached code.
 
 % NEEDS WRITING
 
-\section{Problem 3}
+\section{Ridge Regression}
 
 \subsection{Part 1}
 
@@ -59,7 +107,7 @@ See attached code.
 
 % NEEDS WRITING
 
-\section{Problem 4}
+\section{Generalizations}
 
 \subsection{Part 1}
 
