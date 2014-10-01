@@ -76,7 +76,7 @@ The choice of initial guess, step size, and convergence criterion can have a dra
 
 Choosing an initial guess that is close to a solution will make \textsc{Gradient-Descent} converge more quickly. Choosing an initial guess that is on a downward slope into a particular solution will probably make the ultimate result be that solution. Therefore, \textsc{Gradient-Descent} will return a better solution if the initial guess is on a downward slope into a global maximum, and a worse solution if the starting guess is on a downward slope into a mediocre local maximum.
 
-A smaller step size will make \textsc{Gradient-Descent} converge more slowly. However, if the initial step size is too large, the algorithm could oscillate around the minimum and never converge on the solution.
+A smaller step size will make \textsc{Gradient-Descent} converge more slowly. However, if the initial step size is too large, the algorithm could oscillate around the minimum and never converge on the solution. Worse, it could oscillate back and forth in an increasing manner and suffer an exponential blowup \emph{away} from any minima.
 
 With a smaller convergence criterion \textsc{Gradient-Descent} will return a solution which is closer to the actual minimum. However, it will require more iterations. A small convergence criterion combined with a large step size could create the risk that the algorithm will diverge.
 
@@ -232,7 +232,7 @@ For any given value of $M$, it is possible to compute the optimal value of $\lam
 \caption{SSE of the validation data plotted against the value of $\lambda$ used in \textsc{Ridge-Regression} on Regression Data A. For our model, we want to choose the value of $\lambda$ which minimizes SSE.}
 \end{figure}
 
-Sometimes, the optimal value of $\lambda$ turns out to be negative. However, a negative value of $\lambda$ corresponds to rewarding for large weights, which is certainly undesirable. Thus, whenever the optimal value of $\lambda$ is negative, we choose $\lambda = 0$.
+Sometimes, the optimal value of $\lambda$ turns out to be negative. However, a negative value of $\lambda$ corresponds to rewarding large weights, which must be undesirable because it encourages overfitting. Thus, whenever the optimal value of $\lambda$ is negative, we choose $\lambda = 0$.
 
 The table in Figure 7 displays values of $M$ along with their corresponding optimal values of $\lambda$, and the resulting SSE of the validation data.
 
@@ -263,7 +263,7 @@ $M$ & $\lambda$ & SSE\\
 
 We can see that the values which minimizes the SSE on the validation data are $M = 1$ and $\lambda = 0$, so we choose these for our model. The resulting curves are shown in Figure 8 against the training and validation data.
 
-While its slightly unsatisfying that we end up choosing a simple linear model, we can clearly see that the data (particularly the validation set) fits closely to a line. The fact that the validation data seems to have a slightly steeper slope than the training data justifies why the optimal value for $\lambda$ with $M = 1$ was actually negative.
+While it is slightly unsatisfying that we end up choosing a simple linear model, we can clearly see that the data (particularly the validation set) fits closely to a line. The fact that the validation data seems to have a slightly steeper slope than the training data justifies why the optimal value for $\lambda$ with $M = 1$ was actually negative.
 
 \begin{figure}[!t]
 \centering
