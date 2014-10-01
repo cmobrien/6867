@@ -59,7 +59,7 @@
 
 \begin{document}
 
-\title{Homework 1}
+\title{Exploring Regression}
 
 
 \maketitle
@@ -83,7 +83,7 @@ With a smaller convergence criterion \textsc{Gradient-Descent} will return a sol
 The gradient function $f'$ will use central differences to estimate the gradient at any given point. Consider the quartic bowl $f(x_1, x_2) = x_1^4 + x_2^4$. Figure 1 shows the gradients produced by our $f'$ compared to the actual gradients. We can see that for a smooth function like the quartic bowl, our gradient estimation will be very close to the actual gradient.
 
 \begin{figure}
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \begin{center}
 \begin{tabular}{| c | c | c |}
@@ -98,14 +98,14 @@ $(-4, 8)$&$(-256.04, 2048.08)$ & $(-256, 2048)$\\
 \hline
 \end{tabular}
 \end{center}
-\caption{Performance of our gradient estimator on the function $x_1^4 + x_2^4$.}
+\caption{Performance of our gradient estimator on the function $f(x_1, x_2) = x_1^4 + x_2^4$.}
 \end{figure}
 
 
 Consider the Python function \textsc{Fmin-Bfgs}. We ran both optimization functions with the same parameters and compared the number of times that $f$ was evaluated. The results of our experiments are shown in Figure 2.
 
 \begin{figure}
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \begin{center}
 \begin{tabular}{| c | c | c |}
@@ -121,7 +121,7 @@ $x^4 - x^3 - x^2 + x$ & 388 & 57\\
 \caption{Table of number of function calls. The initial guess was $(5, 5)$ for the first row and $-5$ for the second.}
 \end{figure}
 
-The step size and convergence criterion for \textsc{Gradient-Descent} were chosen so that the solution it returned had the same precision as \textsc{Fmin-Bfgs} within an order of magnitude. Clearly \textsc{Gradient-Descent} takes far more iterations to converge than the more sophisticated optimizer. One possible improvement to \textsc{Gradient-Descent} which could drastically reduce the number of iterations would be to vary the step size.
+Clearly \textsc{Gradient-Descent} takes far more iterations to converge than the more sophisticated optimizer. One possible improvement to \textsc{Gradient-Descent} which could drastically reduce the number of iterations would be to vary the step size.
 
 
 \section{Linear Basis Function Regression}
@@ -130,7 +130,7 @@ Consider the class of regression models consisting of a linear combination of po
 \[f(x) = w_0 + w_1x + w_2x^2 + \hdots + w_Mx^M,\]
 such that the sum of square errors (SSE) of the actual data is minimized. We can solve this problem by using \textsc{Gradient-Descent} to solve for the value of $w$ that minimizes the SSE.
 
-Consider the data set shown in Bishop Figure 1.4, and the curves shown for various values of $M$. Using \textsc{Gradient-Descent} to minimize SSE, we are able to replicate these curves very closely if the appropriate parameters are chosen. For $M = 0$ and $M = 1$, the curves produced by \textsc{Gradient-Descent} are almost identical to those in the original plots, even when given an initial guess which is very far from the solution. These plots are shown in Figure 3.
+Consider the data set shown in Bishop Figure 1.4, and the curves shown for various values of $M$. Using \textsc{Gradient-Descent} to minimize SSE, we are able to replicate these curves very closely by carefully choosing our parameters. For $M = 0$ and $M = 1$, the curves produced by \textsc{Gradient-Descent} are almost identical to those in the original plots, even when given an initial guess which is very far from the solution. These plots are shown in Figure 3.
 
 \begin{figure}[!t]
 \centering
@@ -218,7 +218,7 @@ Next, we notice that the curves with non-zero $\lambda$ values are very similar 
 
 \subsection{Model Selection}
 
-Next, we want to use \textsc{Ridge-Regression} in order to implement model selection. To do this, we will first use \textsc{Ridge-Regression}  (for some $M$ and $\lambda$) to compute the weight vector using a set of training data. Next, we will test the performance of this weight vector against a set of validation data. Based on this performance, we will modify $M$ and $\lambda$. We want to choose the values of $M$ and $\lambda$ which minimize the SSE on the validation data.
+Next, we want to use \textsc{Ridge-Regression} in order to implement model selection. To do this, we will first use \textsc{Ridge-Regression}  (for some $M$ and $\lambda$) to compute the weight vector using a set of training data. Next, we will test the performance of this weight vector against a set of validation data. We want to choose the values of $M$ and $\lambda$ which minimize the SSE on the validation data.
 
 We performed model selection using two different sets of training data, which we will refer to as ``Regression Data A'' and ``Regression Data B''. The following sections describe our findings.
 
@@ -238,7 +238,7 @@ The table in Figure 7 displays values of $M$ along with their corresponding opti
 
 \begin{figure}[!]
 \centering
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
@@ -290,7 +290,7 @@ Next we use the same process on Regression Data B. The most noticeable differenc
 
 \begin{figure}
 \centering
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
@@ -337,7 +337,7 @@ The results of our experiments with $M$ and $\lambda$ are shown in Figure 9. The
 
 \subsection{Applications}
 
-Next, we consider an application of this technique. We will use the BlogFeedback data set, which describes a blog post by 280 numerical values, and maps this to the number of comments the blog post receives in the next 24 hours. As before, we will train our data on one data set and then validate it on another to determine $\lambda$ (here we will use a simple linear model, so $M = 1$). For this data set, we will then apply our curve to a test data set and judge its performance.
+Next, we consider an application of this technique. We will use the BlogFeedback data set, which describes a blog post by 280 numerical values, and maps this to the number of comments the blog post receives in the next 24 hours. We will train our data on one data set and then validate it on another to determine $\lambda$ (here we will use a simple linear model, so $M = 1$). For this data set, we will then apply our curve to a test data set and judge its performance.
 
 Figure 11 shows a plot of the SSE of the validation set versus $\lambda$. We can see that $\lambda$ here is much larger than any value of $\lambda$ we have seen in the past. However, because we are using such a large data set, this is not unreasonable.
 
@@ -356,11 +356,11 @@ Finally, we check the performance of the model against the test data. We note th
 
 A possible way to avoid having our fit be so perturbed by outliers is to only penalize error linearly instead of quadratically. We repeated our experiments with model fitting using the least absolute deviations fit, where errors are only punished linearly but the regularization term is still quadratic. Because this model does not have a nice closed form solution like ridge regression, we use \textsc{Gradient-Descent} to minimize the sum of the absolute value of the errors plus the quadratic regularization term. Thus, the values in this section are less precise than those in the previous sections.
 
-Figure 12 contains the results for Regression Data A. Note that this time, our goal was not to minimize the SSE of the validation data, but the absolute deviations. Thus, the values in Figure 12 should not be compared to the values in Figure 7. Unsurprisingly, the best fit for the data in this again when $M = 1$ and $\lambda = 0$. The fit produced was extremely similar to that in Figure 8, so we do not show it here. However, this is also unsurprising. Because no point lies very far from our curve, the absolute differences are not very different from the quadratic differences.
+Figure 12 contains the results for Regression Data A. Note that this time, our goal was not to minimize the SSE of the validation data, but the absolute deviations. Thus, the values in Figure 12 should not be compared to the values in Figure 7. Unsurprisingly, the best fit for the data in this again was $M = 1$ and $\lambda = 0$. The fit produced was extremely similar to that in Figure 8, so we do not show it here. However, this is also unsurprising. Because no point lies very far from our curve, the absolute differences are not very different from the quadratic differences.
 
 \begin{figure}
 \centering
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
@@ -387,7 +387,7 @@ The more interesting data set here is Regression Data B, which contained a large
 
 \begin{figure}
 \centering
-\def\arraystretch{1.5}
+\def\arraystretch{1.4}
 
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
@@ -441,6 +441,6 @@ The difference in approaches punishing error linearly versus punishing error qua
 
 The lasso  might be used when there are many features, some of which should be ignored entirely. Linear punishment will push many of the weights all the way to 0, and then the function will be simple to explain, implement, and think about intuitively.
 
-If the prediction problem has absolute value loss, it becomes likelier that absolute differences are the correct choice. The predictor should be trained in such a way as to minimize the loss function that it will suffer when it is used on real data. On the other hand, the amount that high weight vectors should be punished is dependent on the fear of over-fitting; an unusual loss function is unlikely to change the way you punch high weights.
+If the prediction problem has absolute value loss, it becomes likelier that absolute differences are the correct choice. The predictor should be trained in such a way as to minimize the loss function that it will suffer when it is used on real data. On the other hand, the amount that high weight vectors should be punished is dependent on the fear of over-fitting; an unusual loss function is unlikely to change the way you punish high weights.
 
 \end{document}
