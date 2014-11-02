@@ -1,0 +1,46 @@
+Overall:
+Score: 5
+
+Awesome work! Your paper is clear with a lot of interesting discussion, and you do a great job of using visuals to support and enhance your conclusions. My biggest general comment is that there's no need to separate the paper into sections corresponding to those outlined in the prompt. Occasionally you seem to include sections which seem unnecessary just so you can say something for that specific problem. Feel free to remove these subsections and let your text flow more freely.
+
+----
+
+Problem 1:
+Content: 5
+Clarity: 5
+
+Great job answering all parts of this question with a lot of clarity and detail. You explained gradient descent very clearly, and then had a very interesting and informative discussion of how the choice of parameters affected the performance of your function and how it compared to MATLAB's optimizer.
+
+One thing I was curious about after having read this section was how you went about choosing your parameter values. For example, you choose step sizes of 1, 0.1, 0.01, and 0.001, and convergence criterion of 0.0001, 0.00001, 0.000001. It is not obvious to me why the convergence criterion should be orders of magnitude small than the step size. Perhaps you could comment on these choices.
+
+----
+
+Problem 2:
+Content: 5
+Clarity: 5
+
+Again, your discussion in this section is clear and informative. I particularly like how your broke down your analysis of your gradient descent function in section 2.3. This made it extremely clear how each parameter impacted the performance of your function.
+
+I think you may want to consider omitting sections 2.1 and 2.2. Both seem to be included as obligatory responses to the questions in the prompt, but I think both of those questions were mostly meant to better our understanding and not necessarily to be discussed. If you choose to keep section 2.1, I think plots of the curves formed by the weight vectors would be much more informative than the values of the weights themselves (in Figure 2a).
+
+---
+
+Problem 3:
+Content: 4
+Clarity: 5
+
+The visuals in this section are excellent, and the accompanying discussion is very useful.  In section 3.2, I really like Figure 4a. However, I want to confirm that the y-axis represents the MSE for the validation data? Perhaps you could label this to make it clearer.
+
+It is also unclear to me why you chose such large values for M. From your graph in 4a, it looks like the value which minimizes MSE is M = 2, lambda = 0 (although I could be mistaken, the graph is small). Why would you be driven to choose a more complication model which also has larger validation error (the last paragraph of this section discusses this briefly, but I don't think it adequately addresses my concerns)?
+
+As a final comment, in Figure 5 I would round the numbers off to a more reasonable amount, I do not see any reason to keep such precision.
+
+For the blog dataset, I am curious why you only consider lambda up to 500 (or at least this is what is shown in Figure 6). The function is still decreasing at this point, and we know there must be an inflection point somewhere, so why not show it and see what the error is? This is partially addressed by your comment that it seems that even large changes in lambda only have very minimal effects on the error, so it might not be worth the more complicated model to consider non-zero lambda. However, I would be a lot more convinced of this if I saw the minimum error compared to the error when lambda = 0.
+
+----
+
+Problem 4:
+Content: 5
+Clarity: 4
+
+This section is very well done. The visuals are clear and supportive and the discussion is easy to follow and interesting. One thing I think should be clarified is in Figure 7, when you say error, do you always refer to the MSE? If so, I wonder whether this is an appropriate measure of error for the LAD fit (as opposed to absolute errors). If not (and you are in fact referring to absolute error for the LAD), I think it is misleading to put these in the same chart, where the reader will clearly be inclined to directly compare the error values between the LAD fit and ridge regression. Depending on how you decide to sort that out, you may want to consider combining Figures 7 and 8. 

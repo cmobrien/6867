@@ -1,0 +1,49 @@
+Overall:
+Score: 5
+
+Great job! I really enjoyed reading this paper. It was well-written, easy to read, and very interesting. I thought you had just the right number of figures to support your results, and the right amount of discussion of your results. I ran into a few minor points of confusion within specific problems (see below), but overall I thought you did a really awesome job.
+
+---
+
+Problem 1:
+Content: 4
+Clarity: 5
+
+I love your brief introduction describing gradient descent. With only a few sentences you made it very clear how gradient descent works and how you implemented it. I think your discussion of the effects of different parameters is thoughtful and that the accompanying graphs are both helpful and informative. I particularly enjoyed Figure 3, which graphically demonstrated the trade-off between accuracy and time to converge.
+
+One thing that I was left wondering after having read this section was how you implemented your gradient function. I am assuming that you used central differences, but I would like to see how your gradient compared to the analytic gradient for a variety of functions.
+
+I think it is great that you compared your gradient descent function to scipy's optimizer in a variety of different scenarios (and plotted these results). However, I would like to know what function you were using for these points and how you chose your parameters. For example, how am I to know that the reason that your gradient descent function takes so many more function calls is not because your convergence criterion is so small that your function produces a much more precise solution than the scipy optimizer?
+
+----
+
+Problem 2:
+Content: 5
+Clarity: 4.5
+
+Your discussion is clear, concise, and thoughtful. The only confusing thing was that you say "gradient descent always converged upon the unique optimal solution". I am assuming that you mean that this was the case when you tried to reproduce the Bishop graphs (and the unique optimal solutions were the curves shown on the prompt). Clarifying this is the only recommendation I have for this section.
+
+---
+
+Problem 3:
+Content: 5
+Clarity: 3
+
+In general, this section is clearly written with great discussion and excellent visuals. One minor nitpick: 10 data points means that a model of order 9 will perfectly fit all the points.
+
+Your discussion and conclusion seem very reasonable. However, I am a little confused about your use of training, validation, and testing data. I believe that you should choose your weights based on training data, and then choose your M and lambda based on the validation data. I think that you may have just switched the words "validation" and "testing". Even that being said, I'm not sure where the testing data came from. When you trained on A, did you test on B?
+
+Your discussion of the blog dataset was great. I particularly liked that you described which features ended up with the highest weights. This was a real-world data set, and I love that you translated your numerical results back into a real-world explanation.
+
+----
+
+Problem 4:
+Content: 5
+Clarity: 5
+
+This section was very clear and very informative. In particular, your discussion of the LASSO fit was very well done and made me understand the motivation for the LASSO fit in ways that I had not from writing this paper myself or reading other papers.
+
+My only criticism for this section is that you mention that there will be a brief discussion of whether MSE is an appropriate performance measure for LAD, and this never happens as far as I can tell. Since in LAD you are trying to minimize absolute differences instead of square errors, I would be interested to see how trying to minimize absolute differences in the validation data changes your results.
+
+
+

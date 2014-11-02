@@ -1,0 +1,55 @@
+Overall:
+Score: 2
+
+You have a lot of great visuals in your paper! But sometimes you just pointed to them without offering any explanation of their significance. I would like to see a bit more discussion. I realize that space is a constraint, but I think if you narrow your margins a bit you will have plenty of extra space for some lively discussion.
+
+I was sometimes bothered by the fact that all the Figures appeared at the end of the paper. If possible, I would like it if you could move them to be closer to the section where they are discussed. If not, perhaps you could make the captions more self-explanatory so that they are able to stand on their own.
+
+Finally, I found the bullet structure a little strange. All of your bullets seem to be well formed paragraphs, so I would definitely recommend just removing the bullets to that your paper flows a little more.
+
+----
+
+Problem 1:
+Content:3
+Clarity:2
+
+I enjoyed your discussion of your gradient descent functions and the effects of choosing different parameters. Your choice of functions to consider is good, they are certainly functions with very different behavior. I would have liked to have heard more about how the parameters affect the output of gradient descent. For example, you never discuss the possibility that it could converge to only a local (and not global) minimum if the initial guess is far from the global minimum.
+
+The 3D graphs of the functions being discussed are very helpful in visualizing the execution of gradient descent. I am having some trouble understanding the other two graphs, which show the 'closeness' of your gradient function to the analytic gradient. It would be nice if you included an explanation of the significance of these graphs and their implications.
+
+As a final comment, I would like to know on what function and with which parameters the MATLAB optimizer outperformed yours. Since you have already discussed how your choice of parameters could impact the number of function calls that your gradient descent makes, it is hard to give any significance to these numbers without that information. As an example, there's certainly some value of parameters (perhaps a huge convergence criterion) for which your gradient descent function would have had less function calls than MATLAB's!
+
+----
+
+Problem 2:
+Content: 3
+Clarity: 2
+
+The graphs in Figure 3 do a great job of demonstrating that both your gradient descent function and MATLAB's optimizer produce very similar fits for the data. I would be curious to see how these functions compare for other values of M. Perhaps you could show these plots for a few more values of M, or even just briefly discuss how they performed.
+
+In the first sentence of the second bullet, I believe that the intention is to say that you used both your implementation of gradient descent and MATLAB's optimizer to minimize the residual sum of squares function. I think this came out slightly jumbled and could be written a little more clearly. You also mention the "final results", but it is unclear to me if you are discussing those for your optimizer or MATLAB's (I think yours, but I am not positive). I think a small amount of re-wording could benefit this section substantially.
+
+----
+
+Problem 3:
+Content: 2
+Clarity: 3
+
+I think that the plots in Figure 4 are informative and very clear. I particularly like the observation that as lambda increases, the fit tends toward one of a lower degree polynomial.
+
+In the second bullet, I would like a more detailed description of your procedure. You mention that you have both validation and test data for each of data sets A and B, so I am assuming that you split the validation set we were given into a validation set and a test set. You also mention that a linear model with no regularization minimizes the "objective function". I am assuming that the objective function here is the value of the MSE on the validation data. However, in Figure 6 it appears to me that the MSE is lower for the validation set at M = 3, lambda = 0 than for M = 1, lambda = 0. Perhaps you could clarify this. Also, I think it is great that you used a test set for this problem, and it is certainly interesting that the test set seems to always have a lower MSE than the validation set, even though the model was selected based on the validation set. Could you comment on this?
+
+It is bit confusing that in Figure 7, the blue line refers to the training data (whereas in Figure 6 it referred to the testing data). In fact, I think it would be quite interesting to see the validation data MSE plotted with the testing data MSE (I also wonder if that is what is being shown in this graph, and the caption simply contains a typo). Also, I would recommend testing this data for much, much larger values of lambda. Your plot shows the impact of lambda between 0 and 1, but for such a large data set we would not expect such a small change to make a large difference. You never actually discuss which value of lambda you would recommend choosing, but I think if you plot this data for larger lambda it may become apparent.
+
+----
+
+Problem 4:
+Content: 2
+Clarity: 2
+
+You note that the plot of MSE (which you note is actually absolute value loss, it would be helpful if you could modify the labels) versus lambda is much "sharper" as we change lambda. I would love to hear some discussion on why this is the case. Also, I think that its great that you give so many illustrative plots of MSE versus lambda, but in general I would like to see a little more discussion of their implications. In particular, which values of M and lambda would you choose? On another note, perhaps the most interesting part about the LAD fit is that it allowed us to fit a much better line to regress B, due to the fact that the outlier was not quadratically punished. I would like to see this discussed a little, as well as (space permitting) a chart showing how it fits the data.
+
+I particularly enjoyed your comment that the regulator "is simply something we have given very hand wavy arguments about making a model more robust". Maybe you could briefly discuss using the L1 norm versus the L2 norm.
+
+
+
