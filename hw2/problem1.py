@@ -44,19 +44,14 @@ def build_matrices(kernel, X, Y, C):
 
 def solve_qp(kernel, X, Y, C):
     P, q, G, h, A, b = build_matrices(kernel, X, Y, C)
-    print matrix(P).size
-    print matrix(q).size
-    print matrix(G).size
-    print matrix(h).size
-    print matrix(A).size
-    print matrix(b).size
     sol = solvers.qp(matrix(P, tc = 'd'), matrix(q, tc = 'd'), matrix(G, tc = 'd'), matrix(h, tc = 'd'), matrix(A, tc = 'd'), matrix(b, tc = 'd')) 
     return sol['x']
 
 
-#X = [[1, 2], [2, 2], [0, 0], [-2, 3]]
-#Y = [1, 1, -1, -1]
-#alpha = solve_qp(X, Y, 1)
+X = [[1, 2], [2, 2], [0, 0], [-2, 3]]
+Y = [1, 1, -1, -1]
+f = dot_kernel(X)
+alpha = solve_qp(f, X, Y, 1)
 
 def get_weights(X, Y, alpha):
     w = [0] * len(X[0])
@@ -65,7 +60,7 @@ def get_weights(X, Y, alpha):
         w = component_wise_add(w, term)
     return [get_w0(X, Y, alpha)] + w
 
-THRESHOLD = 0.0000001
+THRESHOLD = 0.0001
 
 def get_w0(X, Y, alpha):
     s = 0
