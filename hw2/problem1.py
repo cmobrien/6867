@@ -80,6 +80,3 @@ def get_w0(X, Y, alpha):
     return s/count
         
 #print get_weights(X, Y, alpha)
-
-
-
