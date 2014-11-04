@@ -4,7 +4,7 @@ from plotBoundary import *
 from problem1 import *
 
 # parameters
-name = 'stdev1'
+name = 'stdev2'
 print '======Training======'
 # load data from csv files
 train = loadtxt('newData/data_'+name+'_train.csv')
@@ -49,9 +49,10 @@ def num_support_vectors(alpha):
 
 def error_rate(X, Y):
     errors = 0
+    correct = 0
     for i in range(len(X)):
         guess = predictSVM(X[i])
-        if (guess > 0 and Y[i] < 0) or (guess < 0 and Y[i] > 1):
+        if (guess > 0 and Y[i] < 0) or (guess < 0 and Y[i] > 0) or guess == 0:
             errors += 1
     return errors
 
