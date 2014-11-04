@@ -72,7 +72,7 @@ class KLR:
 #print np.dot(klr.x.transpose(), alphaStar), wStar
 #print [np.dot(klr.x.transpose(), alphaStar)[i] / wStar[i] for i in range(klr.d)]
 
-data2dFile = open("newData/data_nonSep2_test.csv", "r")
+data2dFile = open("newData/data_stdev4_test.csv", "r")
 
 xList = []
 yList = []
