@@ -32,10 +32,7 @@ def predictSVM3(x):
   val = 0
   for i in range(len(X)):
     val += Y[i] * alpha[i] *f(X[i], x)
-  if val > 0:
-    return 1.0
-  else:
-    return -1.0
+  return val
 
 def geometric_margin(w):
   return 1 / math.sqrt(dot(w[1:], w[1:]))
