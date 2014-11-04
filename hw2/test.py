@@ -14,7 +14,7 @@ def anotherPlot(X, Y):
 
 def semiPlot(X, Yd):
   for Y in Yd:
-    pl.semilogx(X, Yd[Y], label = Y)
+    pl.semilogx(X, Yd[Y], label = Y, linewidth = 2.0)
   pl.legend()
   pl.show()
 
