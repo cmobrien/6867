@@ -216,10 +216,26 @@ Next, we repeat this experiment for various values of $C$. Our goal is to examin
 
 For each of \texttt{stdev1} and \texttt{stdev2}, we used $C$ in the set $\{0.01, 0.1, 1, 10, 100\}$, and computed the geometric margin and total number of support vectors. As a general trend, both the geometric margin and the number of support vectors decreased as we increased $C$. % Increasing C means less slack
 
-Figure 4 shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience.
+Figure 4 shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience. We can see that both the geometric margin and number of support vectors seem to decrease to a point and then level off. This is because as we increase $C$, we decrease the amount of slack that we allow. As $C$ approaches infinity, we approach the situation where we do not allow any slack.
 
+\begin{figure}
+\centering
 
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/1-3/margin.png}
+	\caption{Geometric Margin}
+\end{subfigure}
 
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/1-3/support_vectors.png}
+	\caption{Number of Support Vectors}
+\end{subfigure}
+
+\end{figure}
+
+TALK ABOUT PART (C)
+
+ASK IF LINEAR KERNEL IS THE SAME AS JUST USING DOT PRODUCT
 
 Next, we extended our dual form SVM to operate with kernels. We experimented on our data using the Gaussian kernel. 
 
