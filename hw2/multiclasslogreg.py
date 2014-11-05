@@ -10,10 +10,9 @@ N = 15120
 #N = 6
 
 # number of features
-d = 55
+d = 53
 #d = 2
 
-# number of classes
 K = 7
 #K = 3
 
@@ -47,7 +46,7 @@ def probBeingClassKGivenPhi(k, W, phi):
 	denominator = 0
 	for j in range(K):
 		act = activation(j, W, phi)
-		print act		
+#		print act		
 
 		if act > 700:
 			return probBeingClassKGivenPhiUsingHardMax(k, W, phi)
@@ -56,7 +55,10 @@ def probBeingClassKGivenPhi(k, W, phi):
 
 	numerator = math.exp(activation(k, W, phi))	
 #	print "end softmax"
-	
+
+	if numerator/denominator == 0.0:
+		return 0.000001	
+
 	return numerator/denominator
 
 def gradientDescent(W_initial, T, X, convergenceCriterion):
@@ -65,12 +67,16 @@ def gradientDescent(W_initial, T, X, convergenceCriterion):
 
 	currentW = W_initial
 
-	while abs(oldValue - newValue) > convergenceCriterion:		
+	iterationCounter = 0
+
+	while abs(oldValue - newValue) > convergenceCriterion and iterationCounter < 1:		
 		currentW = currentW - gradient(currentW, T, X)
 
 		oldValue = newValue
 		newValue = nll(currentW, T, X)
 		print oldValue, newValue
+
+		iterationCounter += 1
 
 	print oldValue, newValue
 	return currentW
@@ -88,8 +94,8 @@ def gradient(W, T, X):
 			returnMatrix[j] += (probBeingClassKGivenPhi(j, W, X[n]) - T[n][j])*X[n]
 
 #	print returnMatrix
-	print returnMatrix/10000000.
-	return returnMatrix/10000000.
+#	print returnMatrix
+	return returnMatrix
 
 def nll(W, T, X):
 	sumValue = 0	
@@ -98,7 +104,7 @@ def nll(W, T, X):
 		for n in range(N):
 #			print activation(k, W, X[n])	
 #			print probBeingClassKGivenPhi(k, W, X[n])
-			print probBeingClassKGivenPhi(k, W, X[n])
+#			print probBeingClassKGivenPhi(k, W, X[n])
 			sumValue += T[n][k] * math.log(probBeingClassKGivenPhi(k, W, X[n]))
 
 	return -sumValue
@@ -106,19 +112,18 @@ def nll(W, T, X):
 def findClosestLocus(dataPoint, wStar):
 	guess = None
 
-	bestDistance = float("Inf")
+	bestChance = 0
 	
 	for i, locus in enumerate(wStar):
-		try:
-			vectorDifference = locus-dataPoint
-		except:	
-			return 1		
 
-		distance = vectorDifference.dot(vectorDifference)
+		chance = probBeingClassKGivenPhi(i, wStar, dataPoint)
 	#	print distance
-
-		if distance < bestDistance:
-			bestDistance = distance
+		
+#		print chance
+#		print activation(i, wStar, dataPoint)		
+		
+		if chance > bestChance:
+			bestChance = chance
 			guess = i
 
 	return guess + 1
@@ -154,11 +159,11 @@ def oldMain():
 	print WStar
 
 def main():
-	d = 55
+	d = 52
 	N = 15120
 	K = 7
 
-	treesFile = open("train.csv", "r")
+	treesFile = open("trainnormalized.csv", "r")
 
 	Xlist = np.zeros((N, d))
 	Tlist = np.zeros((N, K))
@@ -199,7 +204,7 @@ def main():
 
 	myGuessesArray = [0,0,0,0,0,0,0]
 
-	testFile = open("train.csv", "r")
+	testFile = open("trainnormalized.csv", "r")
 
 	for line in testFile.readlines():
 		if not line[0] == "I":
@@ -226,8 +231,8 @@ def main():
 			if answer == 0:	
 				print "uh oh"
 			myGuess = findClosestLocus(np.array(currentDataPointList), wStar)
-	
-			myGuessesArray[myGuess] += 1
+			
+			myGuessesArray[myGuess-1] += 1
 			
 			if myGuess == answer:
 				numCorrect += 1
