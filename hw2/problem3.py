@@ -1,6 +1,7 @@
 from problem1 import *
 from plotBoundary import *
 import numpy
+from load_kaggle import *
 
 def multiclass(X, Y):
   classes = {}
@@ -26,7 +27,6 @@ def multiclass(X, Y):
     wk[k] = get_weights(X, newY, alpha)
   return wk
 
-
 def predictSVM(x, wk):
   m = None
   best = None
@@ -38,21 +38,24 @@ def predictSVM(x, wk):
       m = val
   return best
 
+X, Y = load_train()
+wk = multiclass(X_list, Y_list)
+print wk
+
 #X = numpy.array([[-2, 1], [-4, 1], [3, 0], [4, -1], [-4, 3], [-2, 3], [3, 5], [4, 7], [4, 4], [5, 2], [6, 1], [6, 5]])
 #Y = numpy.array([[1], [1], [1], [1], [2], [2], [2], [2], [3], [3], [3], [3]])
 
-X = numpy.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])
-Y = numpy.array([[1], [2], [3], [4]])
-X_list = X.tolist()
-Y_list = [y[0] for y in Y.tolist()]
+#X = numpy.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])
+#Y = numpy.array([[1], [2], [3], [4]])
+#X_list = X.tolist()
+#Y_list = [y[0] for y in Y.tolist()]
+#
 
-
-wk = multiclass(X_list, Y_list)
-print wk
-print predictSVM([1, 2], wk)
-
-def pred(x):
-  return predictSVM(x, wk)
-
-plotDecisionBoundary(X, Y, pred, [1, 2, 3, 4])
+#wk = multiclass(X_list, Y_list)
+#print wk
+#print predictSVM([1, 2], wk)
+#
+#def pred(x):
+#  return predictSVM(x, wk)
+#plotDecisionBoundary(X, Y, pred, [1, 2, 3, 4])
 
