@@ -19,7 +19,7 @@ def split():
 
   i = 0
   for line in lines:
-    if i > 1800:
+    if i > 6000:
       break
     if i > 0:
       choice = random.randrange(0, 3)

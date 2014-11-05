@@ -10,7 +10,6 @@ def multiclass(X, Y):
       classes[Y[i]] = {i: True}
     else:
       classes[Y[i]][i] = True
-  print classes
   Yk = {}
   f = dot_kernel(X)
   res = {}
