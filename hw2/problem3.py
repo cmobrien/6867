@@ -17,6 +17,7 @@ def multiclass(X, Y):
 
   wk = {}
   for k in classes:
+    print k
     newY = []
     for i in range(len(Y)):
       if i in classes[k]:
@@ -39,8 +40,16 @@ def predictSVM(x, wk):
   return best
 
 X, Y = load_train()
-wk = multiclass(X_list, Y_list)
+wk = multiclass(X, Y)
 print wk
+
+error = 0
+X_test, Y_test = load_test()
+for i in range(len(X_test)):
+    if predictSVM(X_test[i], wk) != Y_test[i]:
+        error += 1
+print error
+print len(Y_test)
 
 #X = numpy.array([[-2, 1], [-4, 1], [3, 0], [4, -1], [-4, 3], [-2, 3], [3, 5], [4, 7], [4, 4], [5, 2], [6, 1], [6, 5]])
 #Y = numpy.array([[1], [1], [1], [1], [2], [2], [2], [2], [3], [3], [3], [3]])
