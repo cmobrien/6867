@@ -231,7 +231,7 @@ Next, we extended our dual form SVM to operate with kernels. We experimented on 
 	\hline
 	$C$ & 1 & 0.01 & 0.01 & 10 \\
 	\hline
-	$b$ & 0.1 & 0.1 & 0.01 & 1 \\
+	$\beta$ & 0.1 & 0.1 & 0.01 & 1 \\
 	\hline
 	SVs & 22 & 400 & 100 & 99 \\
 	\hline
@@ -261,6 +261,23 @@ Next, we extended our dual form SVM to operate with kernels. We experimented on 
 \caption{test}
 \end{figure*}
 
+To get an idea for how the classifier works using a Gaussian kernel, Figure xx shows the resulting classifier for \texttt{stdev1} and \texttt{nonSep}. We can clearly see that the classifier is no longer linear. In addition, we can see that on this allows for it to handle the \texttt{nonSep} data in a way which the linear separator could not.
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/1-3/stdev1opttrain.png}
+	\caption{$C = 0.01$}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/1-3/caseychart.png}
+	\caption{$C = 100$}
+\end{subfigure}
+
+\end{figure}
+
 For \texttt{stdev1}, \texttt{tdev2}, and \texttt{stdev4}, we can see that the test error rates resulting from both the Gaussian and linear kernels are very similar. From looking at the data sets, it seems that a linear separator is the most appropriate choice for the data. Thus, even when we apply a Gaussian separator, which allows a lot more flexibility, we still find that the linear separator performs roughly equally well.
 
 For \texttt{nonSep}, we see a much different story. The data is clearly not linearly separable. Thus, we are hardly able to achieve an error rate below 50\% with the linear separator. However, when we apply the Gaussian separator, we are able to achieve an error rate of only 5\%. Thus, the added flexibility of the Gaussian kernel allows us to use the same techniques to separate data which is not linearly separable.
@@ -275,7 +292,24 @@ Next, performed experiments to analyze the effects of varying $C$. Our goal is t
 
 For each of \texttt{stdev1} and \texttt{stdev2}, we used $C$ in the set $\{0.01, 0.1, 1, 10, 100\}$, and computed the geometric margin and total number of support vectors. As a general trend, both the geometric margin and the number of support vectors decreased as we increased $C$. % Increasing C means less slack
 
-Figure 4 shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience. We can see that both the geometric margin and number of support vectors seem to decrease to a point and then level off. This is because as we increase $C$, we decrease the amount of slack that we allow. As $C$ approaches infinity, we approach the situation where we do not allow any slack.
+We can see this in Figure xx, which shows the separator defined by $C = 0.01$ and $C = 100$ for \texttt{stdev1}. We can clearly see that the increased value of $C$ results in a margin smaller margin, and consequently must fewer vectors are support vectors.
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/varyingC/001.png}
+	\caption{$C = 0.01$}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/varyingC/100.png}
+	\caption{$C = 100$}
+\end{subfigure}
+
+\end{figure}
+
+Figure xx shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience. We can see that both the geometric margin and number of support vectors seem to decrease to a point and then level off. This is because as we increase $C$, we decrease the amount of slack that we allow. As $C$ approaches infinity, we approach the situation where we do not allow any slack.
 
 \begin{figure}
 \centering
@@ -292,7 +326,51 @@ Figure 4 shows geometric margin and number of support vectors plotted as a funct
 
 \end{figure}
 
-We know that a support vector machine aims to maximize the size of the margin. Thus, a seemingly reasonable idea would be to use $C$ to maximize the value of the margin on the training data. However, from the trends we see above, this seems that it would just result in the choice of an arbitrarily small value for $C$, which we would have no reason to expect to perform well on the validation or test data. A more reasonable choice is to choose $C$ based on the validation data. An option would be to minimize the size of the margin on the validation data. However, we found that the option which tended to give better overall performance was to choose $C$ to minimize the validation error rate.
+We know that a support vector machine aims to maximize the size of the margin. Thus, a seemingly reasonable idea would be to use $C$ to maximize the value of the margin on the training data. However, from the trends we see above, this seems that it would just result in the choice of an arbitrarily small value for $C$, which we would have no reason to expect to perform well on the validation or test data.
+
+A more reasonable choice is to choose $C$ based on the validation data. An option would be to maximize the size of the margin on the validation data. However, from Figure xx we can see that increasing the margin can just lead to more vectors being classified as support vectors, which does not actually improve our classification accuracy. The option which tended to give better overall performance was to choose $C$ to minimize the validation error rate.
+
+\section{Logistic Regression}
+
+\section{Multi-Class Classification}
+
+In the previous sections, we dealt with data that needed to be classified as positive or negative. In this section, we will discuss data that needs to be classified as one of $\{1, \hdots, k\}$. In particular, we will deal with the problem of predicting the forest cover type (of which there are 7) of a region based on a 54-dimension feature vector, a problem based on the Kaggle challenge. We will apply both support vector machine and logistic regression techniques.
+
+We were given 15,120 data points, which we randomly split into three sets of size 5,040 to serve as the training, validation, and testing data.
+
+\subsection{Support Vector Machines}
+
+We implemented multi-class support vector machines using the one-versus-the-rest approach. We tested the Kaggle data using both the linear and Gaussian kernel, and found that we were able to achieve a much higher success rate with the linear kernel. We attributed this difference to overfitting of the training data with the Gaussian kernel.
+
+Moving forward with the linear kernel, we begin training the model on the training set and using the validation error rate to tune the value of $C$. Because solving the quadratic program with the support vector machine takes prohibitive amounts of time when run on our training set of 5,040 points, we used a smaller subset of the training and validation sets to tune $C$ (1000 points each).
+
+We found that the best value of $C$ was $C = 1$. Figure xx shows the resulting validation errors for various values of $C$. With this set, we were able to achieve a success rate of xx\% on the test data (when trained on the subsets of training and validation data).
+
+\begin{figure}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| c | p{.25in} | p{.25in} | p{.25in} | p{.25in} | p{.25in} |}
+\hline
+$C$ & \centering 0.01&  \centering 0.1 & \centering 1 & \centering 10 & 100 \\
+\hline
+Validation Error & & & & & \\
+\hline
+\end{tabular}
+\caption{Validation Error for various values of $C$}
+\end{figure}
+
+Due to time and space constraints, we did not explore any other approaches for handing the fact that our algorithm was not able to efficiently train on the entire training set. One possible option would have been to have performed the computation on a more powerful machines (such as Amazon Web Services). With 8GB of RAM, the machine on which we did the training was completely overtaken by performing the training on the full training set. Another option would have been to abandon our implementation of the SVM and use another implementation which supported Sequential Minimal Optimization, in order to provide an approximate solution in a much more manageable timeframe.
+
+Once we settled on a value of $C$, we performed training on all 5,040 training points. The computation managed to terminate after a few hours. With this model, we were able to achieve a success rate of XX\% on the test data. We note that the original data contained equally many points in each class, so this is far better than the 14\% success rate that we would expect from a model which did not actually have any information about the data set.
+
+\subsection{Logistic Regression}
+
+\subsection{Discussion}
+
+Here we should probably talk about how SVM's can achieve slightly higher accuracy, but take much longer and can only train on much smaller data sets. Perhaps the logistic regression would perform better if it had the opportunity to train on more data?
+
+
+
+
 
 
 

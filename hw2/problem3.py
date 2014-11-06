@@ -63,7 +63,7 @@ def run_tests(C_options):
     print "C = ", C, valid_error
   return errors
 
-print run_tests([.10])
+print run_tests([1])
 
 #X = numpy.array([[-2, 1], [-4, 1], [3, 0], [4, -1], [-4, 3], [-2, 3], [3, 5], [4, 7], [4, 4], [5, 2], [6, 1], [6, 5]])
 #Y = numpy.array([[1], [1], [1], [1], [2], [2], [2], [2], [3], [3], [3], [3]])

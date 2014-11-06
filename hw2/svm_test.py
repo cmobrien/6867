@@ -4,7 +4,7 @@ from plotBoundary import *
 from problem1 import *
 
 # parameters
-name = 'nonSep2'
+name = 'stdev1'
 # load data from csv files
 train = loadtxt('newData/data_'+name+'_train.csv')
 # use deep copy here to make cvxopt happy
@@ -25,7 +25,7 @@ Y_test = test[:, 2:3]
 #f = gaussian_kernel(X_list, 1)
 
 def run_test(C, b):
-  f = dot_kernel(X_list)
+  f = gaussian_kernel(X_list, b)
   alpha = solve_qp(f, X_list, Y_list, C)
   w = get_weights(X_list, Y_list, alpha)
   # Define the predictSVM(x) function, which uses trained parameters
@@ -63,14 +63,12 @@ def run_test(C, b):
   print "SUPPORT VECTORS: ", num_support_vectors(alpha)
 
   # plot training results
-  #plotDecisionBoundary(X, Y, predictSVM3, [-1, 0, 1])
+  plotDecisionBoundary(X, Y, predictSVM3, [-1, 0, 1])
   print "VALIDATION ERROR: ", error_rate(X_val, Y_val)
   print "TEST ERROR: ", error_rate(X_test, Y_test)
-  #plotDecisionBoundary(X_val, Y_val, predictSVM3, [-1, 0, 1])
+  plotDecisionBoundary(X_test, Y_test, predictSVM3, [-1, 0, 1])
 
-for C in [0.01, 0.1, 1, 10, 100]:
-  run_test(C, 0)
-
+run_test(1, 0.1)
 
 # plot validation results
 #plotDecisionBoundary(X_val, Y_val, predictSVM3, [-1, 0, 1])
