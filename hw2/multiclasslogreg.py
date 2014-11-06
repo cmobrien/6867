@@ -19,8 +19,11 @@ K = 7
 
 # complexity d! Watch out if d is >>n, might need to kernelize
 def activation(k, W, phi):
-#	print W[k, :], phi
-	return np.dot(W[k,:], phi)
+#	print W[k, :].shape, phi.shape
+	try:
+		return np.dot(W[k,:], phi)
+	except:
+		print W[k, :].shape, phi.shape
 
 def probBeingClassKGivenPhiUsingHardMax(k, W, phi):
 	myAct = activation(k, W, phi)	
@@ -160,7 +163,11 @@ def oldMain():
 	print WStar
 
 def main():
+	tryingOnes = False
 	d = 54
+
+	if tryingOnes:
+		d += 1
 	N = 15120
 	K = 7
 
@@ -179,6 +186,9 @@ def main():
 #			print line, nCounter			
 
 			for number in string.split(line, ","):
+				if tryingOnes and dCounter == 0: 
+					dCounter += 1
+					Xlist[nCounter][0] = 1
 				#print dCounter, number
 				if dCounter == d:
 					Tlist[nCounter][int(number)-1] = 1
@@ -217,6 +227,9 @@ def main():
 			answer = 0
 
 			for number in string.split(line, ","):
+				if tryingOnes and dCounter == 0:
+					dCounter += 1
+					currentDataPointList.append(0)
 
 				if dCounter == d:
 					answer = int(number)

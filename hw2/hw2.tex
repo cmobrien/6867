@@ -239,10 +239,119 @@ ASK IF LINEAR KERNEL IS THE SAME AS JUST USING DOT PRODUCT
 
 Next, we extended our dual form SVM to operate with kernels. We experimented on our data using the Gaussian kernel. 
 
+\section{Logistic Regression}
 
+\subsection{Theory}
 
+The kernelized form of the logistic regression objective can be derived as follows. We know that the negative log likelihood function, which we want to mininize, can be expressed as follows:
 
+$$NLL(w) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)}) $$
 
+where for a data point i, $y^{(i)}$ represents what class it belongs to and $x^{(i)$ represents what its feature vector was. $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.  The algorithm will tend to classify a point as having a positive label if $x^{(i)} \cdot w + w_0$ is positive and as having a negative label if the $x^{(i)} \cdot w + w_0$ is negative. More precisely, the algorithm assigns a probability of $\frac{1}{1+e^{-W^T x}}$ to the point's correct classification being positive, and a probability of $1 - \frac{1}{1+e^{-W^T x}}$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible. \\
 
+The natural method to use to minimize the negative log likelihood is by the method of gradient descent. This will require repeated calls to the formula defined above, for an indefinite period of time before the value converges or our algorithm gives up. Each such call takes a certain amount of time: given that the outer sum loops over $N$ different elements (where $N$ is the number of data points), and each call to the function requires us to evaluate $x^{(i)} \cdot w$, the dot product of two $d$-dimensional vectors (where $d$ is the dimensionality of the feature vectors), every call to $NLL(w)$ as defined above will take $\Theta(Nd)$ time to compute, assuming basic arithmetic operations are constant-time. \\
+
+This is efficient assuming $N = \Omega(d)$. However, in the case where $d >> N$, it is possible to do much better than this by making a clever assumption. We may assume that $W = X^T \alpha$. Here, $W$ is our $d+1$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is a $N \times d+1$ matrix that contains of record of every data point and the features it contains, preceded by a 1 (to allow for the offset term $w_0$); the $i^{\textrm{th}}$ row of $X$ is $\{1 x^{(i)}\}$. Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). \\ 
+
+We derive this transformation as follows:
+
+$$NLL(w) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)}) $$
+$$NLL(w) = \sum_{i=0}^N \log(1+e^{-y{(i)}(XW)^{(i)}})$$
+In the equation above, $(XW)^{(i)}$ denotes the $i^{\textrm{th}}$ element of the vector $XW$. \\
+
+Next, we make use of the assumption $W = X^T\alpha$.
+$$NLL(\alpha) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(XX^T\alpha)^{(i)}})$$
+$$NLL(\alpha) = \sum_{i=0}^N \log(1+e^{-y{(i)}((XX^T)^{(i)} \cdot \alpha})$$
+
+We now have a new formula, with a new vector on which we can do gradient descent. Moreover, the dimensionality of the new vector is different from that of the old vector; $\alpha$ is an $N$-dimensional vector, in contrast to $W$, which was a $d$-dimensional vector. \\
+
+How long does it take to compute the formula above? Well, naively, one might expect that we need to iterate over the sum $N$ times, and for each iteration of the sum, we need to compute the matrix product $XX^T$, which takes $\Theta(N^2d)$ time (the runtime of multiplying an $N \times d$ matrix with a $d \times N$ matrix). Then, we need to compute the dot product of $(XX^T)^{(i)}$, an $N$-dimensional vector, with $\alpha$, another $N$-dimensional vector, which would take $\Theta(N)$ time. Thus, at first glance, it appears that our new formula takes $\Theta(N^3 d)$ time to compute; not an improvement! \\
+
+However, this naive calculation is missing an important insight: the matrix $XX^T$ can be precomputed. Because it is independent of $\alpha$, there's no reason for us to compute it at every step of the gradient descent. Instead, we will compute it once, at the start of the algorithm, and then every at every step of the gradient descent, we will not need to recompute it. With that consideration taken into account, each step of the gradient descent will now take $\Theta(N^2)$ time. This \emph{is} quite an improvement over the old runtime of $\Theta(Nd)$, assuming $N << d$. \\
+
+We call this new form of the equation above the \emph{kernelized} form of the equation. It allows us to efficiently find a weight vector $W$ even when the feature space is very large, by doing gradient descent on the $\alpha$ vectors, and then computing $W$ at the end by using the fact that $X^T\alpha = W$. \\
+
+Moreover, this method can be used to substitute in an arbitrary kernel matrix in place of $XX^T$. Thus, this general method supports the use of any kernel one chooses, simplying by plugging in a precomputed kernel matrix and running gradient descent. \\
+
+One potential issue with this method is that it will have a tendency to assign a non-zero value to every $\alpha$, since in logistic regression, every point has some effect on the location of the classifier, albeit often small. This is not ideal; for many applications, it is convenient to have an $\alpha$ that is very sparse, in order to make computations involving $\alpha$ cheaper and in order to make the situation easier to describe and understand. \\
+
+For this reason, we introduced L1 regularization on the $\alpha$ values; in other words, we introduced an additional penalty of $\lambda ||\alpha||_1$ on the alpha vectors, in addition to the penalty corresponding to the negative log likelihood. Our overall penalty $P(\alpha)$ for a given vector $\alpha$ was: \\
+
+$$P(\alpha) = NLL(\alpha) + L1(\alpha)$$
+$$P(\alpha) = \sum_{i=0}^N \log(1+e^{-y{(i)}((XX^T)^{(i)} \cdot \alpha}) + \lambda||\alpha||_1$$
+
+In order to introduce the L1 regularization without adversely affecting the performance of the gradient descent function (functions that are not smooth can disrupt gradient descent functions) we used the approximately-correct function 
+
+$$L1(\alpha) \approx \lambda \sum_i \sqrt{||\alpha_i||^2 + \epsilon}$$
+
+for some sufficiently small $\epsilon << \lambda$. 
+
+\subsection{Experiment}
+
+As a test of our methods, we used them on the 2D data sets. In these tests, we used the fmin_bfgs function for our gradient descent, available online.
+
+ Our methods yielded results that seemed to strongly imply an underlying mechanism that made sense.  
+
+Our results, with $\lambda = 0$, are shown below:
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev1_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from low-variance Gaussians.}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev1_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from low-variance Gaussians}
+\end{subfigure}
+
+\end{figure}
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev2_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from mid-variance Gaussians.}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev2_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from mid-variance Gaussians}
+\end{subfigure}
+
+\end{figure}
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev4_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from high-variance Gaussians.}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev4_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from high-variance Gaussians}
+\end{subfigure}
+
+\end{figure}
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev1_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from low-variance Gaussians.}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/stdev1_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from low-variance Gaussians}
+\end{subfigure}
+
+\end{figure}
 
 \end{document}
