@@ -381,7 +381,7 @@ The kernelized form of the logistic regression objective can be derived as follo
 
 $$NLL(w) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)}) $$
 
-where for a data point i, $y^{(i)}$ represents what class it belongs to and $x^{(i)}$ represents what its feature vector was. $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.  The algorithm will tend to classify a point as having a positive label if $x^{(i)} \cdot w + w_0$ is positive and as having a negative label if the $x^{(i)} \cdot w + w_0$ is negative. More precisely, the algorithm assigns a probability of $\frac{1}{1+e^{-W^T x}}$ to the point's correct classification being positive, and a probability of $1 - \frac{1}{1+e^{-W^T x}}$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible. \\
+where for a data point i, $y^{(i)}$ represents what class it belongs to and $x^{(i)$ represents what its feature vector was. $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.  The algorithm will tend to classify a point as having a positive label if $x^{(i)} \cdot w + w_0$ is positive and as having a negative label if the $x^{(i)} \cdot w + w_0$ is negative. More precisely, the algorithm assigns a probability of $\frac{1}{1+e^{-W^T x}}$ to the point's correct classification being positive, and a probability of $1 - \frac{1}{1+e^{-W^T x}}$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible. \\
 
 The natural method to use to minimize the negative log likelihood is by the method of gradient descent. This will require repeated calls to the formula defined above, for an indefinite period of time before the value converges or our algorithm gives up. Each such call takes a certain amount of time: given that the outer sum loops over $N$ different elements (where $N$ is the number of data points), and each call to the function requires us to evaluate $x^{(i)} \cdot w$, the dot product of two $d$-dimensional vectors (where $d$ is the dimensionality of the feature vectors), every call to $NLL(w)$ as defined above will take $\Theta(Nd)$ time to compute, assuming basic arithmetic operations are constant-time. \\
 
@@ -422,7 +422,7 @@ for some sufficiently small $\epsilon << \lambda$.
 
 \subsection{Experiment}
 
-As a test of our methods, we used them on the 2D data sets. In these tests, we used the \texttt{fmin\_bfgs} function for our gradient descent, available online.
+As a test of our methods, we used them on the 2D data sets. In these tests, we used the fmin_bfgs function for our gradient descent, available online.
 
  Our methods yielded results that seemed to strongly imply an underlying mechanism that made sense.  
 
@@ -477,28 +477,16 @@ Our results, with $\lambda = 0$, are shown below:
 \centering
 
 \begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_train_plot.png}
-	\caption{Our separator for $\lambda = 0$, shown on the training data}
+	\includegraphics[width = 2.25in]{plots/nonSep2_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from a distribution that is very averse to being linearly separated.}
 \end{subfigure}
 
 \begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_01.png}
-	\caption{Our separator, for $\lambda = 0.01$, shown on the training data.}
-\end{subfigure}
-
-\begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_0_1.png}
-	\caption{Our separator, for $\lambda = 0.1$, shown on the training data.}
-\end{subfigure}
-
-\begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_1.png}
-	\caption{Our separator, for $\lambda = 1$, shown on the training data.}
+	\includegraphics[width = 2.25in]{plots/nonSep2_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from a distribution that is very averse to being linearly separated.}
 \end{subfigure}
 
 \end{figure}
-
-
 
 These results show the output of our algorithm when we introduced no L1 regularization, that is, when $\lambda = 0$. It is instructive to see what happens when L1 regularization is introduced. \\
 
@@ -519,30 +507,7 @@ These results show the output of our algorithm when we introduced no L1 regulari
 
 Notice that the result is barely changed at all by the introduction of L1 regularization; the graphs pre- and post-regularization are barely at all different. One difference we found very noticeable, however, was the great cost in additional time that occurred when we introduced L1 regularization; with the relatively low lambda value of 0.01, the gradient descent went from taking 26 seconds to terminate to 84 seconds, and with a lambda value of 1, the gradient descent took 153 seconds! This is probably due to the adverse effects of the L1 regularization term on the smoothness of the function. \\
 
-In addition to causing little effect on the shape and location of the separating line, we observed little difference in the alpha vector as a result of the introduction of an L1 regularization term. Final alpha values fluctuated slightly, usually downward, but no terms were driven to 0. Because of the great additional costs in computation time to introducing an L1 regularization term, and the lack of observed benefits, we decided to omit a regularization term from our experiments in the multiclass case. \\
-
-Regardless of how large we made $\lambda$, it remained true that all data points had nonzero values for $\alpha$. This implies that, in a strict sense, all points in every graph were ``support vectors''; they all contributed some nonzero amount to the location of the linear separator. Not only that, but unlike in the SVM case, their values were not bimodal; they were mostly around $10^{-3}$ or $10^{-4}$, with the largest magnitudes being no larger than 0.005, and the smallest magnitudes no smaller  Therefore, rather than declare all points support vectors, which would be uninteresting, we decided to artificallycreate a threshold that would exclude about half the points; the threshold we decided upon was $\alpha = 0.001$. Points with $\alpha > 0.001$ we call ``support vectors,'' and other points we do not. However, when we set $\lambda$ to 1, they displayed an interesting pattern; the ones far from the separator tended to be support vectors, whereas the points close to the separator tended to not be. This is quite different from what occurred in the SVM case, where the opposite is true. We hypothesize that why we see this pattern in logistic regression is because the farthest points tend to have the most extreme probabilities (they have very small probabilities of coming from either class) and as a result, their effect on the separator is magnified.
-
-When we set $\lambda = 0$, we saw an even stranger pattern, which was that points tended to not be support vectors only if they belonged to a particular class. This was very strange, and we theorized that we saw the effect because in order for the $\alpha$ values to reflect the amount of effect the point has on the separator, it's necessary to have a substantial L1 regularization term.
-
-\begin{figure}
-\centering
-
-\begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_sup_vectors.png}
-	\caption{In this graph, dots are support vectors and X's are not support vectors. $\lambda = 1$, threshold is $\alpha = 0.001$}
-\end{subfigure}
-
-\begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_0_supvec.png}
-	\caption{In this graph, dots are support vectors and X's are not support vectors. $\lambda = 0$, threshold is $\alpha = 0.001$}
-\end{subfigure}
-
-\end{figure}
-
-
-
-
+In addition to causing little effect on the shape and location of the separating line, we observed little difference in the alpha vector as a result of the introduction of an L1 regularization term. Final alpha values fluctuated slightly, usually downward, but no terms were driven to 0. Because of the great additional costs in computation time to introducing an L1 regularization term, and the lack of observed benefits, we decided to omit a regularization term from our experiments in the multiclass case.
 
 
 
