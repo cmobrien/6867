@@ -91,7 +91,7 @@ for line in data2dFile.readlines():
 klr = KLR(np.array(xList), np.array(yList))
 
 t = time.time()
-alphaStar = klr.findOptimalAlpha(1.0)
+alphaStar = klr.findOptimalAlpha(0.0)
 print time.time() - t
 print alphaStar
 
@@ -104,19 +104,19 @@ print "W*", wStar
 for dataPointIndex in range(klr.n):
 	if yList[dataPointIndex][0] == 1.0:
 #		print abs(alphaStar[dataPointIndex])
-		if abs(alphaStar[dataPointIndex]) > 0.002:
+		if abs(alphaStar[dataPointIndex]) > 0.001:
 			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "bo")
 		else:
 			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "bx")
 	else:
-		if abs(alphaStar[dataPointIndex]) > 0.002:
+		if abs(alphaStar[dataPointIndex]) > 0.001:
 			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "ro")
 		else:
 			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "rx")
 
 pl.plot([-10, 10], [-10*-wStar[1]/wStar[0], 10*-wStar[1]/wStar[0]], "k-")
 	
-pl.savefig("stdev2_test_plot_lambda_sup_vectors.png")		
+pl.savefig("stdev2_test_plot_lambda_1.png")		
 pl.show()
 
 
