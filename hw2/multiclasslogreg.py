@@ -10,7 +10,7 @@ N = 15120
 #N = 6
 
 # number of features
-d = 53
+d = 54
 #d = 2
 
 K = 7
@@ -159,11 +159,11 @@ def oldMain():
 	print WStar
 
 def main():
-	d = 52
+	d = 54
 	N = 15120
 	K = 7
 
-	treesFile = open("test/kaggle_train_standardized.csv", "r")
+	treesFile = open("data/kaggle_train_standardized.csv", "r")
 
 	Xlist = np.zeros((N, d))
 	Tlist = np.zeros((N, K))
@@ -204,7 +204,7 @@ def main():
 
 	myGuessesArray = [0,0,0,0,0,0,0]
 
-	testFile = open("test/kaggle_test_standardized.csv", "r")
+	testFile = open("data/kaggle_test_standardized.csv", "r")
 
 	for line in testFile.readlines():
 		if not line[0] == "I":
