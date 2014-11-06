@@ -163,7 +163,7 @@ def main():
 	N = 15120
 	K = 7
 
-	treesFile = open("trainnormalized.csv", "r")
+	treesFile = open("test/kaggle_train_standardized.csv", "r")
 
 	Xlist = np.zeros((N, d))
 	Tlist = np.zeros((N, K))
@@ -204,7 +204,7 @@ def main():
 
 	myGuessesArray = [0,0,0,0,0,0,0]
 
-	testFile = open("trainnormalized.csv", "r")
+	testFile = open("test/kaggle_test_standardized.csv", "r")
 
 	for line in testFile.readlines():
 		if not line[0] == "I":
