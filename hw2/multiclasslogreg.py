@@ -4,13 +4,14 @@ import math
 from scipy.optimize import fmin_bfgs
 import string
 import scipy
+import sys
 
 # number of data points
 N = 15120
 #N = 6
 
 # number of features
-d = 53
+d = 54
 #d = 2
 
 K = 7
@@ -69,7 +70,7 @@ def gradientDescent(W_initial, T, X, convergenceCriterion):
 
 	iterationCounter = 0
 
-	while abs(oldValue - newValue) > convergenceCriterion and iterationCounter < 1:		
+	while abs(oldValue - newValue) > convergenceCriterion and iterationCounter < int(sys.argv[1]):		
 		currentW = currentW - gradient(currentW, T, X)
 
 		oldValue = newValue
@@ -159,11 +160,11 @@ def oldMain():
 	print WStar
 
 def main():
-	d = 52
+	d = 54
 	N = 15120
 	K = 7
 
-	treesFile = open("trainnormalized.csv", "r")
+	treesFile = open("data/kaggle_train_standardized.csv", "r")
 
 	Xlist = np.zeros((N, d))
 	Tlist = np.zeros((N, K))
@@ -204,7 +205,7 @@ def main():
 
 	myGuessesArray = [0,0,0,0,0,0,0]
 
-	testFile = open("trainnormalized.csv", "r")
+	testFile = open("data/kaggle_test_standardized.csv", "r")
 
 	for line in testFile.readlines():
 		if not line[0] == "I":
