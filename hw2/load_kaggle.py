@@ -12,10 +12,10 @@ def load_data(filename):
   return X, Y
 
 def load_train():
-  return load_data("data/kaggle_train.csv")
+  return load_data("data/kaggle_train_small.csv")
 
 def load_validate():
-  return load_data("data/kaggle_validate.csv")
+  return load_data("data/kaggle_validate_small.csv")
 
 def load_test():
-  return load_data("data/kaggle_test.csv")
+  return load_data("data/kaggle_test_small.csv")

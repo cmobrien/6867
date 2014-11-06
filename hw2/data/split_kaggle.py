@@ -2,9 +2,9 @@ import csv
 import random
 
 def split():
-  f_train = open("kaggle_train.csv", 'wb')
-  f_validate = open("kaggle_validate.csv", 'wb')
-  f_test = open("kaggle_test.csv", 'wb')
+  f_train = open("kaggle_train_medium.csv", 'wb')
+  f_validate = open("kaggle_validate_medium.csv", 'wb')
+  f_test = open("kaggle_test_medium.csv", 'wb')
 
   f_data = open("kaggle_data.csv", 'r')
   reader = csv.reader(f_data, delimiter = ",")
@@ -17,7 +17,7 @@ def split():
   validate = []
   test = []
 
-  size = 5040
+  size = 2000
   assert size <= 5040
 
   lines = []
