@@ -72,7 +72,7 @@ class KLR:
 #print np.dot(klr.x.transpose(), alphaStar), wStar
 #print [np.dot(klr.x.transpose(), alphaStar)[i] / wStar[i] for i in range(klr.d)]
 
-data2dFile = open("newData/data_stdev4_test.csv", "r")
+data2dFile = open("newData/data_nonSep2_test.csv", "r")
 
 xList = []
 yList = []
@@ -91,11 +91,14 @@ for line in data2dFile.readlines():
 klr = KLR(np.array(xList), np.array(yList))
 
 t = time.time()
-alphaStar = klr.findOptimalAlpha(0.0)
+#alphaStar = klr.findOptimalAlpha(0.0)
 print time.time() - t
-print alphaStar
+#print alphaStar
 
-wStar = klr.x.transpose().dot(alphaStar)
+#wStar = klr.x.transpose().dot(alphaStar)
+wStar = [-0.02470123, -0.02373436]
+
+
 print "W*", wStar
 
 for dataPointIndex in range(klr.n):
@@ -106,7 +109,7 @@ for dataPointIndex in range(klr.n):
 
 pl.plot([-10, 10], [-10*-wStar[1]/wStar[0], 10*-wStar[1]/wStar[0]], "k-")
 	
-pl.savefig("logregplot.png")		
+pl.savefig("nonSep2_test_plot.png")		
 pl.show()
 
 
