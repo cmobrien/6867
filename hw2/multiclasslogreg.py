@@ -4,6 +4,7 @@ import math
 from scipy.optimize import fmin_bfgs
 import string
 import scipy
+import sys
 
 # number of data points
 N = 15120
@@ -69,7 +70,7 @@ def gradientDescent(W_initial, T, X, convergenceCriterion):
 
 	iterationCounter = 0
 
-	while abs(oldValue - newValue) > convergenceCriterion and iterationCounter < 1:		
+	while abs(oldValue - newValue) > convergenceCriterion and iterationCounter < int(sys.argv[1]):		
 		currentW = currentW - gradient(currentW, T, X)
 
 		oldValue = newValue
