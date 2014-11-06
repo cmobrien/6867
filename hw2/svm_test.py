@@ -1,84 +1,83 @@
-from numpy import *
-from plotBoundary import *
-# import your SVM training code
 from problem1 import *
+from plotBoundary import *
+import numpy
+from load_kaggle import *
 
-# parameters
-name = 'stdev1'
-# load data from csv files
-train = loadtxt('newData/data_'+name+'_train.csv')
-# use deep copy here to make cvxopt happy
-X = train[:, 0:2].copy()
-Y = train[:, 2:3].copy()
+def multiclass(X, Y, C):
+  classes = {}
+  for i in range(len(Y)):
+    if Y[i] not in classes:
+      classes[Y[i]] = {i: True}
+    else:
+      classes[Y[i]][i] = True
+  Yk = {}
+  f = gaussian_kernel(X, .1)
+  res = {}
 
-#X = array([[1, 2], [2, 2], [0, 0], [-2, 3], [-1, 0]])
-#Y = array([[1], [1], [-1], [-1], [-1]])
-X_list = X.tolist()
-Y_list = [y[0] for y in Y.tolist()]
-validate = loadtxt('newData/data_'+name+'_validate.csv')
-X_val = validate[:, 0:2]
-Y_val = validate[:, 2:3]
-test = loadtxt('newData/data_'+name+'_test.csv')
-X_test = test[:, 0:2]
-Y_test = test[:, 2:3]
-# Carry out training, primal and/or dual
-#f = gaussian_kernel(X_list, 1)
+  wk = {}
+  for k in classes:
+    print k
+    newY = []
+    for i in range(len(Y)):
+      if i in classes[k]:
+        newY.append(1)
+      else:
+        newY.append(-1)
+    alpha = solve_qp(f, X, newY, C)
+    wk[k] = get_weights(X, newY, alpha)
+  return wk
 
-def run_test(C, b):
-  f = gaussian_kernel(X_list, b)
-  alpha = solve_qp(f, X_list, Y_list, C)
-  w = get_weights(X_list, Y_list, alpha)
-  # Define the predictSVM(x) function, which uses trained parameters
-  def predictSVM(x):
-    return w[0] + sum([w[i + 1] * x[i] for i in range(len(x))]) 
+def predictSVM(x, wk):
+  m = None
+  best = None
+  for k in wk:
+    w = wk[k]
+    val = w[0] + sum([w[i + 1] * x[i] for i in range(len(x))]) 
+    if best == None or val > m:
+      best = k
+      m = val
+  return best
 
-  def predictSVM3(x):
-    val = 0
-    for i in range(len(X)):
-      val += Y[i] * alpha[i] *f(X[i], x)
-    return val
+X, Y = load_train()
+X_val, Y_val = load_validate()
+X_test, Y_test = load_test()
 
-  def geometric_margin(w):
-    return 1 / math.sqrt(dot(w[1:], w[1:]))
+def run_tests(C_options):
+  errors = {}
 
-  def num_support_vectors(alpha):
-    count = 0
-    for a in alpha:
-      if a > THRESHOLD:
-        count += 1
-    return count
+  for C in C_options:
+    print "C = ", C
+    wk = multiclass(X, Y, C)
 
-  def error_rate(X, Y):
-    errors = 0
-    correct = 0
-    for i in range(len(X)):
-      guess = predictSVM3(X[i])
-      if (guess > 0 and Y[i] < 0) or (guess < 0 and Y[i] > 0) or guess == 0:
-        errors += 1
-    return errors
+    valid_error = 0
+    for i in range(len(X_val)):
+      if predictSVM(X_val[i], wk) != Y_val[i]:
+        valid_error += 1
+  
+  
+    test_error = 0
+    for i in range(len(X_test)):
+      if predictSVM(X_test[i], wk) != Y_test[i]:
+        test_error += 1
+    errors[C] = (valid_error, test_error)
+    print "C = ", C, valid_error
+  return errors
 
-  print "C: ", C, " b: ", b
-  print "TRAINING ERROR: ", error_rate(X, Y)
-  #print "MARGIN: ", geometric_margin(w)
-  print "SUPPORT VECTORS: ", num_support_vectors(alpha)
+print run_tests([1])
 
-  # plot training results
-  plotDecisionBoundary(X, Y, predictSVM3, [-1, 0, 1])
-  print "VALIDATION ERROR: ", error_rate(X_val, Y_val)
-  print "TEST ERROR: ", error_rate(X_test, Y_test)
-  plotDecisionBoundary(X_test, Y_test, predictSVM3, [-1, 0, 1])
+#X = numpy.array([[-2, 1], [-4, 1], [3, 0], [4, -1], [-4, 3], [-2, 3], [3, 5], [4, 7], [4, 4], [5, 2], [6, 1], [6, 5]])
+#Y = numpy.array([[1], [1], [1], [1], [2], [2], [2], [2], [3], [3], [3], [3]])
 
-run_test(1, 0.1)
-
-# plot validation results
-#plotDecisionBoundary(X_val, Y_val, predictSVM3, [-1, 0, 1])
-
-#d = {}
-#for b in range(1, 100, 1):
-#  f = gaussian_kernel(X_list, b)
-#  alpha = solve_qp(f, Y_list, 1)
-#  w = get_weights(X_list, Y_list, alpha)
-#  d[b] = error_rate(X_val, Y_val)
+#X = numpy.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])
+#Y = numpy.array([[1], [2], [3], [4]])
+#X_list = X.tolist()
+#Y_list = [y[0] for y in Y.tolist()]
 #
-#for b in range(1, 100, 1):
-#  print b, d[b]
+
+#wk = multiclass(X_list, Y_list)
+#print wk
+#print predictSVM([1, 2], wk)
+#
+#def pred(x):
+#  return predictSVM(x, wk)
+#plotDecisionBoundary(X, Y, pred, [1, 2, 3, 4])

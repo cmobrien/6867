@@ -15,7 +15,6 @@ def multiclass(X, Y, C):
   res = {}
 
   wk = {}
-  P = None
   for k in classes:
     print k
     newY = []
@@ -24,7 +23,7 @@ def multiclass(X, Y, C):
         newY.append(1)
       else:
         newY.append(-1)
-    alpha, P = solve_qp(f, X, newY, C, P)
+    alpha = solve_qp(f, X, newY, C)
     wk[k] = get_weights(X, newY, alpha)
   return wk
 
@@ -65,6 +64,8 @@ def run_tests(C_options):
   return errors
 
 print run_tests([1])
+print len(Y_val)
+print len(Y_test)
 
 #X = numpy.array([[-2, 1], [-4, 1], [3, 0], [4, -1], [-4, 3], [-2, 3], [3, 5], [4, 7], [4, 4], [5, 2], [6, 1], [6, 5]])
 #Y = numpy.array([[1], [1], [1], [1], [2], [2], [2], [2], [3], [3], [3], [3]])
@@ -82,4 +83,3 @@ print run_tests([1])
 #def pred(x):
 #  return predictSVM(x, wk)
 #plotDecisionBoundary(X, Y, pred, [1, 2, 3, 4])
-
