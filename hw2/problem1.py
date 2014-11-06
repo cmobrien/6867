@@ -31,20 +31,28 @@ def gaussian_kernel(X, beta):
 def build_matrices(kernel, X, Y, C):
   n = len(Y)
   q = [-1]*n
+  print "q"
   G = [[0]*(2 * i) + [1, -1] + [0] * (2*(n - i - 1)) for i in range(n)]
+  print "G"
   h = [C, 0]*n
+  print "h"
   A = [[y] for y in Y]
+  print "A"
   b = [0]
+  print "b"
   P = [[0] * n for i in range(n)]
   for i in range(n):
     for j in range(n):
         P[i][j] = Y[i] * Y[j] * (kernel(X[i], X[j]))
+  print "P"
   return P, q, G, h, A, b
 
 
 def solve_qp(kernel, X, Y, C):
     P, q, G, h, A, b = build_matrices(kernel, X, Y, C)
+    print "HERE"
     sol = solvers.qp(matrix(P, tc = 'd'), matrix(q, tc = 'd'), matrix(G, tc = 'd'), matrix(h, tc = 'd'), matrix(A, tc = 'd'), matrix(b, tc = 'd')) 
+    print "HERE2"
     return sol['x']
 
 
