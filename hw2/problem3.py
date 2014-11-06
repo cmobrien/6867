@@ -11,10 +11,11 @@ def multiclass(X, Y, C):
     else:
       classes[Y[i]][i] = True
   Yk = {}
-  f = gaussian_kernel(X, .1)
+  f = dot_kernel(X)
   res = {}
 
   wk = {}
+  P = None
   for k in classes:
     print k
     newY = []
@@ -23,7 +24,7 @@ def multiclass(X, Y, C):
         newY.append(1)
       else:
         newY.append(-1)
-    alpha = solve_qp(f, X, newY, C)
+    alpha, P = solve_qp(f, X, newY, C, P)
     wk[k] = get_weights(X, newY, alpha)
   return wk
 
