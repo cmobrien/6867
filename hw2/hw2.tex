@@ -477,15 +477,38 @@ Our results, with $\lambda = 0$, are shown below:
 \centering
 
 \begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev1_train_plot.png}
-	\caption{Our separator, shown on the training data, for data drawn from low-variance Gaussians.}
+	\includegraphics[width = 2.25in]{plots/nonSep2_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from a distribution that is very averse to being linearly separated.}
 \end{subfigure}
 
 \begin{subfigure}[b]{2.25in}
-	\includegraphics[width = 2.25in]{plots/stdev1_test_plot.png}
-	\caption{Our separator, shown on the test data, for data drawn from low-variance Gaussians}
+	\includegraphics[width = 2.25in]{plots/nonSep2_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from a distribution that is very averse to being linearly separated.}
 \end{subfigure}
 
 \end{figure}
+
+These results show the output of our algorithm when we introduced no L1 regularization, that is, when $\lambda = 0$. It is instructive to see what happens when L1 regularization is introduced. \\
+
+\begin{figure}
+\centering
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/nonSep2_train_plot.png}
+	\caption{Our separator, shown on the training data, for data drawn from a distribution that is very averse to being linearly separated.}
+\end{subfigure}
+
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width = 2.25in]{plots/nonSep2_test_plot.png}
+	\caption{Our separator, shown on the test data, for data drawn from a distribution that is very averse to being linearly separated.}
+\end{subfigure}
+
+\end{figure}
+
+Notice that the result is barely changed at all by the introduction of L1 regularization; the graphs pre- and post-regularization are barely at all different. One difference we found very noticeable, however, was the great cost in additional time that occurred when we introduced L1 regularization; with the relatively low lambda value of 0.01, the gradient descent went from taking 26 seconds to terminate to 84 seconds, and with a lambda value of 1, the gradient descent took 153 seconds! This is probably due to the adverse effects of the L1 regularization term on the smoothness of the function. \\
+
+In addition to causing little effect on the shape and location of the separating line, we observed little difference in the alpha vector as a result of the introduction of an L1 regularization term. Final alpha values fluctuated slightly, usually downward, but no terms were driven to 0. Because of the great additional costs in computation time to introducing an L1 regularization term, and the lack of observed benefits, we decided to omit a regularization term from our experiments in the multiclass case.
+
+
 
 \end{document}

@@ -72,7 +72,7 @@ class KLR:
 #print np.dot(klr.x.transpose(), alphaStar), wStar
 #print [np.dot(klr.x.transpose(), alphaStar)[i] / wStar[i] for i in range(klr.d)]
 
-data2dFile = open("newData/data_nonSep2_test.csv", "r")
+data2dFile = open("newData/data_stdev2_test.csv", "r")
 
 xList = []
 yList = []
@@ -91,25 +91,32 @@ for line in data2dFile.readlines():
 klr = KLR(np.array(xList), np.array(yList))
 
 t = time.time()
-#alphaStar = klr.findOptimalAlpha(0.0)
+alphaStar = klr.findOptimalAlpha(1.0)
 print time.time() - t
-#print alphaStar
+print alphaStar
 
-#wStar = klr.x.transpose().dot(alphaStar)
-wStar = [-0.02470123, -0.02373436]
+wStar = klr.x.transpose().dot(alphaStar)
+#wStar = [-0.02470123, -0.02373436]
 
 
 print "W*", wStar
 
 for dataPointIndex in range(klr.n):
 	if yList[dataPointIndex][0] == 1.0:
-		pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "bo")
+#		print abs(alphaStar[dataPointIndex])
+		if abs(alphaStar[dataPointIndex]) > 0.002:
+			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "bo")
+		else:
+			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "bx")
 	else:
-		pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "ro")
+		if abs(alphaStar[dataPointIndex]) > 0.002:
+			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "ro")
+		else:
+			pl.plot(xList[dataPointIndex][0], xList[dataPointIndex][1], "rx")
 
 pl.plot([-10, 10], [-10*-wStar[1]/wStar[0], 10*-wStar[1]/wStar[0]], "k-")
 	
-pl.savefig("nonSep2_test_plot.png")		
+pl.savefig("stdev2_test_plot_lambda_sup_vectors.png")		
 pl.show()
 
 
