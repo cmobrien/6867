@@ -151,7 +151,7 @@ Solving this linear program for $\alpha$, we obtain the linear separator shown i
 
 \subsection{Applications}
 
-Next, we try out our implementation on four different data sets, each consisting of 400 points for each of the training, validation, and test sets. The first three data sets, which we will refer to as \texttt{stdev1}, \texttt{stdev2}, \texttt{stdev4}, consist of points where each of the negative and positive examples are generated from a Gaussian distribution with varying standard deviations (as suggested by the name). The final data set, \texttt{nonSep}, is a data set generated as to be impossible to separate with a linear separator.
+Next, we try out our implementation on four different data sets, each consisting of 400 points for each of the training, validation, and test sets. The first three data sets, which we will refer to as \texttt{stdev1}, \texttt{stdev2}, \texttt{stdev4}, consist of points where each of the negative and positive examples are generated from a Gaussian distribution with varying standard deviations (as suggested by the name). The final data set, \texttt{nonSep}, is a data set generated as to be impossible to separate effectively with a linear separator.
 
 \begin{figure*}[!ht]
 \centering
@@ -345,7 +345,7 @@ The kernelized form of the logistic regression objective can be derived as follo
 
 where for a data point $i$, $y^{(i)}$ represents what class it belongs to and $x^{(i)}$ represents its feature vector. Together $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.
 
-The algorithm will tend to classify a point as positive if $x^{(i)} \cdot w + w_0 > 0$ and as negative if $x^{(i)} \cdot w + w_0 < 0$. More precisely, the algorithm assigns a probability of $1/(1+e^{-W^T x})$ to the point's correct classification being positive, and a probability of $1 - (1/(1+e^{-W^T x}))$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible.
+The algorithm will tend to classify a point as positive if $x^{(i)} \cdot w + w_0 > 0$ and as negative if $x^{(i)} \cdot w + w_0 < 0$. More precisely, the algorithm assigns a probability of $1/(1+e^{-w^T x})$ to the point's correct classification being positive, and a probability of $1 - (1/(1+e^{-w^T x}))$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible.
 
 The natural method to use to minimize the negative log likelihood is by the method of gradient descent. This will require repeated calls to the formula defined above, for an indefinite period of time before the value converges or our algorithm gives up.
 
@@ -471,7 +471,7 @@ In addition to causing little effect on the shape and location of the separating
 
 Regardless of how large we made $\lambda$, it remained true that all data points had nonzero values for $\alpha$. This implies that, in a strict sense, all points in every graph were ``support vectors''; they all contributed some nonzero amount to the location of the linear separator.
 
-In the SVM case, we were able to determine a threshold which clearly divided points which were supposed to be support vectors and those which should have $\alpha$ values considered zero. For logistic regression, the $\alpha$ values were mostly around $10^{-3}$ or $10^{-4}$, with the largest magnitudes being no larger than 0.005. Therefore, rather than declare all points support vectors, which would be uninteresting, we decided to artifically create a threshold that would exclude about half the points; the threshold we decided upon was $\alpha = 0.001$. Points with $\alpha > 0.001$ we call ``support vectors,'' and other points we do not.
+In the SVM case, we were able to determine a threshold which clearly divided points which were supposed to be support vectors and those which should have $\alpha$ values considered zero. For logistic regression, the $\alpha$ values were mostly around $10^{-3}$ or $10^{-4}$, with the largest magnitudes being no larger than 0.005. Therefore, rather than declare all points support vectors, which would be uninteresting, we decided to artifically create a threshold that would exclude about half the points; the threshold we decided upon was $\alpha = 0.001$. Points with $\alpha > 0.001$ we called ``support vectors,'' and other points we did not.
 
 When we set $\lambda = 1$, the $\alpha$ values displayed an interesting pattern; the ones far from the separator tended to be support vectors, whereas the points close to the separator tended to not be. This is quite different from what occurred in the SVM case, where the opposite is true. We hypothesize that why we see this pattern in logistic regression is because the farthest points tend to have the most extreme probabilities (they have very small probabilities of coming from either class) and as a result, their effect on the separator is magnified.
 
@@ -587,7 +587,7 @@ Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ 
 
 Let $T$ be the $N \times K$ matrix that contains, for each data point, a 1 in column $k$ if that data point belongs to that class, and a 0 in column $k$ if it does not. Then, the negative log likelihood of our model, therefore, is 
 
-$$-\sum_{n=1}^N \sum_{k=1}^K T_{nk} \ln y_{nk}$$.
+$$-\sum_{n=1}^N \sum_{k=1}^K T_{nk} \ln y_{nk}$$
 
 We can do a gradient descent on this quantity. \\
 
