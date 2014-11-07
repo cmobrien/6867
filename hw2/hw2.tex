@@ -579,9 +579,7 @@ We notice that the test error rate was actually better for the smaller sets than
 
 \subsection{Logistic Regression}
 
-The extension of logistic regression into the multi-class case is somewhat more sophisticated than one might expect, unfortunately, because of the fact that we must now introduce an additional dimension into the problem: the number of classes. Two classes was kind of a special case, where we differentiate nicely between positive and negative; with three or more classes, that is no longer possible. 
-
-The way we classify now ``feels'' a bit different, although at its core it is the same (if one were to use this method of classifying for two classes only, one would find that it would behave identically). Suppose we are trying to determine which of $K$ different classes a given data point belongs to. If we are given some $d$-dimensional input data point $\phi$, and we have some $N \times d$ weight matrix $W$ with which we make our classification decisions, then for each possible class $\phi$ might belong to, we assign to it an ``activation'' $a_k$: a scalar value which indicates in some absolute sense how likely that class is to have been the class $k$ corresponding to $\phi$ a posteriori. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$. 
+To do a logistic regression with more than two classes, we use the following procedure. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$. 
 
 Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ is equal to $\frac{e^{a_k}}{\sum_{j=0}^K e^{a_j}}$. 
 
