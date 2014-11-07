@@ -258,14 +258,14 @@ Next, we focus on \texttt{nonSep}. The resulting decision boundaries are shown i
 \caption{The parameters which minimized validation error rates for both the linear kernel and the Gaussian kernel on each data set. The number of support vectors resulting from these parameters and the test error rate are also shown.}
 \end{figure*}
 
-With a training error of 48.5\%, we can see that the separator is barely able to do a better job than randomly guessing how to classify each point. On the validation data, we see an error rate of 50.75\%. Because we have an error rate of over 50\%, we could have done a better job if we guessed the exact opposite of what our trained separator suggested. If we were not sure form the plot of the data that this data was not well suited to be classified using a linear separator, then the very high error rates convince us that this is in fact the case.
+With a training error of 48.5\%, we can see that the separator is barely able to do a better job than randomly guessing how to classify each point. On the validation data, we see an error rate of 50.75\%. Because we have an error rate of over 50\%, we could have done a better job if we guessed the exact opposite of what our trained separator suggested. If we were not sure before, then the very high error rates convince us that a linear separator is not appropriate for this data.
 
 \subsection{Kernels}
 
 Next, we extended our dual form SVM to operate with kernels. We experimented on our data using the Gaussian kernel, with a variety of values for $C$ and $\beta$. For each data set, we found the values of $C$ and $\beta$ which minimized the validation error rate (see the next section for a discussion of this decision). We repeated this experiment for the linear kernel, again using the validation error rate to tune $C$. The results are summarized in Figure 4.
 
 
-To get an idea for how the classifier works using a Gaussian kernel, Figure xx shows the resulting classifier for \texttt{stdev1} and \texttt{nonSep}. We can clearly see that the classifier is no longer linear. In addition, we can see that this allows for it to handle the \texttt{nonSep} data in a way which the linear separator could not.
+To get an idea for how the classifier works using a Gaussian kernel, Figure 5 shows the resulting classifier for \texttt{stdev1} and \texttt{nonSep}. We can clearly see that the classifier is no longer linear. In addition, we can see that this allows for it to handle the \texttt{nonSep} data in a way which the linear separator could not.
 
 \begin{figure}
 \centering
@@ -282,7 +282,7 @@ To get an idea for how the classifier works using a Gaussian kernel, Figure xx s
 \caption{The resulting separators when using the Gaussian kernel (with the optimal parameters shown in Figure 4).}
 \end{figure}
 
-For \texttt{stdev1}, \texttt{tdev2}, and \texttt{stdev4}, we can see that the test error rates resulting from both the Gaussian and linear kernels are very similar. From looking at the data sets, it seems that a linear separator is the most appropriate choice for the data. Thus, even when we apply a Gaussian separator, which allows a lot more flexibility, we still find that the linear separator performs roughly equally well.
+For \texttt{stdev1}, \texttt{stdev2}, and \texttt{stdev4}, we can see that the test error rates resulting from both the Gaussian and linear kernels are very similar. From looking at the data sets, it seems that a linear separator is the most appropriate choice for the data. Thus, even when we apply a Gaussian separator, which allows a lot more flexibility, we still find that the linear separator performs roughly equally well.
 
 For \texttt{nonSep}, we see a much different story. The data is clearly not linearly separable. Thus, we are hardly able to achieve an error rate below 50\% with the linear separator. However, when we apply the Gaussian separator, we are able to achieve an error rate of only 5\%. Thus, the added flexibility of the Gaussian kernel allows us to use the same techniques to separate data which is not linearly separable.
 
@@ -296,7 +296,7 @@ Next, we performed experiments to analyze the effects of varying $C$. The purpos
 
 For each of \texttt{stdev1} and \texttt{stdev2}, we used $C$ in the set $\{0.01, 0.1, 1, 10, 100\}$, and computed the geometric margin and total number of support vectors. As a general trend, both the geometric margin and the number of support vectors decreased as we increased $C$. % Increasing C means less slack
 
-We can see this in Figure xx, which shows the separator defined by $C = 0.01$ and $C = 100$ for \texttt{stdev1}. We can clearly see that the increased value of $C$ results in a smaller margin, and consequently much fewer vectors are support vectors.
+We can see this in Figure 6, which shows the separator defined by $C = 0.01$ and $C = 100$ for \texttt{stdev1}. We can clearly see that the increased value of $C$ results in a smaller margin, and consequently much fewer vectors are support vectors.
 
 \begin{figure}
 \centering
@@ -313,7 +313,7 @@ We can see this in Figure xx, which shows the separator defined by $C = 0.01$ an
 \caption{The effects of $C$ on the separator for \texttt{stdev1}, shown on the training data. Support vectors are shown as dots, all other points as plusses. We can see that the smaller $C$ leads to a much wider margin and more support vectors.}
 \end{figure}
 
-Figure xx shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience. We can see that both the geometric margin and number of support vectors seem to decrease to a point and then level off. This is because as we increase $C$, we decrease the amount of slack that we allow. As $C$ approaches infinity, we approach the situation where we do not allow any slack.
+Figure 7 shows geometric margin and number of support vectors plotted as a function of $C$. Note that the $x$ axis is shown on a log scale for convenience. We can see that both the geometric margin and number of support vectors seem to decrease to a point and then level off. This is because as we increase $C$, we decrease the amount of slack that we allow. As $C$ approaches infinity, we approach the situation where we do not allow any slack, and the behavior levels off.
 
 \begin{figure}
 \centering
@@ -332,7 +332,7 @@ Figure xx shows geometric margin and number of support vectors plotted as a func
 
 We know that a support vector machine aims to maximize the size of the margin. Thus, a seemingly reasonable idea would be to use $C$ to maximize the value of the margin on the training data. However, from the trends we see above, this seems that it would just result in the choice of an arbitrarily small value for $C$, which we would have no reason to expect to perform well on the validation or test data.
 
-A more reasonable choice is to choose $C$ based on the validation data. An option would be to maximize the size of the margin on the validation data. However, from Figure xx we can see that increasing the margin can just lead to more vectors being classified as support vectors, which does not actually improve our classification accuracy. The option which tended to give better overall performance was to choose $C$ to minimize the validation error rate.
+A more reasonable choice is to choose $C$ based on the validation data. An option would be to maximize the size of the margin on the validation data. However, from Figure 6 we can see that increasing the margin can just lead to more vectors being classified as support vectors, which does not actually improve our classification accuracy. The option which tended to give better overall performance was to choose $C$ to minimize the validation error rate.
 
 
 \section{Logistic Regression}
@@ -343,7 +343,7 @@ The kernelized form of the logistic regression objective can be derived as follo
 
 \begin{equation}NLL(w) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)})\end{equation}
 
-where for a data point i, $y^{(i)}$ represents what class it belongs to and $x^{(i)}$ represents its feature vector. Together $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.
+where for a data point $i$, $y^{(i)}$ represents what class it belongs to and $x^{(i)}$ represents its feature vector. Together $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.
 
 The algorithm will tend to classify a point as positive if $x^{(i)} \cdot w + w_0 > 0$ and as negative if $x^{(i)} \cdot w + w_0 < 0$. More precisely, the algorithm assigns a probability of $1/(1+e^{-W^T x})$ to the point's correct classification being positive, and a probability of $1 - (1/(1+e^{-W^T x}))$ to the point's correct classification being negative. In light of this, the above formula for a posteriori negative log likelihood makes sense; it is therefore our goal as algorithmicists to minimize this quantity as efficiently as possible.
 
@@ -351,7 +351,9 @@ The natural method to use to minimize the negative log likelihood is by the meth
 
 Each such call takes a certain amount of time: given that the outer sum loops over $N$ different elements (where $N$ is the number of data points), and each call to the function requires us to evaluate $x^{(i)} \cdot w$, the dot product of two $d$-dimensional vectors (where $d$ is the dimensionality of the feature vectors), every call to $NLL(w)$ as defined above will take $\Theta(Nd)$ time to compute, assuming basic arithmetic operations are constant-time.
 
-This is efficient assuming $N = \Omega(d)$. However, in the case where $d >> N$, it is possible to do much better than this by making a clever assumption. We may assume that $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
+%This is efficient assuming $N = \Omega(d)$. However, in the case where $d >> N$, it is possible to do much better than this by making a clever assumption. We may assume that $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
+
+As we have seen from the \texttt{nonSep} data above, there are situations in which it is useful to apply an arbitrary kernel. In order to be able to do this, we make the substitution $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
 
 First, we rewrite equation (1) as
 $$NLL(w) = \sum_{i=0}^N \log(1+e^{-y{(i)}(XW)^{(i)}})$$
@@ -367,13 +369,10 @@ $NLL(\alpha)$&$=$&$\displaystyle \sum_{i=0}^N \log(1+e^{-y^{(i)}(XX^T\alpha)^{(i
 
 We now have a new formula, with a new vector on which we can do gradient descent. Moreover, the dimensionality of the new vector is different from that of the old vector; $\alpha$ is an $N$-dimensional vector, in contrast to $W$, which was a $d$-dimensional vector. 
 
-How long does it take to compute the formula above? Well, naively, one might expect that we need to iterate over the sum $N$ times, and for each iteration of the sum, we need to compute the matrix product $XX^T$, which takes $\Theta(N^2d)$ time (the runtime of multiplying an $N \times d$ matrix with a $d \times N$ matrix). Then, we need to compute the dot product of $(XX^T)^{(i)}$, an $N$-dimensional vector, with $\alpha$, another $N$-dimensional vector, which would take $\Theta(N)$ time. Thus, at first glance, it appears that our new formula takes $\Theta(N^3 d)$ time to compute; not an improvement! 
+How long does it take to compute the formula above? %Well, naively, one might expect that we need to iterate over the sum $N$ times, and for each iteration of the sum, we need to compute the matrix product $XX^T$, which takes $\Theta(N^2d)$ time (the runtime of multiplying an $N \times d$ matrix with a $d \times N$ matrix). Then, we need to compute the dot product of $(XX^T)^{(i)}$, an $N$-dimensional vector, with $\alpha$, another $N$-dimensional vector, which would take $\Theta(N)$ time. Thus, at first glance, it appears that our new formula takes $\Theta(N^3 d)$ time to compute; not an improvement! 
+First we note that the matrix $XX^T$ can be precomputed. Because it is independent of $\alpha$, there's no reason for us to compute it at every step of the gradient descent. With that consideration taken into account, each step of the gradient descent will now take $\Theta(N^2)$ time. We call this new form of the equation above the \emph{kernelized} form of the equation.% It allows us to efficiently find a weight vector $W$ even when the feature space is very large, by doing gradient descent on the $\alpha$ vectors, and then computing $W$ at the end by using the fact that $X^T\alpha = W$. 
 
-However, this naive calculation is missing an important insight: the matrix $XX^T$ can be precomputed. Because it is independent of $\alpha$, there's no reason for us to compute it at every step of the gradient descent. With that consideration taken into account, each step of the gradient descent will now take $\Theta(N^2)$ time. This \emph{is} quite an improvement over the old runtime of $\Theta(Nd)$, assuming $N << d$. 
-
-We call this new form of the equation above the \emph{kernelized} form of the equation. It allows us to efficiently find a weight vector $W$ even when the feature space is very large, by doing gradient descent on the $\alpha$ vectors, and then computing $W$ at the end by using the fact that $X^T\alpha = W$. 
-
-Moreover, this method can be used to substitute in an arbitrary kernel matrix in place of $XX^T$. Thus, this general method supports the use of any kernel one chooses, simplying by plugging in a precomputed kernel matrix and running gradient descent. 
+%Moreover, this method can be used to substitute in an arbitrary kernel matrix in place of $XX^T$. Thus, this general method supports the use of any kernel one chooses, simplying by plugging in a precomputed kernel matrix and running gradient descent. 
 
 One potential issue with this method is that it will have a tendency to assign a non-zero value to every $\alpha$, since in logistic regression, every point has some effect on the location of the classifier, albeit often small. This is not ideal; for many applications, it is convenient to have an $\alpha$ that is very sparse, in order to make computations involving $\alpha$ cheaper and in order to make the situation easier to describe and understand. 
 
@@ -461,16 +460,16 @@ MAYBE TALK ABOUT THESE RESULTS A BIT MORE?
 
 \begin{subfigure}[b]{2.25in}
 	\includegraphics[width = 2.25in]{plots/stdev2_test_plot_lambda_1.png}
-	\caption{Our separator, for $\lambda = 1$, shown on the training data.}
+	\caption{$\lambda = 1$}
 \end{subfigure}
 \caption{The resulting separator on \texttt{stdev2} Training Data.}
 
 \end{figure}
 
 
-In Figure xx, we see the results of using $\lambda = 0.01$ and $\lambda = 1$ on the \texttt{stdev2} training data. Notice that the result is barely changed at all by the introduction of L1 regularization. One difference we found very noticeable, however, was the great cost in additional time that occurred when we introduced L1 regularization; with the relatively low lambda value of 0.01, the gradient descent went from taking 26 seconds to terminate to 84 seconds, and with a lambda value of 1, the gradient descent took 153 seconds! This is probably due to the adverse effects of the L1 regularization term on the smoothness of the function. 
+In Figure 10, we see the results of using $\lambda = 0.01$ and $\lambda = 1$ on the \texttt{stdev2} training data. Notice that the result is barely changed at all by the introduction of L1 regularization. One difference we found very noticeable, however, was the great cost in additional time that occurred when we introduced L1 regularization; with the relatively low $\lambda$ value of 0.01, the gradient descent went from taking 26 seconds to terminate to 84 seconds, and with a $\lambda$ value of 1, the gradient descent took 153 seconds! This is probably due to the adverse effects of the L1 regularization term on the smoothness of the function. 
 
-In addition to causing little effect on the shape and location of the separating line, we observed little difference in the alpha vector as a result of the introduction of an L1 regularization term. Final alpha values fluctuated slightly, usually downward, but no terms were driven to 0. Because of the great additional costs in computation time to introducing an L1 regularization term, and the lack of observed benefits, we decided to omit a regularization term from our experiments in the multi-class case. 
+In addition to causing little effect on the shape and location of the separating line, we observed little difference in the $\alpha$ vector as a result of the introduction of an L1 regularization term. Final $\alpha$ values fluctuated slightly, usually downward, but no terms were driven to 0. Because of the great additional costs in computation time to introducing an L1 regularization term, and the lack of observed benefits, we decided to omit a regularization term from our experiments in the multi-class case. 
 
 Regardless of how large we made $\lambda$, it remained true that all data points had nonzero values for $\alpha$. This implies that, in a strict sense, all points in every graph were ``support vectors''; they all contributed some nonzero amount to the location of the linear separator.
 
@@ -527,7 +526,7 @@ VE & 41.1\%& 37.0\% & 36.9\% & 37.2\% & 37.2\% \\
 
 Due to time constraints, we did not explore any other approaches for handing the fact that our algorithm was not able to efficiently train on the entire training set. One possible option would have been to have performed the computation on a more powerful machine (such as Amazon Web Services). With 8GB of RAM, the machine on which we did the training was completely overtaken by performing the training on the full training set. Another option would have been to abandon our implementation of the SVM and use another implementation which supported Sequential Minimal Optimization, in order to provide an approximate solution in a much more manageable timeframe.
 
-Once we settled on a value of $C$, we performed training on all 5,040 training points. The computation managed to terminate after a few hours. With this model, we were able to achieve a test error rate of 38.3\%, corresponding to a success rate of 61.7\%. We note that the original data contained equally many points in each class, so this is far better than the 14\% success rate that we would expect from a model which did not actually have any information about the data set.
+Once we settled on a value of $C$, we performed training on all 5,040 training points. The computation managed to terminate after a few hours. With this model, we were able to achieve a test error rate of 38.3\%, corresponding to a success rate of 61.7\%. We note that the original data contained equally many points in each class, so this is far better than the 14.3\% success rate that we would expect from a model which did not actually have any information about the data set.
 
 We notice that the test error rate was actually better for the smaller sets than the full data set. We speculate that the value of $C$ which we chose based on training the small data set was not the optimal value for the larger data set. In future work, we would like to optimize for $C$ using the full training and validation sets, to see if that allows us to achieve better performance on the full data set.
 
@@ -540,8 +539,6 @@ TALK ABOUT MULTICLASS LOGISTIC REGRESSION
 We were able to achieve the highest level of accuracy using the multi-class SVM. This is especially promising because, as stated in the previous section, we believe that with more time and/or computational power we could further improve the performance of the multi-class SVM.
 
 Logistic regression did not perform quite as well, but took significantly less time to perform training. To train on the same set of data, logistic regression took about two orders of magnitude less time. For a model which performed only slightly worse than the SVM, this time difference is compelling.
-
-Another benefit of using the SVM is that it easily supports the use of other kernels. While in this particular case, we found that the linear kernel offered the best fit for the data, this will certainly not be the case in general, and logistic regression cannot easily handle these non-linearly separable cases.
 
 
 
