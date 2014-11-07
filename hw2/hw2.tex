@@ -492,8 +492,56 @@ When we set $\lambda = 0$, we saw an even stranger pattern, which was that point
 \caption{The impact of $\lambda$ on support vectors. Support vectors are shown as dots, and all other points as plusses.}
 \end{figure}
 
+Next, we extended our logistic regression to operate with a Gaussian kernel. We use our validation data to tune the values of $\lambda$ and $\beta$ (to minimize validation error), and report the test errors for the optimal values. We repeat the experiments with the linear kernel in order to demonstrate the effectiveness of the Gaussian kernel. The results are shown in Figure 12.
 
 
+\begin{figure*}
+\centering
+\renewcommand*{\arraystretch}{1.5}
+
+\begin{tabular}{c c}
+\begin{subfigure}[b]{3.5in}
+\centering
+	\begin{tabular}{| c | c | c | c | c |}
+	\hline
+	& \texttt{stdev1} & \texttt{stdev2} & \texttt{stdev4} & \texttt{nonSep}\\
+	\hline
+	$\lambda$ & 0 & 0 & 0 & 0 \\
+	\hline
+	$\beta$ & 1 & 0.1 & 0.01 & 1 \\
+	\hline
+	SVs & 400 & 400 & 400 & 400 \\
+	\hline
+	Test Error & 0.25\% & 7\% & 21.75\% & 5.5\%  \\
+	\hline
+	\end{tabular}
+	\caption{Gaussian Kernel}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3.5in}
+\centering
+	\begin{tabular}{| c | c | c | c | c |}
+	\hline
+	& \texttt{stdev1} & \texttt{stdev2} & \texttt{stdev4} & \texttt{nonSep}\\
+	\hline
+	$\lambda$ & 0  & 0  & 0  & 0  \\
+	\hline
+	SVs & & 343 & 278 &  \\
+	\hline
+	Test Error & 1\% & 7\% & 23\% & 49.75\%\\
+	\hline
+	\end{tabular}
+	\caption{Linear Kernel}
+\end{subfigure}
+\end{tabular}
+
+\caption{The parameters which minimized validation error rates for both the linear kernel and the Gaussian kernel on each data set. The number of support vectors resulting from these parameters and the test error rate are also shown.}
+\end{figure*}
+
+
+As with SVM's, we note that the Gaussian and linear kernels perform very similarly on \texttt{stdev1}, \texttt{stdev2}, and \texttt{stdev3}, while we notice that the Gaussian kernel performs far better on \texttt{nonSep}, as expected.
+
+We also notice a few other things. First, for the Gaussian kernel, all the points are classified as support vectors. This is due to the fact that the $\alpha$ values were all sufficiently similar that there was no way to distinguish between them.
 
 
 \section{Multi-Class Classification}
