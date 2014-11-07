@@ -526,7 +526,7 @@ Next, we extended our logistic regression to operate with a Gaussian kernel. We 
 	\hline
 	$\lambda$ & 0  & 0  & 0  & 0  \\
 	\hline
-	SVs & & 343 & 278 &  \\
+	SVs & 400 & 343 & 278 & 400  \\
 	\hline
 	Test Error & 1\% & 7\% & 23\% & 49.75\%\\
 	\hline
@@ -541,7 +541,9 @@ Next, we extended our logistic regression to operate with a Gaussian kernel. We 
 
 As with SVM's, we note that the Gaussian and linear kernels perform very similarly on \texttt{stdev1}, \texttt{stdev2}, and \texttt{stdev3}, while we notice that the Gaussian kernel performs far better on \texttt{nonSep}, as expected.
 
-We also notice a few other things. First, for the Gaussian kernel, all the points are classified as support vectors. This is due to the fact that the $\alpha$ values were all sufficiently similar that there was no way to distinguish between them.
+We also notice a few other things. First, for the Gaussian kernel, all the points are classified as support vectors. This is due to the fact that the $\alpha$ values were all sufficiently similar that there was no way to distinguish between them. Even with the linear kernel, we saw far more support vectors with logistic regression than with did with SVM's. This is not surprising from our discussion earlier, where we noted that it was very difficult to choose a threshold which seemed to properly classify support vectors.
+
+We also note that for all situations, the best value of $\lambda$ was $\lambda = 0$. We know that a value of $\lambda = 0$ would optimize training error, but we also found that it optimized validation error. This is not terribly surprising because the training and validation data turned out to be so similar (with no large outliers).
 
 
 \section{Multi-Class Classification}
@@ -556,7 +558,7 @@ We implemented multi-class support vector machines using the one-versus-the-rest
 
 Moving forward with the linear kernel, we begin training the model on the training set and using the validation error rate to tune the value of $C$. Because solving the quadratic program with the support vector machine takes prohibitive amounts of time when run on our training set of 5,040 points, we used a smaller subset of the training and validation sets to tune $C$ (1,000 points each).
 
-We found that the best value of $C$ was $C = 1$. Figure 12 shows the resulting validation errors for various values of $C$. For this value of $C$, the test error was 35.6\% (where the test set was also a random choice of 1,000 points of the full test set).
+We found that the best value of $C$ was $C = 1$. Figure 13 shows the resulting validation errors for various values of $C$. For this value of $C$, the test error was 35.6\% (where the test set was also a random choice of 1,000 points of the full test set).
 
 \begin{figure}
 \centering
@@ -612,7 +614,7 @@ We used this method to classify the data points in the Kaggle data. Because we w
 	\caption{Test error as a function of the number of iterations before truncation of the gradient descent}
 \end{figure}
 
-In Figure 13, we see the effects of the numbers of iterations that we allowed the gradient descent function to run for on the test error. It appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. As we can see, the best that this model was able to achieve was a 56\% success rate (although this is slightly unfair, as we are citing the number of iterations which minimized the test data).
+In Figure 14, we see the effects of the numbers of iterations that we allowed the gradient descent function to run for on the test error. It appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. As we can see, the best that this model was able to achieve was a 56\% success rate (although this is slightly unfair, as we are citing the number of iterations which minimized the test data).
 
 For context, each additional iteration took roughly 20 seconds to compute. Because logistic regression can get decent predictions without taking much time, they have the edge over the SVMs when efficiency is a very serious consideration; however, we found that for the purpose of the competition, the SVM's substantial edge in accuracy over logistic regression made it the more effective choice.
 
