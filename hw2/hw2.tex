@@ -583,21 +583,15 @@ We notice that the test error rate was actually better for the smaller sets than
 
 The extension of logistic regression into the multi-class case is somewhat more sophisticated than one might expect, unfortunately, because of the fact that we must now introduce an additional dimension into the problem: the number of classes. Two classes was kind of a special case, where we differentiate nicely between positive and negative; with three or more classes, that is no longer possible. 
 
-The way we classify now ``feels'' a bit different, although at its core it is the same (if one were to use this method of classifying for two classes only, one would find that it would behave identically). Suppose we are trying to determine which of $K$ different classes a given data point belongs to. If we are given some $d$-dimensional input data point $\phi$, and we have some $N \times d$ weight matrix $W$ with which we make our classification decisions, then for each possible class $\phi$ might belong to, we assign to it an ``activation'' $a_k$: a scalar value which indicates in some absolute sense how likely that class is to have been the class $k$ corresponding to $\phi$ a posteriori. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$.
+The way we classify now ``feels'' a bit different, although at its core it is the same (if one were to use this method of classifying for two classes only, one would find that it would behave identically). Suppose we are trying to determine which of $K$ different classes a given data point belongs to. If we are given some $d$-dimensional input data point $\phi$, and we have some $N \times d$ weight matrix $W$ with which we make our classification decisions, then for each possible class $\phi$ might belong to, we assign to it an ``activation'' $a_k$: a scalar value which indicates in some absolute sense how likely that class is to have been the class $k$ corresponding to $\phi$ a posteriori. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$. 
 
-Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ is equal to $\frac{e^{a_k}}{\sum_{j=0}^K e^{a_j}}$. Call this quantity $y_{\phi k}$.
+Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ is equal to $\frac{e^{a_k}}{\sum_{j=0}^K e^{a_j}}$. 
 
-Using this quantity, we would like to know how well a given weight matrix is performing. To do this, we can take the likelihood of each data point being what it turned out to be, according to our model. Let $T$ be the $N \times K$ matrix that contains, for each data point, a 1 in column $k$ if that data point belongs to that class, and a 0 in column $k$ if it does not. Then, the likelihood of our model is given by 
-
-$$\prod_{n=1}^N \prod_{k=1}^K y_{nk}^{T_{nk}}$$
-
-assuming we have $N$ data points in total, $y_{nk}$ is defined as above and $T_{nk}$ is the ($n$, $k$) element of the array. The negative log likelihood of our model, therefore, is 
+Let $T$ be the $N \times K$ matrix that contains, for each data point, a 1 in column $k$ if that data point belongs to that class, and a 0 in column $k$ if it does not. Then, the negative log likelihood of our model, therefore, is 
 
 $$-\sum_{n=1}^N \sum_{k=1}^K T_{nk} \ln y_{nk}$$.
 
-We can do a gradient descent on this quantity; our gradient conveniently takes the simple form of 
-
-$$\sum_{n=1}^N (y_{nj}-t_{nj})\phi_n$$
+We can do a gradient descent on this quantity. \\
 
 We used this method to classify the data points in the Kaggle data. Because we were not validating any parameters, we trained on 10,080 points (the training and validation sets), and then used the same test set for testing. While running our algorithm, the gradient descent function never terminated. However, if the gradient descent was truncated at some point before completion, the result was a weight matrix that classified the points decently, though not as well as SVMs. We did not include L1 regularization, due to its previous lack of effect on the quality of the results but its dramatic effect on the computation time.
 
