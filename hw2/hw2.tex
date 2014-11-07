@@ -396,8 +396,6 @@ for some sufficiently small $\epsilon << \lambda$.
 
 As a test of our methods, we used them on the four 2-dimensional data sets from the previous section. In these tests, we used the \texttt{fmin\_bfgs} function for our gradient descent, available online. Our methods yielded results that seemed to strongly imply an underlying mechanism that made sense. Our results, with $\lambda = 0$ (i.e., no L1 regalarization), are shown in Figure 8. It is instructive to see what happens when L1 regularization is introduced.
 
-MAYBE TALK ABOUT THESE RESULTS A BIT MORE?
-
 \begin{figure*}[!ht]
 \centering
 \begin{tabular}{c c c}
@@ -510,9 +508,10 @@ We implemented multi-class support vector machines using the one-versus-the-rest
 
 Moving forward with the linear kernel, we begin training the model on the training set and using the validation error rate to tune the value of $C$. Because solving the quadratic program with the support vector machine takes prohibitive amounts of time when run on our training set of 5,040 points, we used a smaller subset of the training and validation sets to tune $C$ (1,000 points each).
 
-We found that the best value of $C$ was $C = 1$. Figure xx shows the resulting validation errors for various values of $C$. For this value of $C$, the test error was 35.6\% (where the test set was also a random choice of 1,000 points of the full test set).
+We found that the best value of $C$ was $C = 1$. Figure 12 shows the resulting validation errors for various values of $C$. For this value of $C$, the test error was 35.6\% (where the test set was also a random choice of 1,000 points of the full test set).
 
 \begin{figure}
+\centering
 \renewcommand*{\arraystretch}{1.5}
 \begin{tabular}{| c | p{.3in} | p{.3in} | p{.3in} | p{.3in} | p{.3in} |}
 \hline
@@ -532,11 +531,11 @@ We notice that the test error rate was actually better for the smaller sets than
 
 \subsection{Logistic Regression}
 
-The extension of logistic regression into the multiclass case is somewhat more sophisticated than one might expect, unfortunately, because of the fact that we must now introduce an additional dimension into the problem: the number of classes. Two classes was kind of a special case, where we differentiate nicely between positive and negative; with three or more classes, that is no longer possible. 
+The extension of logistic regression into the multi-class case is somewhat more sophisticated than one might expect, unfortunately, because of the fact that we must now introduce an additional dimension into the problem: the number of classes. Two classes was kind of a special case, where we differentiate nicely between positive and negative; with three or more classes, that is no longer possible. 
 
-The way we classify now ``feels'' a bit different, although at its core it is the same (if one were to use this method of classifying for two classes only, one would find that it would behave identically). Suppose we are trying to determine which of $K$ different classes a given data point belongs to. If we are given some $d$-dimensional input data point $\phi$, and we have some $N \times d$ weight matrix $W$ with which we make our classification decisions, then for each possible class $\phi$ might belong to, we assign to it an ``activation'' $a_k$: a scalar value which indicates in some absolute sense how likely that class is to have been the class $k$ corresponding to $\phi$ a posteriori. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$. \\
+The way we classify now ``feels'' a bit different, although at its core it is the same (if one were to use this method of classifying for two classes only, one would find that it would behave identically). Suppose we are trying to determine which of $K$ different classes a given data point belongs to. If we are given some $d$-dimensional input data point $\phi$, and we have some $N \times d$ weight matrix $W$ with which we make our classification decisions, then for each possible class $\phi$ might belong to, we assign to it an ``activation'' $a_k$: a scalar value which indicates in some absolute sense how likely that class is to have been the class $k$ corresponding to $\phi$ a posteriori. We compute $a_k$ via the following dot product: $a_k = W_k^T\phi$, where $W_k$ is the the $k^{\textrm{th}}$ row of $W$.
 
-Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ is equal to $\frac{e^{a_k}}{\sum_{j=0}^K e^{a_j}}$. Call this quantity $y_{\phi k}$. \\
+Using the activations $a_k$, our estimated probability that $\phi$ is class $k$ is equal to $\frac{e^{a_k}}{\sum_{j=0}^K e^{a_j}}$. Call this quantity $y_{\phi k}$.
 
 Using this quantity, we would like to know how well a given weight matrix is performing. To do this, we can take the likelihood of each data point being what it turned out to be, according to our model. Let $T$ be the $N \times K$ matrix that contains, for each data point, a 1 in column $k$ if that data point belongs to that class, and a 0 in column $k$ if it does not. Then, the likelihood of our model is given by 
 
@@ -550,11 +549,12 @@ We can do a gradient descent on this quantity; our gradient conveniently takes t
 
 $$\sum_{n=1}^N (y_{nj}-t_{nj})\phi_n$$
 
-When we used this method to classify the data points in the Kaggle data, the gradient descent function never terminated. However, if the gradient descent was truncated at some point before completion, the result was a weight matrix that classified the points decently, though not as well as SVMs. We did not include L1 regularization, due to its previous lack of effect on the quality of the results but its dramatic effect on the computation time. \\
+We used this method to classify the data points in the Kaggle data. Because we were not validating any parameters, we trained on 10,080 points (the training and validation sets), and then used the same test set for testing. While running our algorithm, the gradient descent function never terminated. However, if the gradient descent was truncated at some point before completion, the result was a weight matrix that classified the points decently, though not as well as SVMs. We did not include L1 regularization, due to its previous lack of effect on the quality of the results but its dramatic effect on the computation time.
 
+\renewcommand*{\arraystretch}{1.5}
+\begin{figure}
+\centering
 	\begin{tabular}{| c | c | c | c | c |}
-	\hline
-	& \texttt{stdev1} & \texttt{stdev2} & \texttt{stdev4} & \texttt{nonSep}\\
 	\hline
 	Iterations & 1 & 10 & 20 & 100 \\
 	\hline
@@ -562,8 +562,11 @@ When we used this method to classify the data points in the Kaggle data, the gra
 	\hline
 	\end{tabular}
 	\caption{Test error as a function of the number of iterations before truncation of the gradient descent}
+\end{figure}
 
-As can be seen from the table above, it appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. For context, each additional iteration took roughly 20 seconds to compute. Because logistic regression can get decent predictions without taking much time, they have the edge over the SVMs when efficiency is a very serious consideration; however, we found that for the purpose of the competition, the SVMs' substantial edge in accuracy over logistic regression made it the more effective choice.
+In Figure 13, we see the effects of the numbers of iterations that we allowed the gradient descent function to run for on the test error. It appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. As we can see, the best that this model was able to achieve was a 56\% success rate (although this is slightly unfair, as we are citing the number of iterations which minimized the test data).
+
+For context, each additional iteration took roughly 20 seconds to compute. Because logistic regression can get decent predictions without taking much time, they have the edge over the SVMs when efficiency is a very serious consideration; however, we found that for the purpose of the competition, the SVM's substantial edge in accuracy over logistic regression made it the more effective choice.
 
 \subsection{Discussion}
 
