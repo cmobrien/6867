@@ -1,9 +1,7 @@
 import csv
 
-FILENAME = "DATA.csv"
-
-def get_data(n):
-  with open(FILENAME, 'r') as csvfile:
+def get_data(n, filename):
+  with open(filename, 'r') as csvfile:
     r = csv.reader(csvfile, delimiter = ",")
     rows = [row for row in r]
 
@@ -74,9 +72,20 @@ def get_data(n):
           v = [0.0] * 24
           for c in courses:
             v[int(c) - 1] = 1.0
-          v = v[0:3] + v[4:10] + v[11:12] + v[13:18] + v[19:21] + v[23:]
+          #v = v[0:3] + v[4:10] + v[11:12] + v[13:18] + v[19:21] + v[23:]
+          v = [v[5]] + [v[7]] + [v[17]]
           x += v
       X.append(x)
-      Y.append(row[-2:])
+      Y.append([float(row[-2]), row[-1]])
 
   return X, Y
+
+
+def get_train(n):
+  return get_data(n, "train.csv")
+
+def get_validate(n):
+  return get_data(n, "validate.csv")
+
+def get_test(n):
+  return get_data(n, "test.csv")

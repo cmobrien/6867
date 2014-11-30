@@ -2,4 +2,9 @@
 *.swp
 .tmp/*
 *DATA.csv
+*train.csv
+*validate.csv
+*test.csv
+*.pyc
+*.swo
 

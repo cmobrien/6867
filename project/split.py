@@ -2,11 +2,11 @@ import csv
 import random
 
 def split():
-  f_train = open("kaggle_train_medium.csv", 'wb')
-  f_validate = open("kaggle_validate_medium.csv", 'wb')
-  f_test = open("kaggle_test_medium.csv", 'wb')
+  f_train = open("train.csv", 'wb')
+  f_validate = open("validate.csv", 'wb')
+  f_test = open("test.csv", 'wb')
 
-  f_data = open("kaggle_data.csv", 'r')
+  f_data = open("DATA.csv", 'r')
   reader = csv.reader(f_data, delimiter = ",")
  
   writer_train = csv.writer(f_train, lineterminator="\n")
@@ -17,8 +17,7 @@ def split():
   validate = []
   test = []
 
-  size = 2000
-  assert size <= 5040
+  size = 282
 
   lines = []
   d = {}
@@ -33,33 +32,14 @@ def split():
     train.append(lines[i])
     del d[i]
 
-  assert len(d) == 15120 - size
-
   validate_id = random.sample(d, size)
   for i in validate_id:
     validate.append(lines[i])
     del d[i]
   
-  assert len(d) == 15120 - (2 * size)
-
-  test_id = random.sample(d, size) 
+  test_id = random.sample(d, size - 1) 
   for i in test_id:
     test.append(lines[i])
-
-#  i = 0
-#  for line in lines:
-#    if i > 6000:
-#      break
-#    if i > 0:
-#      choice = random.randrange(0, 3)
-#      if choice == 0:
-#        train.append(line)
-#      elif choice == 1:
-#        validate.append(line)
-#      else:
-#        test.append(line)
-#    i += 1
-#
   writer_train.writerows(train)
   writer_validate.writerows(validate)
   writer_test.writerows(test)
