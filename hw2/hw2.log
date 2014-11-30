@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  6 NOV 2014 20:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  6 NOV 2014 23:02
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -456,9 +456,6 @@ File: plots/1-3/casey/nonSepgauss.png Graphic file (type png)
 Package pdftex.def Info: plots/1-3/casey/nonSepgauss.png used on input line 279
 .
 (pdftex.def)             Requested size: 162.6075pt x 114.3695pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
  [3 <./plots/1-3/casey/nonSepguass2.png> <./plots/1-3/casey/nonSepgauss.png>]
 <plots/1-3/casey/c01.png, id=46, 557.9244pt x 392.4261pt>
 File: plots/1-3/casey/c01.png Graphic file (type png)
@@ -491,175 +488,202 @@ Package pdftex.def Info: plots/1-3/support_vectors.png used on input line 327.
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [4 <./plots/1-3/casey/c01.png> <./plots/1-3/casey/c100.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 7116) has occurred while \output is active []
 
  [5 <./plots/1-3/margin.png> <./plots/1-3/support_vectors.png>]
-Overfull \hbox (8.73514pt too wide) in paragraph at lines 383--388
+Overfull \hbox (8.73514pt too wide) in paragraph at lines 382--387
  [] 
  []
 
-[6] <plots/stdev1_train_plot.png, id=69, 578.16pt x 433.62pt>
+<plots/stdev1_train_plot.png, id=65, 578.16pt x 433.62pt>
 File: plots/stdev1_train_plot.png Graphic file (type png)
 
 <use plots/stdev1_train_plot.png>
-Package pdftex.def Info: plots/stdev1_train_plot.png used on input line 406.
+Package pdftex.def Info: plots/stdev1_train_plot.png used on input line 403.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev2_train_plot.png, id=70, 578.16pt x 433.62pt>
+<plots/stdev2_train_plot.png, id=66, 578.16pt x 433.62pt>
 File: plots/stdev2_train_plot.png Graphic file (type png)
 
 <use plots/stdev2_train_plot.png>
-Package pdftex.def Info: plots/stdev2_train_plot.png used on input line 411.
+Package pdftex.def Info: plots/stdev2_train_plot.png used on input line 408.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev4_train_plot.png, id=71, 578.16pt x 433.62pt>
+<plots/stdev4_train_plot.png, id=67, 578.16pt x 433.62pt>
 File: plots/stdev4_train_plot.png Graphic file (type png)
 
 <use plots/stdev4_train_plot.png>
-Package pdftex.def Info: plots/stdev4_train_plot.png used on input line 416.
+Package pdftex.def Info: plots/stdev4_train_plot.png used on input line 413.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev1_test_plot.png, id=72, 578.16pt x 433.62pt>
+<plots/stdev1_test_plot.png, id=68, 578.16pt x 433.62pt>
 File: plots/stdev1_test_plot.png Graphic file (type png)
 
 <use plots/stdev1_test_plot.png>
-Package pdftex.def Info: plots/stdev1_test_plot.png used on input line 421.
+Package pdftex.def Info: plots/stdev1_test_plot.png used on input line 418.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev2_test_plot.png, id=73, 578.16pt x 433.62pt>
+<plots/stdev2_test_plot.png, id=69, 578.16pt x 433.62pt>
 File: plots/stdev2_test_plot.png Graphic file (type png)
 
 <use plots/stdev2_test_plot.png>
-Package pdftex.def Info: plots/stdev2_test_plot.png used on input line 426.
+Package pdftex.def Info: plots/stdev2_test_plot.png used on input line 423.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev4_test_plot.png, id=74, 578.16pt x 433.62pt>
+<plots/stdev4_test_plot.png, id=70, 578.16pt x 433.62pt>
 File: plots/stdev4_test_plot.png Graphic file (type png)
 
 <use plots/stdev4_test_plot.png>
-Package pdftex.def Info: plots/stdev4_test_plot.png used on input line 431.
+Package pdftex.def Info: plots/stdev4_test_plot.png used on input line 428.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-Overfull \hbox (8.07286pt too wide) in paragraph at lines 404--435
+Overfull \hbox (8.07286pt too wide) in paragraph at lines 401--432
  [][] 
  []
 
-<plots/nonSep2_train_plot.png, id=75, 578.16pt x 433.62pt>
+<plots/nonSep2_train_plot.png, id=71, 578.16pt x 433.62pt>
 File: plots/nonSep2_train_plot.png Graphic file (type png)
 
 <use plots/nonSep2_train_plot.png>
-Package pdftex.def Info: plots/nonSep2_train_plot.png used on input line 442.
+Package pdftex.def Info: plots/nonSep2_train_plot.png used on input line 439.
+(pdftex.def)             Requested size: 162.6075pt le: plots/nonSep2_train_plot.png Graphic file (type png)
+
+<use plots/nonSep2_train_plot.png>
+Package pdftex.def Info: plots/nonSep2_train_plot.png used on input line 441.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/nonSep2_test_plot.png, id=76, 578.16pt x 433.62pt>
+<plots/nonSep2_test_plot.png, id=72, 578.16pt x 433.62pt>
 File: plots/nonSep2_test_plot.png Graphic file (type png)
 
 <use plots/nonSep2_test_plot.png>
-Package pdftex.def Info: plots/nonSep2_test_plot.png used on input line 447.
+Package pdftex.def Info: plots/nonSep2_test_plot.png used on input line 446.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev2_test_plot_lambda_01.png, id=77, 578.16pt x 433.62pt>
+<plots/stdev2_test_plot_lambda_01.png, id=73, 578.16pt x 433.62pt>
 File: plots/stdev2_test_plot_lambda_01.png Graphic file (type png)
 
 <use plots/stdev2_test_plot_lambda_01.png>
 Package pdftex.def Info: plots/stdev2_test_plot_lambda_01.png used on input lin
-e 458.
+e 457.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev2_test_plot_lambda_1.png, id=78, 578.16pt x 433.62pt>
+<plots/stdev2_test_plot_lambda_1.png, id=74, 578.16pt x 433.62pt>
 File: plots/stdev2_test_plot_lambda_1.png Graphic file (type png)
 
 <use plots/stdev2_test_plot_lambda_1.png>
 Package pdftex.def Info: plots/stdev2_test_plot_lambda_1.png used on input line
- 463.
+ 462.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7 <./plots/nonSep2_train_plot.png> <./plots/nonSep2_test_plot.png> <./plots/s
-tdev2_test_plot_lambda_01.png> <./plots/stdev2_test_plot_lambda_1.png>]
-<plots/stdev2_test_plot_lambda_sup_vectors.png, id=87, 578.16pt x 433.62pt>
+ [6] [7 <./plots/stdev1_train_plot.png> <./plots/stdev2_train_plot.png> <./plot
+s/stdev4_train_plot.png> <./plots/stdev1_test_plot.png> <./plots/stdev2_test_pl
+ot.png> <./plots/stdev4_test_plot.png> <./plots/nonSep2_train_plot.png> <./plot
+s/nonSep2_test_plot.png> <./plots/stdev2_test_plot_lambda_01.png> <./plots/stde
+v2_test_plot_lambda_1.png>]
+<plots/stdev2_test_plot_lambda_sup_vectors.png, id=93, 578.16pt x 433.62pt>
 File: plots/stdev2_test_plot_lambda_sup_vectors.png Graphic file (type png)
 
 <use plots/stdev2_test_plot_lambda_sup_vectors.png>
 Package pdftex.def Info: plots/stdev2_test_plot_lambda_sup_vectors.png used on 
-input line 487.
+input line 486.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
-<plots/stdev2_test_plot_lambda_0_supvec.png, id=88, 578.16pt x 433.62pt>
+<plots/stdev2_test_plot_lambda_0_supvec.png, id=94, 578.16pt x 433.62pt>
 File: plots/stdev2_test_plot_lambda_0_supvec.png Graphic file (type png)
 
 <use plots/stdev2_test_plot_lambda_0_supvec.png>
 Package pdftex.def Info: plots/stdev2_test_plot_lambda_0_supvec.png used on inp
-ut line 492.
+ut line 491.
 (pdftex.def)             Requested size: 162.6075pt x 121.95532pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [8 <./plots/stdev1_train_plot.png> <./plots/stdev2_train_plot.png> <./plots/st
-dev4_train_plot.png> <./plots/stdev1_test_plot.png> <./plots/stdev2_test_plot.p
-ng> <./plots/stdev4_test_plot.png>]
-Overfull \hbox (4.14874pt too wide) in paragraph at lines 522--522
+ [8 <./plots/stdev2_test_plot_lambda_sup_vectors.png> <./plots/stdev2_test_plot
+_lambda_0_supvec.png>]
+Overfull \hbox (4.14874pt too wide) in paragraph at lines 521--521
 []|\OT1/ptm/m/n/10 41.1%| 
  []
 
 
-Overfull \hbox (4.14874pt too wide) in paragraph at lines 522--522
+Overfull \hbox (4.14874pt too wide) in paragraph at lines 521--521
 []|\OT1/ptm/m/n/10 37.0%| 
  []
 
 
-Overfull \hbox (4.14874pt too wide) in paragraph at lines 522--522
+Overfull \hbox (4.14874pt too wide) in paragraph at lines 521--521
 []|\OT1/ptm/m/n/10 36.9%| 
  []
 
 
-Overfull \hbox (4.14874pt too wide) in paragraph at lines 522--522
+Overfull \hbox (4.14874pt too wide) in paragraph at lines 521--521
 []|\OT1/ptm/m/n/10 37.2%| 
  []
 
 
-Overfull \hbox (4.14874pt too wide) in paragraph at lines 522--523
+Overfull \hbox (4.14874pt too wide) in paragraph at lines 521--522
 []|\OT1/ptm/m/n/10 37.2%| 
  []
 
 
-Underfull \vbox (badness 1253) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9 <./plots/stdev2_test_plot_lambda_sup_vectors.png> <./plots/stdev2_test_plot
-_lambda_0_supvec.png>] [10
 
-] (./hw2.aux) ) 
+Underfull \hbox (badness 10000) in paragraph at lines 537--538
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 539--540
+
+ []
+
+
+Underfull \vbox (badness 5939) has occurred while \output is active []
+
+ [9]
+Underfull \hbox (badness 10000) in paragraph at lines 553--554
+
+ []
+
+
+./hw2.tex:564: Package caption Error: \caption outside float.
+
+See the caption package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.564 	\caption
+               {Test error as a function of the number of iterations before ...
+
+? 
+./hw2.tex:564: Emergency stop.
+ ...                                              
+                                                  
+l.564 	\caption
+               {Test error as a function of the number of iterations before ...
+
+If you do not understand this error, please take a closer look
+at the documentation of the `caption' package, especially the
+section about errors.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+ 
 Here is how much of TeX's memory you used:
- 3976 strings out of 493117
- 60106 string characters out of 6135433
+ 3973 strings out of 493117
+ 60217 string characters out of 6135433
  128178 words of memory out of 5000000
- 7330 multiletter control sequences out of 15000+600000
+ 7328 multiletter control sequences out of 15000+600000
  28798 words of font info for 76 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,16n,38p,732b,547s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2014/texmf-dist/fonts/enc/dvips/base/8r.enc}
-</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
-/usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
-usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></u
-sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr
-/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/l
-ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/loc
-al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local
-/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/t
-exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texl
-ive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive
-/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/20
-14/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/201
-4/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2014/
-texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2014/texmf-di
-st/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2014/texmf-dist/font
-s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/ur
-w/times/utmri8a.pfb>
-Output written on hw2.pdf (10 pages, 1089592 bytes).
+ 41i,16n,38p,847b,547s stack positions out of 5000i,500n,10000p,200000b,80000s
+./hw2.tex:564:  ==> Fatal error occurred, no output PDF file produced!
+b8a.pfb></usr/local/texlive/2014/texmf-dis
+t/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
+pe1/urw/times/utmri8a.pfb>
+Output written on hw2.pdf (10 pages, 1103432 bytes).
 PDF statistics:
- 161 PDF objects out of 1000 (max. 8388607)
- 77 compressed objects within 1 object stream
+ 165 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  136 words of extra memory for PDF output out of 10000 (max. 10000000)
 

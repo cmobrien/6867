@@ -151,7 +151,7 @@ Solving this linear program for $\alpha$, we obtain the linear separator shown i
 
 \subsection{Applications}
 
-Next, we try out our implementation on four different data sets, each consisting of 400 points for each of the training, validation, and test sets. The first three data sets, which we will refer to as \texttt{stdev1}, \texttt{stdev2}, \texttt{stdev4}, consist of points where each of the negative and positive examples are generated from a Gaussian distribution with varying standard deviations (as suggested by the name). The final data set, \texttt{nonSep}, is a data set generated as to be impossible to separate effectively with a linear separator.
+Next, we try out our implementation on four different data sets, each consisting of 400 points for each of the training, validation, and test sets. The first three data sets, which we will refer to as \texttt{stdev1}, \texttt{stdev2}, and \texttt{stdev4}, consist of points where each of the negative and positive examples are generated from a Gaussian distribution with varying standard deviations (as suggested by the name). The final data set, \texttt{nonSep}, is a data set generated as to be impossible to separate effectively with a linear separator.
 
 \begin{figure*}[!ht]
 \centering
@@ -189,7 +189,7 @@ Next, we try out our implementation on four different data sets, each consisting
 \caption{The separators computed by our SVM implementation on a variety of different data sets with $C = 1$.}
 \end{figure*}
 
-For each of these data sets we will use a value of $C = 1$, and we will show the resulting boundary on both a training and validation set. We will also report the training and validation error rates. We begin with \texttt{stdev1}.
+For each of these data sets we will use a value of $C = 1$, and we will show the resulting boundary on both the training and validation set. We will also report the training and validation error rates. We begin with \texttt{stdev1}.
 
 Figures 2(a) and 2(b) show the decision boundary formed by our algorithm on the training and validation data, respectively. As we can clearly see, both the training and validation data have an error rate of 0. This is not surprising given the very large gap between positive and negative samples.
 
@@ -341,7 +341,7 @@ A more reasonable choice is to choose $C$ based on the validation data. An optio
 
 The kernelized form of the logistic regression objective can be derived as follows. We know that the negative log likelihood function, which we want to mininize, can be expressed as follows:
 
-\begin{equation}NLL(w) = \sum_{i=0}^N \log(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)})\end{equation}
+\begin{equation}NLL(w) = \sum_{i=0}^N \log{\left(1+e^{-y^{(i)}(x^{(i)}\cdot w + w_0)}\right)}\end{equation}
 
 where for a data point $i$, $y^{(i)}$ represents what class it belongs to and $x^{(i)}$ represents its feature vector. Together $w$ and $w_0$ together make up the weights, supplied by the algorithm and used to classify the points.
 
@@ -353,21 +353,21 @@ Each such call takes a certain amount of time: given that the outer sum loops ov
 
 %This is efficient assuming $N = \Omega(d)$. However, in the case where $d >> N$, it is possible to do much better than this by making a clever assumption. We may assume that $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
 
-As we have seen from the \texttt{nonSep} data above, there are situations in which it is useful to apply an arbitrary kernel. In order to be able to do this, we make the substitution $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $d$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
+As we have seen from the \texttt{nonSep} data above, there are situations in which it is useful to apply an arbitrary kernel. In order to be able to do this, we make the substitution $W = X^T \alpha$. Here, $W$ is our $(d+1)$-dimensional vector of weights that helps us determine how we will ultimately classify points ($W$ includes $w$ and $w_0$, $X$ is the $N \times (d+1)$ data matrix). Finally, $\alpha$ is some new $N$-dimensional vector for us to consider, which roughly corresponds to how important each of the data points is to our classification. The core idea is to transform the above formula from being a formula over inputs $W$ (a $(d + 1)$-dimensional vector) to a formula over inputs $\alpha$ (an $N$-dimensional vector). 
 
 First, we rewrite equation (1) as
-$$NLL(w) = \sum_{i=0}^N \log(1+e^{-y{(i)}(XW)^{(i)}})$$
+$$NLL(w) = \sum_{i=0}^N \log\left(1+e^{-y{(i)}(XW)^{(i)}}\right)$$
 where $(XW)^{(i)}$ denotes the $i^{\textrm{th}}$ element of the vector $XW$. Next, we make use of the assumption $W = X^T\alpha$. So then we have
 
 \begin{center}
 \begin{tabular}{r c l}
-$NLL(\alpha)$&$=$&$\displaystyle \sum_{i=0}^N \log(1+e^{-y^{(i)}(XX^T\alpha)^{(i)}})$\\
+$NLL(\alpha)$&$=$&$\displaystyle \sum_{i=0}^N \log \left(1+e^{-y^{(i)}(XX^T\alpha)^{(i)}}\right)$\\
 &&\\
-&$=$&$\displaystyle \sum_{i=0}^N \log(1+e^{-y{(i)}((XX^T)^{(i)} \cdot \alpha})$
+&$=$&$\displaystyle \sum_{i=0}^N \log\left(1+e^{-y{(i)}(XX^T)^{(i)} \cdot \alpha}\right)$
 \end{tabular}
 \end{center}
 
-We now have a new formula, with a new vector on which we can do gradient descent. Moreover, the dimensionality of the new vector is different from that of the old vector; $\alpha$ is an $N$-dimensional vector, in contrast to $W$, which was a $d$-dimensional vector. 
+We now have a new formula, with a new vector on which we can do gradient descent. Moreover, the dimensionality of the new vector is different from that of the old vector; $\alpha$ is an $N$-dimensional vector, in contrast to $W$, which was a $(d + 1)$-dimensional vector. 
 
 How long does it take to compute the formula above? %Well, naively, one might expect that we need to iterate over the sum $N$ times, and for each iteration of the sum, we need to compute the matrix product $XX^T$, which takes $\Theta(N^2d)$ time (the runtime of multiplying an $N \times d$ matrix with a $d \times N$ matrix). Then, we need to compute the dot product of $(XX^T)^{(i)}$, an $N$-dimensional vector, with $\alpha$, another $N$-dimensional vector, which would take $\Theta(N)$ time. Thus, at first glance, it appears that our new formula takes $\Theta(N^3 d)$ time to compute; not an improvement! 
 First we note that the matrix $XX^T$ can be precomputed. Because it is independent of $\alpha$, there's no reason for us to compute it at every step of the gradient descent. With that consideration taken into account, each step of the gradient descent will now take $\Theta(N^2)$ time. We call this new form of the equation above the \emph{kernelized} form of the equation.% It allows us to efficiently find a weight vector $W$ even when the feature space is very large, by doing gradient descent on the $\alpha$ vectors, and then computing $W$ at the end by using the fact that $X^T\alpha = W$. 
@@ -394,7 +394,7 @@ for some sufficiently small $\epsilon << \lambda$.
 
 \subsection{Experiment}
 
-As a test of our methods, we used them on the four 2-dimensional data sets from the previous section. In these tests, we used the \texttt{fmin\_bfgs} function for our gradient descent, available online. Our methods yielded results that seemed to strongly imply an underlying mechanism that made sense. Our results, with $\lambda = 0$ (i.e., no L1 regalarization), are shown in Figure 8. It is instructive to see what happens when L1 regularization is introduced.
+As a test of our methods, we used them on the four 2-dimensional data sets from the previous section. In these tests, we used the \texttt{fmin\_bfgs} function for our gradient descent, available online. Our methods yielded results that seemed to strongly imply an underlying mechanism that made sense. Our results, with $\lambda = 0$ (i.e., no L1 regalarization), are shown in Figures 8 and 9. It is instructive to see what happens when L1 regularization is introduced.
 
 \begin{figure*}[!ht]
 \centering
@@ -491,6 +491,8 @@ When we set $\lambda = 0$, we saw an even stranger pattern, which was that point
 \end{subfigure}
 \caption{The impact of $\lambda$ on support vectors. Support vectors are shown as dots, and all other points as plusses.}
 \end{figure}
+
+\subsection{Kernels}
 
 Next, we extended our logistic regression to operate with a Gaussian kernel. We use our validation data to tune the values of $\lambda$ and $\beta$ (to minimize validation error), and report the test errors for the optimal values. We repeat the experiments with the linear kernel in order to demonstrate the effectiveness of the Gaussian kernel. The results are shown in Figure 12.
 
@@ -589,9 +591,9 @@ Let $T$ be the $N \times K$ matrix that contains, for each data point, a 1 in co
 
 $$-\sum_{n=1}^N \sum_{k=1}^K T_{nk} \ln y_{nk}$$
 
-We can do a gradient descent on this quantity. \\
+We can do a gradient descent on this quantity.
 
-We used this method to classify the data points in the Kaggle data. Because we were not validating any parameters, we trained on 10,080 points (the training and validation sets), and then used the same test set for testing. While running our algorithm, the gradient descent function never terminated. However, if the gradient descent was truncated at some point before completion, the result was a weight matrix that classified the points decently, though not as well as SVMs. We did not include L1 regularization, due to its previous lack of effect on the quality of the results but its dramatic effect on the computation time.
+We used this method to classify the data points in the Kaggle data. Because we were not validating any parameters, we trained on 10,080 points (the training and validation sets), and then used the same set for testing. While running our algorithm, the gradient descent function never terminated. However, if the gradient descent was truncated at some point before completion, the result was a weight matrix that classified the points decently, though not as well as SVMs. We did not include L1 regularization, due to its previous lack of effect on the quality of the results but its dramatic effect on the computation time.
 
 \renewcommand*{\arraystretch}{1.5}
 \begin{figure}
@@ -606,7 +608,7 @@ We used this method to classify the data points in the Kaggle data. Because we w
 	\caption{Test error as a function of the number of iterations before truncation of the gradient descent}
 \end{figure}
 
-In Figure 14, we see the effects of the numbers of iterations that we allowed the gradient descent function to run for on the test error. It appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. As we can see, the best that this model was able to achieve was a 56\% success rate (although this is slightly unfair, as we are citing the number of iterations which minimized the test data).
+In Figure 14, we see the effects of the numbers of iterations that we allowed the gradient descent function to run for on the test error. It appears that the gradient descent beyond the first few iterations was largely ineffective at reducing the test error. As we can see, the best that this model was able to achieve was a 56\% success rate (although this is slightly unfair, as we are citing the number of iterations which minimized the test error).
 
 For context, each additional iteration took roughly 20 seconds to compute. Because logistic regression can get decent predictions without taking much time, they have the edge over the SVMs when efficiency is a very serious consideration; however, we found that for the purpose of the competition, the SVM's substantial edge in accuracy over logistic regression made it the more effective choice.
 
