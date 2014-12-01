@@ -1,5 +1,6 @@
 import numpy as np
 from make_features import *
+from scipy.optimize import fmin_bfgs
 
 def blogDesignMatrix(X):
   return np.array([np.append([1], x) for x in X])
@@ -52,6 +53,25 @@ def get_guesses(X, Y, w):
       P[i] = 'A'
     c += 1
   return P
+
+class GradDescender:
+  def __init__(self):
+    n = 9
+    self.X, self.Y = get_train(n)
+    self.X_val, self.Y_val = get_validate(n)    
+    self.Y_letter = [y[1] for y in self.Y]          
+    self.Y_val_letter = [y_val[1] for y_val in self.Y_val]
+    self.lamda = 10 # self dot lambda equals zero point one, I guess
+
+  def func_returning_misgraded_plus_lamda(self):
+    actual = self.Y_letter
+    return (lambda w: calculate_error(get_guesses(self.X, self.Y, w), actual) + self.lamda * np.linalg.norm(w))
+
+  def grad_descent_on_grades(self):
+    d = 18
+    misgraded_plus_lamda = self.func_returning_misgraded_plus_lamda()
+    print misgraded_plus_lamda([0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0])
+    return fmin_bfgs(misgraded_plus_lamda, np.array([0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]), full_output=False, epsilon=0.1)
 
 def calculate_error(guess, actual):
   error = 0
@@ -145,5 +165,11 @@ def baseline(n):
     c += 1
   print "VALIDATE: ", calculate_error(P, Y_val_letter)
 
-#baseline(3)
+baseline(9)
 
+gd = GradDescender()
+result = gd.grad_descent_on_grades()
+print "result", result
+print len(result), len(gd.Y_letter)
+print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
+print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
