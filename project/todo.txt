@@ -2,7 +2,7 @@ General: We should fix the data so that the test set is a single semester and th
 
 Regression: (Probably ridge, but maybe try LAD/LASSO?)
 
-
+- Try finding cutoff that minimizes validation error
 - For each prefix of possible assignments:
 	- Try two loss functions: MSE and # misclassified
 	- Report optimal choices of lambda/ resulting test error rates
@@ -13,3 +13,7 @@ Ordered Logit/Probit:
 - (This will calculate probability distributions)
 - Implement
 - Report error rates
+
+
+
+30		73		84		76		8537		85		74		50		8927		20		39		30		460.319148936	0.41011236	0.426395939	0.487179487	0.3863636360.393617021	0.47752809	0.375634518	0.320512821	0.4045454550.287234043	0.112359551	0.197969543	0.192307692	0.209090909

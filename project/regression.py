@@ -69,12 +69,37 @@ def MSE(X, Y, w):
     s += (diff ** 2)
   return float(s) / len(X)
 
+def print_weights(w):
+  n = len(w) - 7
+  if n >= 5:
+    n -= 2
+    PSET_ZEROS = True
+    QUIZ_ZEROS = True
+  elif n >= 2:
+    n -= 1 
+    PSET_ZEROS = True
+    QUIZ_ZEROS = False
+  else:
+    PSET_ZEROS = False
+    QUIZ_ZEROS = False
+  print "OFFSET: ", w[0]
+  for i in range(1, n + 1):
+    print "ASSIGNMENT", i, ": ", w[i]
+  if PSET_ZEROS and QUIZ_ZEROS:
+    print "PSET-ZEROS: ", w[-8]
+    print "QUIZ-ZEROS: ", w[-7]
+  elif PSET_ZEROS:
+    print "PSET-ZEROS: ", w[-7]
+  print "FALLNESS: ", w[-6]
+  print "MALENESS: ", w[-5]
+  print "YEAR: ", w[-4]
+  print "6-ness: ", w[-3]
+  print "8-ness: ", w[-2]
+  print "18-ness: ", w[-1]
+
 def go(n):
   X, Y = get_train(n)
   X_val, Y_val = get_validate(n)
-  print X[0]
-  print
-  print X[1]
   Y_numerical = [[y[0]] for y in Y]
   Y_val_numerical = [[y_val[0]] for y_val in Y_val]
   Y_letter = [y[1] for y in Y]
@@ -82,7 +107,8 @@ def go(n):
   w = ridge_regression(X, Y_numerical, 1)
   print 
   print
-  print w
+  print_weights(w)
+  print
   print "TRAINING: ", calculate_error(get_guesses(X, Y, w), Y_letter)
   print "TRAINING: ", MSE(X, Y_numerical, w)
   print "VALIDATE: ", calculate_error(get_guesses(X_val, Y_val, w), Y_val_letter) 
@@ -90,4 +116,34 @@ def go(n):
 
   return calculate_error(get_guesses(X, Y, w), Y_letter)
 
-print go(3) 
+go(3)
+
+
+def baseline(n):
+  X, Y = get_train_simple(n)
+  Y_letter = [y[1] for y in Y]
+  
+  X_val, Y_val = get_validate_simple(n)
+  Y_val_letter = [y[1] for y in Y_val]
+
+  totals = [(i, sum(X_val[i])) for i in range(len(X_val))]
+  totals.sort(key = lambda x: x[1])
+
+  As = len([y for y in Y if y[1] == 'A'])
+  Bs = len([y for y in Y if y[1] == 'B'])
+  Cs = len([y for y in Y if y[1] == 'C'])
+  
+  P = [''] * (As + Bs + Cs)
+  c = 0
+  for i, g in totals:
+    if c < Cs:
+      P[i] = 'C'
+    elif c < Cs + Bs:
+      P[i] = 'B'
+    else:
+      P[i] = 'A'
+    c += 1
+  print "VALIDATE: ", calculate_error(P, Y_val_letter)
+
+#baseline(3)
+

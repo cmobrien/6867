@@ -1,11 +1,49 @@
 import csv
 import numpy as np
 
+def get_simple(n, filename):
+  with open(filename, 'r') as csvfile:
+    r = csv.reader(csvfile, delimiter = ",")
+    rows = [row for row in r]
+
+    if n == 0:
+      assignments = []
+    elif n == 1:
+      assignments = [0]
+    elif n == 2:
+      assignments = [0, 2]
+    elif n == 3:
+      assignments = [0, 2, 12]
+    elif n == 4:
+      assignments = [0, 2, 4, 12]
+    elif n == 5:
+      assignments = [0, 2, 4, 6, 12]
+    elif n == 6:
+      assignments = [0, 2, 4, 6, 12, 14]
+    elif n == 7:
+      assignments = [0, 2, 4, 6, 8, 12, 14]
+    elif n == 8:
+      assignments = [0, 2, 4, 6, 8, 10, 12, 14]
+    elif n == 9:
+      assignments = [0, 2, 4, 6, 8, 10, 12, 14, 16]
+
+    X = []
+    Y = []
+    for row in rows:
+      x = [float(row[i]) for i in assignments]
+      X.append(x)
+      Y.append([float(row[-2]), row[-1]])
+    return X, Y
+
+
+
 def get_data(n, filename):
   with open(filename, 'r') as csvfile:
     r = csv.reader(csvfile, delimiter = ",")
     rows = [row for row in r]
 
+    if n == 0:
+      assignments = []
     if n == 1:
       assignments = [0]
     elif n == 2:
@@ -37,15 +75,18 @@ def get_data(n, filename):
             pset_zeros += 1
           else:
             quiz_zeros += 1
-      final.append(pset_zeros)
-      if j >= 12:
+      if n >= 1:
+        final.append(pset_zeros)
+      if n >= 3:
         final.append(quiz_zeros)
       final += row[18:]
       grades.append(final)
 
     X = []
     Y = []
-    if n <= 2:
+    if n == 0:
+      offset = -1
+    elif n <= 2:
       offset = 0
     else:
       offset = 1
@@ -57,7 +98,9 @@ def get_data(n, filename):
     for row in grades:
       x = []
       for i in range(len(row)):
-        if i < n + 1 + offset or i == n + 3 + offset:
+        if i < n + 1 + offset:
+          x.append(float(row[i]))
+        if i == n + 3 + offset:
           x.append(float(row[i]))
         elif i == n + 1 + offset:
           if row[i] == "fa10":
@@ -65,29 +108,34 @@ def get_data(n, filename):
             fa10.remove(x[0:n])
             s = np.std(fa10, axis = 0).tolist()
             fa10.append(x[0:n])
+            x += [1.0]
           elif row[i] == "fa12":
             #x += [0.0, 1.0, 0.0, 0.0, 0.0]
             fa12.remove(x[0:n])
             s = np.std(fa12, axis = 0).tolist()
             fa12.append(x[0:n])
+            x += [1.0]
           elif row[i] == "fa13":
             #x += [0.0, 0.0, 1.0, 0.0, 0.0]
             fa13.remove(x[0:n])
             s = np.std(fa13, axis = 0).tolist()
             fa13.append(x[0:n])
+            x += [0.0]
           elif row[i] == "sp10":
             #x += [0.0, 0.0, 0.0, 1.0, 0.0]
             sp10.remove(x[0:n])
             s = np.std(sp10, axis = 0).tolist()
             sp10.append(x[0:n])
+            x += [0.0]
           elif row[i] == "sp12":
             #x += [0.0, 0.0, 0.0, 0.0, 1.0]
             sp12.remove(x[0:n])
             s = np.std(sp12, axis = 0).tolist()
             sp12.append(x[0:n])
+            x += [0.0]
           else:
             assert False
-          x += s
+          #x += s
         elif i == n + 2 + offset:
           if row[i] == "TRUE":
             x.append(1.0)
@@ -108,6 +156,14 @@ def get_data(n, filename):
 
   return X, Y
 
+def get_train_simple(n):
+  return get_simple(n, "train.csv")
+
+def get_validate_simple(n):
+  return get_simple(n, "validate.csv")
+
+def get_test_simple(n):
+  return get_simple(n, "validate.csv")
 
 def get_train(n):
   return get_data(n, "train.csv")
