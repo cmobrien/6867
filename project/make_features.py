@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 
 def get_data(n, filename):
   with open(filename, 'r') as csvfile:
@@ -21,6 +22,8 @@ def get_data(n, filename):
       assignments = [0, 2, 4, 6, 8, 12, 14]
     elif n == 8:
       assignments = [0, 2, 4, 6, 8, 10, 12, 14]
+    elif n == 9:
+      assignments = [0, 2, 4, 6, 8, 10, 12, 14, 16]
 
     grades = []
     for row in rows:
@@ -42,32 +45,57 @@ def get_data(n, filename):
 
     X = []
     Y = []
+    if n <= 2:
+      offset = 0
+    else:
+      offset = 1
+    fa10 = [[float(a) for a in r[0:n]] for r in grades if r[n + 1 + offset] == "fa10"]
+    fa12 = [[float(a) for a in r[0:n]] for r in grades if r[n + 1 + offset] == "fa12"]
+    fa13 = [[float(a) for a in r[0:n]] for r in grades if r[n + 1 + offset] == "fa13"]
+    sp10 = [[float(a) for a in r[0:n]] for r in grades if r[n + 1 + offset] == "sp10"]
+    sp12 = [[float(a) for a in r[0:n]] for r in grades if r[n + 1 + offset] == "sp12"]
     for row in grades:
       x = []
       for i in range(len(row)):
-        if i < n + 2 or i == n + 4:
+        if i < n + 1 + offset or i == n + 3 + offset:
           x.append(float(row[i]))
-        elif i == n + 2:
+        elif i == n + 1 + offset:
           if row[i] == "fa10":
-            x += [1.0, 0.0, 0.0, 0.0, 0.0]
+            #x += [1.0, 0.0, 0.0, 0.0, 0.0]
+            fa10.remove(x[0:n])
+            s = np.std(fa10, axis = 0).tolist()
+            fa10.append(x[0:n])
           elif row[i] == "fa12":
-            x += [0.0, 1.0, 0.0, 0.0, 0.0]
+            #x += [0.0, 1.0, 0.0, 0.0, 0.0]
+            fa12.remove(x[0:n])
+            s = np.std(fa12, axis = 0).tolist()
+            fa12.append(x[0:n])
           elif row[i] == "fa13":
-            x += [0.0, 0.0, 1.0, 0.0, 0.0]
+            #x += [0.0, 0.0, 1.0, 0.0, 0.0]
+            fa13.remove(x[0:n])
+            s = np.std(fa13, axis = 0).tolist()
+            fa13.append(x[0:n])
           elif row[i] == "sp10":
-            x += [0.0, 0.0, 0.0, 1.0, 0.0]
+            #x += [0.0, 0.0, 0.0, 1.0, 0.0]
+            sp10.remove(x[0:n])
+            s = np.std(sp10, axis = 0).tolist()
+            sp10.append(x[0:n])
           elif row[i] == "sp12":
-            x += [0.0, 0.0, 0.0, 0.0, 1.0]
+            #x += [0.0, 0.0, 0.0, 0.0, 1.0]
+            sp12.remove(x[0:n])
+            s = np.std(sp12, axis = 0).tolist()
+            sp12.append(x[0:n])
           else:
             assert False
-        elif i == n + 3:
+          x += s
+        elif i == n + 2 + offset:
           if row[i] == "TRUE":
             x.append(1.0)
           elif row[i] == "FALSE":
             x.append(0.0)
           else:
             assert False
-        elif i == n + 5:
+        elif i == n + 4 + offset:
           courses = row[i].split(";")
           v = [0.0] * 24
           for c in courses:

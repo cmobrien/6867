@@ -1,0 +1,15 @@
+General: We should fix the data so that the test set is a single semester and the training/validation sets are the combinations of other semesters.
+
+Regression: (Probably ridge, but maybe try LAD/LASSO?)
+
+
+- For each prefix of possible assignments:
+	- Try two loss functions: MSE and # misclassified
+	- Report optimal choices of lambda/ resulting test error rates
+- Graph of misclassification rate/MSE versus # assignments used
+	
+Ordered Logit/Probit:
+
+- (This will calculate probability distributions)
+- Implement
+- Report error rates
