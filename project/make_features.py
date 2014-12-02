@@ -115,12 +115,12 @@ def get_data(n, filename):
             s = np.std(fa12, axis = 0).tolist()
             fa12.append(x[0:n])
             x += [1.0]
-          elif row[i] == "fa13":
-            #x += [0.0, 0.0, 1.0, 0.0, 0.0]
-            fa13.remove(x[0:n])
-            s = np.std(fa13, axis = 0).tolist()
-            fa13.append(x[0:n])
-            x += [0.0]
+          #elif row[i] == "fa13":
+          #  #x += [0.0, 0.0, 1.0, 0.0, 0.0]
+          #  fa13.remove(x[0:n])
+          #  s = np.std(fa13, axis = 0).tolist()
+          #  fa13.append(x[0:n])
+          #  x += [0.0]
           elif row[i] == "sp10":
             #x += [0.0, 0.0, 0.0, 1.0, 0.0]
             sp10.remove(x[0:n])
@@ -132,6 +132,8 @@ def get_data(n, filename):
             sp12.remove(x[0:n])
             s = np.std(sp12, axis = 0).tolist()
             sp12.append(x[0:n])
+            x += [0.0]
+          elif row[i] == "sp14":
             x += [0.0]
           else:
             assert False
@@ -173,3 +175,18 @@ def get_validate(n):
 
 def get_test(n):
   return get_data(n, "test.csv")
+
+
+def write_data(n):
+  f = open(str(n) + ".csv", 'wb')
+  writer = csv.writer(f, lineterminator="\n")
+  X, Y = get_train(n)
+  print X[0]
+  print Y[0]
+  rows = []
+  for i in range(len(X)):
+    rows.append(X[i] + Y[i])
+  print rows[0]
+
+
+#write_data(9)

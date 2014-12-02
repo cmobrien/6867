@@ -35,7 +35,8 @@ def get_error(X, Y_letter, w, mA, mB):
 
   return A_term + B_term + C_term
 
-X, Y = get_train(3)
+X, Y = get_train(9)
+X = [[1] + x for x in X]
 Y_letter = [y[1] for y in Y]
 
 def e(w):
@@ -43,6 +44,37 @@ def e(w):
   mB = w[-1]
   return get_error(X, Y_letter, w[:-2], mA, mB)
 
-w = (fmin_bfgs(e, [1, 1, 1] + [0] * (len(X[0]) - 3) + [3, -10], full_output = True))
+w = (fmin_bfgs(e, [0, 1, 1, 1, 1, 1, 1, 1, 1, 1] + [0] * (len(X[0]) - 10) + [3, -10], epsilon = 0.1, maxiter = 2))
 print w
   
+def print_weights(w):
+  n = len(w) - 7
+  if n >= 5:
+    n -= 2
+    PSET_ZEROS = True
+    QUIZ_ZEROS = True
+  elif n >= 2:
+    n -= 1 
+    PSET_ZEROS = True
+    QUIZ_ZEROS = False
+  else:
+    PSET_ZEROS = False
+    QUIZ_ZEROS = False
+  print "OFFSET: ", w[0]
+  for i in range(1, n + 1):
+    print "ASSIGNMENT", i, ": ", w[i]
+  if PSET_ZEROS and QUIZ_ZEROS:
+    print "PSET-ZEROS: ", w[-8]
+    print "QUIZ-ZEROS: ", w[-7]
+  elif PSET_ZEROS:
+    print "PSET-ZEROS: ", w[-7]
+  print "FALLNESS: ", w[-6]
+  print "MALENESS: ", w[-5]
+  print "YEAR: ", w[-4]
+  print "6-ness: ", w[-3]
+  print "8-ness: ", w[-2]
+  print "18-ness: ", w[-1]
+
+print_weights(w[:-2])
+print "A CUTOFF: ", w[-2]
+print "B CUTOFF: ", w[-1]
