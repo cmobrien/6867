@@ -18,6 +18,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{array}
+%\usepackage{multirow}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -96,6 +97,38 @@ To compute the numerical prediction, we used regression. For letter prediction, 
 \subsection{Data}
 
 We have grade data for six semesters over the past five years. For each student, we have their grade on each assignment, as well as their final letter grade in the class. Within any semester, professors used hard thresholds for letter grade divides. So, if Alice and Bob took 6.006 in the same semester, and Alice has a higher weighted average than Bob, then Alice's letter grade is at least as good as Bob's.
+
+Figure 1 displays information about our dataset. In particular, Figure 1(a) shows the distribution of students over the different majors (note that double majors were counted in both corresponding columns). We can see that almost all students are either courses 6 or 18. Figure 1(b) shows the gender distribution (which is about 2:1 male:female). Figure 1(c) shows the year distribution, where we see that the students are mostly sophomores. Finally, Figure 1(d) shows the distribution over final grades, which is about 41\% A's, 41\% B's, and 18\% C's. Note that this distribution varies slightly across different semesters.
+
+\begin{figure*}[t!]
+
+\begin{tabular}{c c c}
+\multicolumn{3}{ c }{
+	\begin{subfigure}[b]{7in}
+		\includegraphics[width=7in]{plots/major.png}
+		\caption{CAPTION}
+	\end{subfigure}
+	}
+\\ &&\\
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width=2.25in]{plots/gender.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width=2.25in]{plots/year.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{2.25in}
+	\includegraphics[width=2.25in]{plots/grade.png}
+	\caption{CAPTION}
+\end{subfigure}
+\end{tabular}
+
+\caption{Caption}
+
+\end{figure*}
 
 We would like for our models to be able to predict scores not just in these six semesters, but in future semesters. When this is being used in the future, the test data will consist of students from a single semester, and the goal will be to predict their final grades before we actually know them. As such, we randomly chose a single semester of the six to represent our test data. The test data consists of 197 students. The other five semesters, consisting of 938 students in total, were combined and used as training and validation data.
 
