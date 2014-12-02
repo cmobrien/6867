@@ -1,6 +1,7 @@
 import numpy as np
 from make_features import *
 from scipy.optimize import fmin_bfgs
+from scipy.stats import norm
 
 def blogDesignMatrix(X):
   return np.array([np.append([1], x) for x in X])
@@ -53,6 +54,10 @@ def get_guesses(X, Y, w):
       P[i] = 'A'
     c += 1
   return P
+
+def get_cutoffs():
+  return [-6, 2]
+  # replace with something better  
 
 class GradDescender:
   def __init__(self):
@@ -136,13 +141,6 @@ def go(n):
 
   return calculate_error(get_guesses(X, Y, w), Y_letter)
 
-<<<<<<< HEAD
-#go(9)
-=======
-#go(3)
->>>>>>> b2a0f098345762cb5fd44f6bdf7507d45985721f
-
-
 def give_me_the_WEIGHTS_son(n):
   X, Y = get_train(n)
   X_val, Y_val = get_validate(n)
@@ -153,6 +151,36 @@ def give_me_the_WEIGHTS_son(n):
   w = ridge_regression(X, Y_numerical, 1)
   return w
 
+def useLinRegToPredictGaussians(n):
+  X, Y = get_train(n)
+  Y_numerical = [[y[0]] for y in Y]
+
+  w = give_me_the_WEIGHTS_son(n)
+  G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  estimatedSigma = 0 
+
+  for g in G:
+    estimatedSigma += (g[1] - Y_numerical[g[0]]) ** 2
+
+  estimatedSigma /= len(G)
+  estimatedSigma = estimatedSigma**0.5
+  print estimatedSigma
+
+  returnArray = []
+
+  for g in G:
+    cutoffs = get_cutoffs()
+    oddsOfC = norm.cdf((cutoffs[0] - g[1])/estimatedSigma)
+    oddsOfB = norm.cdf((cutoffs[1] - g[1])/estimatedSigma) - oddsOfC
+    oddsOfA = 1 - oddsOfC - oddsOfB
+	
+    print g[0], g[1], [oddsOfA, oddsOfB, oddsOfC]
+    returnArray.append((g[0], g[1], [oddsOfA, oddsOfB, oddsOfC]))	
+
+#  return returnArray
+	
 def useLinRegToPredictDistributions(n):
   X, Y = get_train(n)
   w = give_me_the_WEIGHTS_son(n)
@@ -221,4 +249,5 @@ def baseline(n):
 #print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
 #print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
 
-useLinRegToPredictDistributions(9)
+#print useLinRegToPredictGaussians(1)
+go(1)
