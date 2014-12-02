@@ -161,7 +161,7 @@ def useLinRegToPredictDistributions(n):
   
   probability_dict = {} # maps from predicted scores to probabilities of gradesgrades 
 
-  for grade in range(-31, 25):
+  for grade in range(-50, 50):
     probability_dict[grade] = [0,0,0] #A's, B's, C's
 	 	
   for student in G:	 
