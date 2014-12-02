@@ -104,7 +104,7 @@ def go(n):
   Y_val_numerical = [[y_val[0]] for y_val in Y_val]
   Y_letter = [y[1] for y in Y]
   Y_val_letter = [y_val[1] for y_val in Y_val]
-  w = ridge_regression(X, Y_numerical, 1)
+  w = ridge_regression(X, Y_numerical, 60)
   print 
   print
   print_weights(w)
@@ -116,7 +116,7 @@ def go(n):
 
   return calculate_error(get_guesses(X, Y, w), Y_letter)
 
-go(3)
+go(9)
 
 
 def baseline(n):
