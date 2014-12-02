@@ -98,7 +98,7 @@ def get_data(n, filename):
     for row in grades:
       x = []
       for i in range(len(row)):
-        if i < n + 1 + offset:
+        if i < n + offset:
           x.append(float(row[i]))
         if i == n + 3 + offset:
           x.append(float(row[i]))
@@ -115,12 +115,12 @@ def get_data(n, filename):
             s = np.std(fa12, axis = 0).tolist()
             fa12.append(x[0:n])
             x += [1.0]
-          #elif row[i] == "fa13":
+          elif row[i] == "fa13":
           #  #x += [0.0, 0.0, 1.0, 0.0, 0.0]
           #  fa13.remove(x[0:n])
           #  s = np.std(fa13, axis = 0).tolist()
           #  fa13.append(x[0:n])
-          #  x += [0.0]
+            x += [0.0]
           elif row[i] == "sp10":
             #x += [0.0, 0.0, 0.0, 1.0, 0.0]
             sp10.remove(x[0:n])
@@ -134,6 +134,7 @@ def get_data(n, filename):
             sp12.append(x[0:n])
             x += [0.0]
           elif row[i] == "sp14":
+            pass
             x += [0.0]
           else:
             assert False
@@ -180,13 +181,20 @@ def get_test(n):
 def write_data(n):
   f = open(str(n) + ".csv", 'wb')
   writer = csv.writer(f, lineterminator="\n")
-  X, Y = get_train(n)
-  print X[0]
-  print Y[0]
+  X, Y = get_data(n, "DATA.csv")
   rows = []
   for i in range(len(X)):
-    rows.append(X[i] + Y[i])
-  print rows[0]
+    if Y[i][1] == "A":
+      val = 3
+    elif Y[i][1] == "B":
+      val = 2
+    elif Y[i][1] == "C":
+      val = 1
+    else:
+      return False
+    rows.append(X[i] + [val])
+  writer.writerows(rows)
 
 
-#write_data(9)
+#for i in range(10):
+# write_data(i)

@@ -91,10 +91,10 @@ def MSE(X, Y, w):
 
 def print_weights(w):
   n = len(w) - 7
-  if n >= 5:
-    n -= 2
+  if n >= 4:
+    n -= 1
     PSET_ZEROS = True
-    QUIZ_ZEROS = True
+    QUIZ_ZEROS = False
   elif n >= 2:
     n -= 1 
     PSET_ZEROS = True
@@ -136,7 +136,7 @@ def go(n):
 
   return calculate_error(get_guesses(X, Y, w), Y_letter)
 
-go(9)
+#go(9)
 
 
 def baseline(n):
@@ -165,7 +165,7 @@ def baseline(n):
     c += 1
   print "VALIDATE: ", calculate_error(P, Y_val_letter)
 
-baseline(9)
+#baseline(9)
 
 gd = GradDescender()
 result = gd.grad_descent_on_grades()
@@ -173,3 +173,4 @@ print "result", result
 print len(result), len(gd.Y_letter)
 print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
 print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
+
