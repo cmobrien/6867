@@ -61,7 +61,7 @@ class GradDescender:
     self.X_val, self.Y_val = get_validate(n)    
     self.Y_letter = [y[1] for y in self.Y]          
     self.Y_val_letter = [y_val[1] for y_val in self.Y_val]
-    self.lamda = 10 # self dot lambda equals zero point one, I guess
+    self.lamda = 10    # self dot lambda equals zero point one, I guess
 
   def func_returning_misgraded_plus_lamda(self):
     actual = self.Y_letter
@@ -136,9 +136,52 @@ def go(n):
 
   return calculate_error(get_guesses(X, Y, w), Y_letter)
 
-go(9)
+#go(3)
 
 
+def give_me_the_WEIGHTS_son(n):
+  X, Y = get_train(n)
+  X_val, Y_val = get_validate(n)
+  Y_numerical = [[y[0]] for y in Y]
+  Y_val_numerical = [[y_val[0]] for y_val in Y_val]
+  Y_letter = [y[1] for y in Y]
+  Y_val_letter = [y_val[1] for y_val in Y_val]
+  w = ridge_regression(X, Y_numerical, 1)
+  return w
+
+def useLinRegToPredictDistributions(n):
+  X, Y = get_train(n)
+  w = give_me_the_WEIGHTS_son(n)
+  G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  Y_letter = [y[1] for y in Y]
+
+ # print Y_letter
+  
+  probability_dict = {} # maps from predicted scores to probabilities of gradesgrades 
+
+  for grade in range(-31, 25):
+    probability_dict[grade] = [0,0,0] #A's, B's, C's
+	 	
+  for student in G:	 
+    student_grade = Y[student[0]]
+    student_predicted_score = student[1]
+    if student_grade[1] == "A" and round(student_predicted_score) == 12:
+      print student[0]
+    if student_grade[1] == "A":
+      probability_dict[round(student_predicted_score)][0] += 1
+    if student_grade[1] == "B": 
+      probability_dict[round(student_predicted_score)][1] += 1
+    if student_grade[1] == "C":
+      probability_dict[round(student_predicted_score)][2] += 1
+
+  for grade in range(-31, 25):
+    if sum(probability_dict[grade]) > 0:
+      probability_dict[grade] = [float(i)/sum(probability_dict[grade]) for i in probability_dict[grade]]		
+   
+    print grade, probability_dict[grade]
+  
 def baseline(n):
   X, Y = get_train_simple(n)
   Y_letter = [y[1] for y in Y]
@@ -165,11 +208,15 @@ def baseline(n):
     c += 1
   print "VALIDATE: ", calculate_error(P, Y_val_letter)
 
-baseline(9)
 
-gd = GradDescender()
-result = gd.grad_descent_on_grades()
-print "result", result
-print len(result), len(gd.Y_letter)
-print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
-print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
+
+#baseline(9)
+
+#gd = GradDescender()
+#result = gd.grad_descent_on_grades()
+#print "result", result
+#print len(result), len(gd.Y_letter)
+#print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
+#print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
+
+useLinRegToPredictDistributions(9)
