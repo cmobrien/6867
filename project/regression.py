@@ -2,6 +2,7 @@ import numpy as np
 from make_features import *
 from scipy.optimize import fmin_bfgs
 from scipy.stats import norm
+import sys
 
 def blogDesignMatrix(X):
   return np.array([np.append([1], x) for x in X])
@@ -122,14 +123,18 @@ def print_weights(w):
   print "8-ness: ", w[-2]
   print "18-ness: ", w[-1]
 
-def go(n):
+def go(n, lamda, return_MSE=False):
   X, Y = get_train(n)
   X_val, Y_val = get_validate(n)
+  X_test, Y_test = get_test(n)
   Y_numerical = [[y[0]] for y in Y]
   Y_val_numerical = [[y_val[0]] for y_val in Y_val]
+  Y_test_numerical = [[y_test[0]] for y_test in Y_test]
   Y_letter = [y[1] for y in Y]
   Y_val_letter = [y_val[1] for y_val in Y_val]
-  w = ridge_regression(X, Y_numerical, 60)
+  Y_test_letter = [y_test[1] for y_test in Y_test]
+
+  w = ridge_regression(X, Y_numerical, lamda)
   print 
   print
   print_weights(w)
@@ -137,9 +142,18 @@ def go(n):
   print "TRAINING: ", calculate_error(get_guesses(X, Y, w), Y_letter)
   print "TRAINING: ", MSE(X, Y_numerical, w)
   print "VALIDATE: ", calculate_error(get_guesses(X_val, Y_val, w), Y_val_letter) 
-  print "VALIDATE: ", MSE(X_val, Y_val_numerical, w)
+  MSE_val_error = MSE(X_val, Y_val_numerical, w)
+  print "VALIDATE: ", MSE_val_error
+  print "TEST: ", calculate_error(get_guesses(X_test, Y_test, w), Y_test_letter)
+  MSE_test_error = MSE(X_test, Y_test_numerical, w)
+  print "TEST: ", MSE_test_error
 
-  return calculate_error(get_guesses(X, Y, w), Y_letter)
+  print "lambda", lamda
+
+  if return_MSE:
+    return MSE_val_error
+  else:
+    return calculate_error(get_guesses(X, Y, w), Y_letter)
 
 def give_me_the_WEIGHTS_son(n):
   X, Y = get_train(n)
@@ -248,6 +262,45 @@ def baseline(n):
 #print len(result), len(gd.Y_letter)
 #print calculate_error(get_guesses(gd.X, gd.Y, result), gd.Y_letter)
 #print calculate_error(get_guesses(gd.X_val, gd.Y_val, result), gd.Y_val_letter)
-
 #print useLinRegToPredictGaussians(1)
-go(1)
+
+def binarySearchOverTheLambdas(n, highPoint, lowPoint, highVal, lowVal):
+  midPoint = (highPoint+lowPoint)/2.
+  midVal = go(n, midPoint, True)
+  
+  if (highPoint-lowPoint) < 0.1:
+    if highVal < lowVal:
+      return ("lambda is" + str(highPoint), "MSE is" + str(highVal))
+    else:
+      return ("lambda is" + str(lowPoint), "MSE is" + str(lowVal))
+  
+  if (highVal < lowVal):
+    return binarySearchOverTheLambdas(n, highPoint, midPoint, highVal, midVal)
+  else:
+    return binarySearchOverTheLambdas(n, midPoint, lowPoint, midVal, lowVal) 
+
+def bruteForceSearchOverTheLambdas(n):
+  currentLamda = 0
+  
+  min_val_MSE = float("Inf")
+  min_val_lamda = None
+  
+  while currentLamda < 100:
+    testVal = go(n, currentLamda, False)
+    if testVal < min_val_MSE:
+      min_val_lamda = currentLamda
+      min_val_MSE = testVal
+      
+    currentLamda += 0.1
+  
+  return min_val_lamda  
+    
+
+highPoint = 1000
+ 
+n = int(sys.argv[1])
+lowVal = go(n, 0, True)
+highVal = go(n, highPoint, True)
+
+print bruteForceSearchOverTheLambdas(n)
+
