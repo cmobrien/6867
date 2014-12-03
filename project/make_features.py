@@ -98,46 +98,17 @@ def get_data(n, filename):
     for row in grades:
       x = []
       for i in range(len(row)):
-        if i < n + offset:
+        if i <= n + offset:
           x.append(float(row[i]))
         if i == n + 3 + offset:
           x.append(float(row[i]))
         elif i == n + 1 + offset:
-          if row[i] == "fa10":
-            #x += [1.0, 0.0, 0.0, 0.0, 0.0]
-            fa10.remove(x[0:n])
-            s = np.std(fa10, axis = 0).tolist()
-            fa10.append(x[0:n])
+          if row[i] == "fa10" or row[i] == "fa12" or row[i] == "fa13":
             x += [1.0]
-          elif row[i] == "fa12":
-            #x += [0.0, 1.0, 0.0, 0.0, 0.0]
-            fa12.remove(x[0:n])
-            s = np.std(fa12, axis = 0).tolist()
-            fa12.append(x[0:n])
-            x += [1.0]
-          elif row[i] == "fa13":
-          #  #x += [0.0, 0.0, 1.0, 0.0, 0.0]
-          #  fa13.remove(x[0:n])
-          #  s = np.std(fa13, axis = 0).tolist()
-          #  fa13.append(x[0:n])
-            x += [1.0]
-          elif row[i] == "sp10":
-            #x += [0.0, 0.0, 0.0, 1.0, 0.0]
-            sp10.remove(x[0:n])
-            s = np.std(sp10, axis = 0).tolist()
-            sp10.append(x[0:n])
-            x += [0.0]
-          elif row[i] == "sp12":
-            #x += [0.0, 0.0, 0.0, 0.0, 1.0]
-            sp12.remove(x[0:n])
-            s = np.std(sp12, axis = 0).tolist()
-            sp12.append(x[0:n])
-            x += [0.0]
-          elif row[i] == "sp14":
+          elif row[i] == "sp10" or row[i] == "sp12" or row[i] == "sp14":
             x += [0.0]
           else:
             assert False
-          #x += s
         elif i == n + 2 + offset:
           if row[i] == "TRUE":
             x.append(1.0)
@@ -153,9 +124,11 @@ def get_data(n, filename):
           #v = v[0:3] + v[4:10] + v[11:12] + v[13:18] + v[19:21] + v[23:]
           v = [v[5]] + [v[7]] + [v[17]]
           x += v
-      X.append(x)
+      if n <= 2:
+        X.append(x)
+      else:
+        X.append(x[:n + 1] + x[n + 2:])
       Y.append([float(row[-2]), row[-1]])
-
   return X, Y
 
 def get_train_simple(n):
