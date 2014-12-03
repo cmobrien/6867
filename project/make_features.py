@@ -38,7 +38,7 @@ def get_simple(n, filename):
 
 
 def get_data(n, filename):
-  with open(filename, 'r') as csvfile:
+  with open(filename, 'rU') as csvfile:
     r = csv.reader(csvfile, delimiter = ",")
     rows = [row for row in r]
 
@@ -120,7 +120,7 @@ def get_data(n, filename):
           #  fa13.remove(x[0:n])
           #  s = np.std(fa13, axis = 0).tolist()
           #  fa13.append(x[0:n])
-            x += [0.0]
+            x += [1.0]
           elif row[i] == "sp10":
             #x += [0.0, 0.0, 0.0, 1.0, 0.0]
             sp10.remove(x[0:n])
@@ -134,7 +134,6 @@ def get_data(n, filename):
             sp12.append(x[0:n])
             x += [0.0]
           elif row[i] == "sp14":
-            pass
             x += [0.0]
           else:
             assert False

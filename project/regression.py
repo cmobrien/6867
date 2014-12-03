@@ -3,6 +3,9 @@ from make_features import *
 from scipy.optimize import fmin_bfgs
 from scipy.stats import norm
 import sys
+import math
+import matplotlib.pyplot as pl
+
 
 def blogDesignMatrix(X):
   return np.array([np.append([1], x) for x in X])
@@ -38,6 +41,18 @@ def dot(x1, x2):
 def predict(x, y, w):
   return w[0] + dot(x, w[1:])
 
+def roundToNearestMultipleOf(x, d):
+  multiple = int(x)/d
+  modulus = x%d
+  
+  print x, d, multiple, modulus
+  
+  if modulus > d/2.:
+#    print multiple, d+1, multiple*(d+1)
+    return (multiple+1)*d
+  else:
+    return multiple*d
+
 def get_guesses(X, Y, w):
   As = len([y for y in Y if y[1] == 'A'])
   Bs = len([y for y in Y if y[1] == 'B'])
@@ -57,7 +72,19 @@ def get_guesses(X, Y, w):
   return P
 
 def get_cutoffs():
-  return [-6, 2]
+  X, Y = get_train(n)
+  X_val, Y_val = get_validate(n)
+  
+  Y_joint = Y + Y_val
+  X_joint = X + X_val
+  
+  As = len([y for y in Y_joint if y[1] == 'A'])
+  Bs = len([y for y in Y_joint if y[1] == 'B'])
+  Cs = len([y for y in Y_joint if y[1] == 'C'])
+    
+  Y_joint.sort(key = lambda x: x[0])
+  
+  return [Y_joint[Cs][0], Y_joint[Cs+Bs][0]]
   # replace with something better  
 
 class GradDescender:
@@ -148,7 +175,7 @@ def go(n, lamda, return_MSE=False):
   MSE_test_error = MSE(X_test, Y_test_numerical, w)
   print "TEST: ", MSE_test_error
 
-  print "lambda", lamda
+#  print "lambda", lamda
 
   if return_MSE:
     return MSE_val_error
@@ -165,7 +192,10 @@ def give_me_the_WEIGHTS_son(n):
   w = ridge_regression(X, Y_numerical, 1)
   return w
 
-def useLinRegToPredictGaussians(n):
+def cumLogistic(x):
+  return 1./(1+math.exp(-x))
+
+def useLinRegToPredictGaussians(n, f):
   X, Y = get_train(n)
   Y_numerical = [[y[0]] for y in Y]
 
@@ -173,10 +203,28 @@ def useLinRegToPredictGaussians(n):
   G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
   G.sort(key = lambda x: x[1])
 
+  errorDict = {}
+  
+  bucketSize = 1
+  
+  for a in range(-50, 50, bucketSize):
+    errorDict[a] = 0
+
   estimatedSigma = 0 
 
   for g in G:
-    estimatedSigma += (g[1] - Y_numerical[g[0]]) ** 2
+    error = g[1] - Y_numerical[g[0]]
+    estimatedSigma += error ** 2
+  
+    errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
+  
+  print errorDict
+  
+  data = errorDict.items()
+  data.sort(key = lambda x: x[0])
+  
+  pl.plot([i[0] for i in data], [i[1] for i in data], "b-")
+#  pl.show()
 
   estimatedSigma /= len(G)
   estimatedSigma = estimatedSigma**0.5
@@ -184,14 +232,46 @@ def useLinRegToPredictGaussians(n):
 
   returnArray = []
 
+  cutoffs = get_cutoffs()
+
   for g in G:
-    cutoffs = get_cutoffs()
-    oddsOfC = norm.cdf((cutoffs[0] - g[1])/estimatedSigma)
-    oddsOfB = norm.cdf((cutoffs[1] - g[1])/estimatedSigma) - oddsOfC
+    oddsOfC = f((cutoffs[0] - g[1])/estimatedSigma)
+    oddsOfB = f((cutoffs[1] - g[1])/estimatedSigma) - oddsOfC
     oddsOfA = 1 - oddsOfC - oddsOfB
 	
-    print g[0], g[1], [oddsOfA, oddsOfB, oddsOfC]
+#    print g[0], g[1], [oddsOfA, oddsOfB, oddsOfC]
     returnArray.append((g[0], g[1], [oddsOfA, oddsOfB, oddsOfC]))	
+
+  X_test, Y_test = get_test(n)
+  Y_test_letter = [y[1] for y in Y_test]
+  
+  G_test = [(i, predict(X_test[i], Y_test[i], w)) for i in range(len(X_test))]
+  G_test.sort(key = lambda x: x[0])
+  
+#  print G_test
+  
+  penalty = 0
+  
+  print "here"
+  cutoffs = get_cutoffs()
+  print "there"
+  
+  for i, g_test in enumerate(G_test):
+    oddsOfC = f((cutoffs[0] - g_test[1])/estimatedSigma)
+    oddsOfB = f((cutoffs[1] - g_test[1])/estimatedSigma) - oddsOfC
+    oddsOfA = 1 - oddsOfC - oddsOfB
+    
+    print penalty, g_test[0], g_test[1], oddsOfA, oddsOfB, oddsOfC, Y_test_letter[g_test[0]]
+    
+    
+    if Y_test_letter[g_test[0]] == "A":
+      penalty += math.log(oddsOfA)
+    elif Y_test_letter[g_test[0]] == "B":
+      penalty += math.log(oddsOfB)
+    elif Y_test_letter[g_test[0]] == "C":
+      penalty += math.log(oddsOfC)
+
+  return penalty
 
 #  return returnArray
 	
@@ -285,13 +365,15 @@ def bruteForceSearchOverTheLambdas(n):
   min_val_MSE = float("Inf")
   min_val_lamda = None
   
-  while currentLamda < 100:
+  while currentLamda < 500:
     testVal = go(n, currentLamda, False)
+    print "testVal", testVal
+    print "min_val_lamda", min_val_lamda
     if testVal < min_val_MSE:
       min_val_lamda = currentLamda
       min_val_MSE = testVal
       
-    currentLamda += 0.1
+    currentLamda += 1
   
   return min_val_lamda  
     
@@ -302,5 +384,15 @@ n = int(sys.argv[1])
 lowVal = go(n, 0, True)
 highVal = go(n, highPoint, True)
 
-print bruteForceSearchOverTheLambdas(n)
+print binarySearchOverTheLambdas(n, highPoint, 0, highVal, lowVal)
 
+#print bruteForceSearchOverTheLambdas(n)
+
+#print go(sys.argv[1], 0, False)
+
+#classic functions: norm.cdf, cumLogistic
+
+#print useLinRegToPredictGaussians(n, norm.cdf)
+
+#print get_cutoffs()
+#get_cutoffs()
