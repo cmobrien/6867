@@ -38,7 +38,7 @@ def get_simple(n, filename):
 
 
 def get_data(n, filename):
-  with open(filename, 'r') as csvfile:
+  with open(filename, 'rU') as csvfile:
     r = csv.reader(csvfile, delimiter = ",")
     rows = [row for row in r]
 
