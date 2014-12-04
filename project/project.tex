@@ -76,6 +76,8 @@
 
 \section{Abstract}
 
+\renewcommand*{\arraystretch}{1.5}
+
 \section{Introduction}
 
 Say that you are a student in a large introductory class, like 6.006. Halfway through the semester, you'd really like to know: \textit{How likely is it that I get an A in this class?}
@@ -267,6 +269,60 @@ Note that the most common grade among the training and validation data was a $B$
 
 It is somewhat disappointing that we are not able to determine final grades with 100\% accuracy, even when all of their scores are completely determined. The reason for this is variation among thresholds from different professors. If professors observed strict proportions of $A$'s, $B$'s, and $C$'s, we could easily predict grades with 100\% accuracy after the final. Sadly, MIT does not allow such grading policies.
 
+\subsubsection{Feature Weights}
+
+To see how important the models consider the various features, let us look at the weights that they produce for each feature at various points throughout the semester.
+
+Figure 3 shows the weights assigned to each feature after 3, 6, and 9 assignments (note that these mark the points after each quiz/final) for ordered probit. The weights for ordered logit are very similar, so we do not display them here. We can observe some general trends from looking at these weights. First, the assignment scores tend to carry a lot more weight than the personal information, which is expected.
+
+The weights of all the assignments tend to be very similar. Recall that the values of the features already take into account the fact that different assignments have different weights in their final grades, so we expect these weights to be roughly equal.
+
+We do see some variety among the weights, although we believe this is because there is some noise introduced by the fact that these assignments had different variances (and the variances differed slightly among years). For example, most students perform very well on problem set 1. Thus, a students score on problem set 1 does not give us much information about their final grade. We believe this is why we tend to see a much lower weight on the first problem set. 
+
+\begin{figure}
+\centering
+\begin{tabular}{| c || c | c | c |}
+\hline
+ &\multicolumn{3}{ c |}{Weights}\\
+\hline
+Feature & 3 & 6 & 9 \\
+\hline
+\hline
+Problem Set 1 & $0.173$  & $0.116$  & $0.361$ \\
+\hline
+Problem Set 2 & $0.449$  & $0.226$ & $0.463$ \\
+\hline
+Quiz 1	       & $0.489$  &  $0.454$ & $0.487$ \\ 
+\hline
+Problem Set 3 & $-$          & $0.532$ & $0.442$ \\
+\hline 
+Problem Set 4 & $-$          & $0.391$ & $0.302$  \\
+\hline
+Quiz 2	       & $-$          & $0.381$ & $0.346$ \\
+\hline
+Problem Set 5 & $-$          & $-$& $0.617$\\
+\hline
+Problem Set 6 & $-$          & $-$& $0.284$ \\
+\hline
+Final		       & $-$          & $-$& $0.503$\\
+\hline
+Fall		       & $-0.083$ & $-0.195$ & $-0.227$ \\
+\hline
+Male		       & $0.065$  & $0.004$ & $0.050$ \\
+\hline
+Year 		       & $-0.096$ & $0.001$ & $0.012$\\
+\hline
+Course 6	       & $0.028$  & $0.192$ & $0.488$ \\
+\hline
+Course 8	       & $0.026$  & $0.050$ & $-0.005$ \\
+\hline
+Course 18       & $0.337$  & $0.098$ & $0.152$ \\
+\hline
+\end{tabular}
+\caption{TEST}
+\end{figure}
+
+
 \subsubsection{Grade Distributions}
 
 Next, we move on to focus on the grade distribution problem. Note that when we solved the ordered logit/probit, we already solved the grade distribution problem. To solve the grade prediction problem, we simply chose the most likely estimate. However, this is just throwing away additional information.
@@ -282,6 +338,8 @@ We notice that if we assign a student a 0\% chance of receiving a grade that the
 We also notice that if we guess their grade correctly with 100\% certainly, we suffer no penalty. This also seems appropriate. If we are entirely sure of a student's final grade, then we should not be penalized for our guess.
 
 Figure xx shows the values of the minimum values of the negative log likelihoods after each assignment is due, for both ordered logit and probit. Interestingly, they produce nearly identical results. This is good news, because it means that the distributional assumptions are not driving the result. As in Figure xx, we show both the curves as a function of the number of assignments completed (in Figure xx(a)), and as a function of percentage of the grade completed (in Figure xx(b)). 
+
+In Figure xx(b), we also observe that the value of the slope decreases slightly as we determine more of their final grades. Again, this points to the fact that as we move through the semester, each additional determined percentage point tells us less than the previous.
 
 %As a result, we introduce a scoring rule for a set of distributions. Let $p^{(i)}$ represent the probability we assigned to student $i$ receiving their actual grade, $y^{(i)}$. So, for example, if we assigned student $i$ a 40\% chance of receiving an A, and the student eventually received an $A$, we would have $p^{(i)} = 0.4$.
 
@@ -327,38 +385,83 @@ Again, we notice that even with no assignments included in the features, our ord
 
 \begin{figure*}
 \centering
-\begin{tabular}{c}
+\begin{tabular}{c c}
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/dist3.png}
+	\includegraphics[width=3in]{plots/logit3dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/probit3dist.png}
 	\caption{CAPTION}
 \end{subfigure}
 \\
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/dist6.png}
+	\includegraphics[width=3in]{plots/logit6dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/probit6dist.png}
 	\caption{CAPTION}
 \end{subfigure}
 \\
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/dist9.png}
+	\includegraphics[width=3in]{plots/logit9dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/probit9dist.png}
 	\caption{CAPTION}
 \end{subfigure}
 \end{tabular}
 \caption{TEST}
 \end{figure*}
 
-It is also interesting to look at how the distributions over grades vary between the students. We attempt to represent this information graphically in Figure xx. Recall that for each student, we found the maximum likelihood estimate, and then classified their grade according to that. We are interested in a few things.
+\subsubsection{Understanding the Distributions}
 
-In each subfigure, we display the proportion of students who had an maximum likelihood of at least a certain value, for students classified correctly and incorrectly, for both the ordered logit and probit models. The different subfigures represent different points throughout the semester. 
+It is also interesting to try to get a feel for how these distributions actually looked. To start, let's consider a few test points, and look at their distributions after the first quiz (these are not real students). Consider three students taking 6.006 in the spring. Ben is a senior in course 6. He scored exactly average on the first two problem sets and first quiz. Jeremy is a freshman in course 6, and also scored average on the first two problem sets and first quiz. Paul is also a freshman in course 6. He scored average on the first two problem sets, but 10\% above average on the first quiz.
 
-First, we'd like to know how the values of the maximum likelihoods differed for those students that we were able to classify correctly, and those who we classified incorrectly. We can see that both the ordered logit and probit consistently tended to place higher probabilities on the students that they were ultimately able to classify correctly. This is comforting. It means that the models, in general, claimed to be less sure about the ones which they got wrong than the ones they got right.
+Figure xx shows the distribution returned by ordered probit (ordered logit has the same trends and very similar results, so we do not display it here). It may be surprising that age plays such a large role here. However, in the training data, we see that 66.2\% of freshman received A's in the class, while only 32.5\% of seniors did. With this in mind, their differences are not too surprising.
 
-We're also interested in how the maximum likelihoods differed between the ordered logit and probit models. This is the first time where we have seen a significant different in the performance of the two models. We can see that the ordered logit model tends to assign higher maximum likelihoods than the ordered probit model, particularly at the beginning and end of the semester.
+
+\begin{figure}
+\centering
+\begin{tabular}{|c | c | c | c |}
+\hline
+Student & $P(y = A)$ & $P(y = B)$ & $P(y = C)$\\
+\hline
+Ben & $28.1\%$ & $66.9\%$ & $5.0\%$\\
+\hline
+Jeremy & $38.6\%$ & $58.7\%$ & $2.7\%$\\
+\hline
+Paul & $57.9\%$ & $41.4\%$ & $0.07\%$\\
+\hline
+\end{tabular}
+\caption{CAPTION}
+\end{figure}
+
+
+
+Let us take a more general look at the distributions in the test set. We attempt to represent this information graphically in Figure xx. Recall that for each student, we found the maximum likelihood estimate, and then classified their grade according to that.
+
+Focus on Figure xx(a). Consider all the students who we were able to correctly guess their final grade. Lets focus on the values of the probabilities we assigned to their maximum likelihood estimates. The blue line represents a histogram of these values, bucketed to intervals of 5\% (we did not display the histogram in the bar form so that we could show multiple on the same graph). The green line is a similar histogram for students that we were not able to correctly guess their final grade.
+
+The charts in the left column were all generated using distributions from the ordered logit model, and the charts in the right column were all generated using distributions from the ordered probit model. The rows correspond to different points throughout the semester. The first row is after three assignments (two pests and a quiz), the second row is after six assignments (four pests and two quizzes), and the last row is after all nine assignments.
+
+
+%, we display the proportion of students who had an maximum likelihood of at least a certain value, for students classified correctly and incorrectly, for both the ordered logit and probit models. The different subfigures represent different points throughout the semester. 
+
+There are a few interesting trends we can see from these graphs. First, we look at how the values of the maximum likelihoods differed for those students that we were able to classify correctly, and those who we classified incorrectly. We can see that both the ordered logit and probit consistently tended to place higher probabilities on the students that they were ultimately able to classify correctly. This is comforting. It means that the models, in general, claimed to be less sure about the ones which they got wrong than the ones they got right.
+
+We're also interested in how the maximum likelihoods differed between the ordered logit and probit models. This actually is not especially apparent in these graphs, although it becomes much more obvious in the cumulative versions of these graphs (which we do not display here). In general, the ordered logit models tends to be more sure than the ordered probit model (corresponding to higher values for the maximum likelihood).
 
 Finally, we can see how the maximum likelihoods changes throughout the semester. The general trend we see is that as time passes, the models assign higher probabilities to the ones they ultimately classified as correct, and lower probabilities to the ones they ultimately classified as incorrect. This is expected behavior. As the model receives more information, it is given more reason to be sure of the answers that it has classified correctly, and more reason to be unsure of the ones classified incorrectly.
 
 FIGURE OUT WHERE TO PUT IN GAUSSIAN GRAPH
 
-DISCUSS VALUES OF WEIGHTS A LITTLE
+\section{Distributions with Regression}
 
 \section{Discussion}
 
