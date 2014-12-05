@@ -165,7 +165,32 @@ It seems very plausible that the student's final score depends \emph{linearly} o
 
 The indirect effect of past grades on final score represents the fact that one's past performance in the class is predictive of future performance. It is less obvious that this effect is linear. But we claim that the best prediction of how a student will do in the class in the future, to first order, is how they've done in the past.
 
-In fact, it's roughly this times 2/3, because of regression to the mean; and this estimate, of course, ignores the student's personal information. Assuming that a student's performance on assignments is their ``talent'' plus some additive Gaussian noise, and talent is normally distributed in the course, talent will depend linearly on past performance, which implies that future performance will depend linearly on past performance.
+If we want a more precise understanding of the best prediction of how a student will do in the class in the future, we have to account for regression to the mean. A student who has done extremely well on the first assignment is unlikely to do as well on the second assignment, because odds are their early overperformance was in part due to good fortune. We will argue here, however, that the best prediction of a student's future performance is still linear in their past performance, even if the two aren't equal.
+
+Our argument proceeds as follows. We assume that each student has some level of inherent ``talent'' $t$ that affects their performance on assignments. We assume that talent is normally distributed among the students in the class, with standard deviation $\sigma_t$. 
+
+We assume that a student's performance on assignments is going to be equal to their talent, along with some additive gaussian noise with standard deviation $\sigma_s$. Let $S$ be the random variable representing this student's performance on an assignment. The student's probability of getting some score $s$ on that assignment is then given as follows (all scores, talents, and additive noise are centered around 0):
+
+$$Pr(S = s) = \frac{1}{\sqrt{2\pi(\sigma_s^2 + \sigma_t^2)}}e^{-\frac{1}{2}\frac{x^2}{\sigma_s^2+\sigma_t^2}}$$
+
+However, this is not exactly what we want to know. What we want to know is, given that the student got some score $s$ on a past assignment, what is the likeliest value for their talent to have? The likelihood that they got a score $s$ on an assignment, as a function of $t$ and $s$, is given by
+
+$$Pr(S = s) \sim Pr(T = t) Pr(S = s | T = t)$$ 
+$$Pr(S = s) \sim e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}$$
+
+We want to find the value for $t$ that maximizes the likelihood. To do this, we take the derivative with respect to $t$ of the above likelihood, and set it equal to zero.
+
+$$\frac{d}{dt} (e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}) = 0$$
+$$(\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2})(e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}) = 0$$
+$$(\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2}) = 0$$
+$$(t(\sigma_s^2+\sigma_t^2) - s\sigma_t^2) = 0$$
+$$t = s \frac{\sigma_t^2}{\sigma_s^2+\sigma_t^2}$$
+
+Talent does indeed depend linearly on past exam score, with a constant multiplicative factor of $\frac{\sigma_t^2}{\sigma_s^2+\sigma_t^2}$ representing the effect of regression to the mean. 
+
+Because likely future score plainly depends directly on talent, it follows that future score will depend linearly on past score, according to our assumptions. We therefore argue that our use of linear regression in this case is justified.
+
+%In fact, it's roughly this times 2/3, because of regression to the mean; and this estimate, of course, ignores the student's personal information. Assuming that a student's performance on assignments is their ``talent'' plus some additive Gaussian noise, and talent is normally distributed in the course, talent will depend linearly on past performance, which implies that future performance will depend linearly on past performance.
 
 Students' final scores can't help but depend linearly on binary variables such as gender, or membership in a major (just from the fact that the relationship to any binary variable must be linear). The notion that students' final scores depend linearly on their year, however, is more dubious.
 
