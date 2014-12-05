@@ -197,7 +197,9 @@ The offset $w_0$ is in turn given by:
 
 $$W_0 = (\bar{y} - W^T\bar{X})$$
 
+\subsection{Results}
 
+When we ran ridge regression on past semesters' data, we got the following values for the weight vector's entries. Note that we ran the regression after knowing 0, 3, 6, and 9 of the assignments' values, respectively, before predicting final score. 
 
 \begin{figure*}
 \centering
@@ -232,46 +234,57 @@ $$W_0 = (\bar{y} - W^T\bar{X})$$
 
 \begin{figure}
 \centering
-\begin{tabular}{| c || c | c | c |}
+\begin{tabular}{| c || c | c | c | c |}
 \hline
- &\multicolumn{3}{ c |}{Weights}\\
+ &\multicolumn{4}{ c |}{Weights}\\
 \hline
-Feature & 3 & 6 & 9 \\
+Feature & 0 & 3 & 6 & 9 \\
 \hline
+$w_0$ & $5.04$ & $-1.00$ & $-0.07$ & $0.00$ \\ 
 \hline
-Problem Set 1 & $$  & $$  & $$ \\
+Problem Set 1 & $-$ & $2.44$  & $1.11$  & $1.00$ \\
 \hline
-Problem Set 2 & $$  & $$ & $$ \\
+Problem Set 2 & $-$ & $4.04$  & $0.85$ & $1.00$ \\
 \hline
-Quiz 1	       & $$  &  $$ & $$ \\ 
+Quiz 1	      & $-$ & $2.49$  &  $1.53$ & $1.00$ \\ 
 \hline
-Problem Set 3 & $-$          & $$ & $$ \\
+Problem Set 3 & $-$ & $-$          & $1.94$ & $1.00$ \\
 \hline 
-Problem Set 4 & $-$          & $$ & $$  \\
+Problem Set 4 & $-$ & $-$          & $1.99$ & $1.00$  \\
 \hline
-Quiz 2	       & $-$          & $$ & $$ \\
+Quiz 2	       & $-$ & $-$          & $1.79$ & $1.00$ \\
 \hline
-Problem Set 5 & $-$          & $-$& $$\\
+Problem Set 5 & $-$ & $-$          & $-$& $1.00$\\
 \hline
-Problem Set 6 & $-$          & $-$& $$ \\
+Problem Set 6 & $-$ & $-$          & $-$& $1.00$ \\
 \hline
-Final		       & $-$          & $-$& $$\\
+Final		& $-$       & $-$          & $-$& $1.00$\\
 \hline
-Fall		       & $$ & $$ & $$ \\
+Pset-zeros   & $-$ & $4.89$ & $-0.08$ & $0.00$ \\
 \hline
-Male		       & $$  & $$ & $$ \\
+Fall		&  $0.62$     & $0.98$ & $1.49$ & $0.00$ \\
 \hline
-Year 		       & $$ & $$ & $$\\
+Male		&  $1.00$     & $1.41$  & $0.26$ & $0.00$ \\
 \hline
-Course 6	       & $$  & $$ & $$ \\
+Year 		&  $-2.82$   & $-1.06$ & $-0.16$ & $0.00$\\
 \hline
-Course 8	       & $$  & $$ & $$ \\
+Course 6	&  $-0.34$    & $1.80$  & $0.03$ & $0.00$ \\
 \hline
-Course 18       & $$  & $$ & $$ \\
+Course 8	&  $0.45$  &  $1.57$  &  $0.40$  &  $0.00$ \\
+\hline
+Course 18       & $2.00$ & $2.58$  & $0.17$ & $0.00$ \\
 \hline
 \end{tabular}
-\caption{THIS SHOULD BE FILLED IN TO HAVE THE WEIGHTS FROM MSE REGRESSION AFTER EACH OF 3, 6, 9 ASSIGNMENTS}
+\caption{$w$, as returned by ridge regression.}
 \end{figure}
+
+Looking at the above results, there are a few noteworthy trends. The first is that weights tend to decrease in absolute value as one progresses across the table from left to right; the weights for assignments tend towards one, and the weights for personal statistics tend towards zero. This is comforting, because the theory we had was that assignments would have weights of more than one and personal statistics would have non-zero weights because both the early assignment scores and the personal statistics have some predictive power over future assignments. As the number of future assignments decreases, then, one would naturally expect this predictive effect to decrease and the direct effect of assignment grades being factored into final grades to increase. \\
+
+In addition to this overall effect on the columns of the table, we can observe some interesting trends no rows. Taking the class in the fall, being male, and being a physics major all appear to give a small advantage in 6.006; being a math major, and being a freshman rather than a junior or a senior both appear to confer a somewhat more important advantage. \\
+
+All of these effects, of course, are dwarfed by the predictive effect of early assignments on later ones. This is entirely unsurprising; as discussed earlier, the best predictor of final score is, to first order, performance up until this point. \\
+
+There is one more feature that deserves mention here, and that is the effect on score of getting zeros on problem sets. We theorized early on that getting zeros on problem sets would actually have a substantial \emph{positive} effect on predicted score, because a zero on a problem set does not carry the same predictive weight that poor scores on assignments otherwise might. Put otherwise, most low scores on assignments tend to signal a relatively poor understanding of the material, whereas a zero on a problem set might instead be signaling simple laziness. We see that this theory is more or less borne out by the data, with the positive effect of problem set zeros beginning strong and quickly becoming very weak as the predictive effect of problem sets diminishes with time.
 
 \section{Ordered Logit/Probit}
 

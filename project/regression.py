@@ -530,7 +530,7 @@ n = int(sys.argv[1])
 
 #print bruteForceSearchOverTheLambdas(n)
 
-#print go(sys.argv[1], 0, False)
+print go(int(sys.argv[1]), 0, False)
 
 #classic functions: norm.cdf, cumLogistic
 
