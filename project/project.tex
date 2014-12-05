@@ -286,6 +286,26 @@ All of these effects, of course, are dwarfed by the predictive effect of early a
 
 There is one more feature that deserves mention here, and that is the effect on score of getting zeros on problem sets. We theorized early on that getting zeros on problem sets would actually have a substantial \emph{positive} effect on predicted score, because a zero on a problem set does not carry the same predictive weight that poor scores on assignments otherwise might. Put otherwise, most low scores on assignments tend to signal a relatively poor understanding of the material, whereas a zero on a problem set might instead be signaling simple laziness. We see that this theory is more or less borne out by the data, with the positive effect of problem set zeros beginning strong and quickly becoming very weak as the predictive effect of problem sets diminishes with time.
 
+\subsection{Predicting Letter Grades}
+
+As noted above, regression is extremely well-suited to predicting numerical scores. Predicting letter grades, however, is perhaps a slightly more awkward fit, since linear regression is not properly designed for classification. \\
+
+In order to use linear regression to predict letter grades, the simplest conversion is simply to take the predicted final scores returned by the ridge regression as described above, and sort the scores into A, B, and C bins according to the average number of A's, B's, and C's given out in a given semester. \\
+
+In other words, suppose that in an average run of 6.006, the distribution of grades is 40\% A's, 40\% B's, and 20\% other grades, abbreviated in this paper as ``C's.'' (In reality, the average run of 6.006 has slightly more A's and slightly fewer C's than that, but it's close enough.) In that case, we take the final scores predicted by the ridge regression, and we assign the predicted scores of the students to letter grades according to whether they belong to the top 40\% of predicted scores (in which case we predict an A), the bottom 20\% of predicted scores (in which case we predict a C) or the middle 40\% of predicted scores (in which case we predict a B). Call this mapping from numerical scores $s$ to letter grades $c(s)$\\
+
+If we just do this--take the weights from the previous section that were designed to minimize MSE between predicted final score and actual final score, and use them to classify students by grade--we do reasonably well, misclassifying 8 students when we have access to every assignment grade and 126 students when we have access to none of them. The misclassification rate of this algorithm is illustrated in more detail in the figure below. \\ % TODO deal
+
+However, this approach is somewhat unnatural, in that the weight vector is being optimized to minimize MSE, but is being used to predict letter grades. It would seem to make more sense to optimize the weight vector to minimize the number of errors in letter grade classification, if that is what it is going to eventually be used for. Therefore, we seek to minimize the following error function:
+
+$$E(w) = \sum_i e^{(i)} + \lambda ||w||^2$$
+
+where $e^{(i)} = 1$ if $c(x^{(i)} \cdot w) = y^{(i)}$ and $e^{(i)} = 0$ if $c(x^{(i)} \cdot w) \not{=} y^{(i)}$, with $c(s)$ defined as above.    \\
+
+This error function is not nicely differentiable the way the ordinary goal function for ridge regression is. Therefore, we could not find a closed form for the solution; instead, we performed a gradient descent over the $w$ values, in an attempt to find a local minimum whose values will hopefully not be far from those of the global minimum. To do this gradient descent, we used the fmin_bfgs package from scipy.\\
+
+To our mild surprise, the results of the gradient descent did not yield materially different results from the MSE minimization, either in terms of the observed mean-squared-error (which would have expected the previous method to perform better at) or in terms of the number of errors in classification in the test set (which we would have expected the previous method to perform worse at). The new method misclassified 14 students with access to every assignment grade and 126 students with access to no assignment grades. A more complete description of its performance is visible in the figure below. % TODO deal
+
 \section{Ordered Logit/Probit}
 
 This problem seems to lend itself more naturally to classification than to regression. Thus, we decided to model this problem as a classification problem. For this problem, we are no longer interested in predicting student's final numerical scores. Instead, we are only interested in predicting students final letter grade.

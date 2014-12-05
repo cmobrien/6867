@@ -396,20 +396,20 @@ def useLinRegToPredictGaussians(n, f):
     
     
     if Y_test_letter[g_test[0]] == "A":
-      try: 
-        penalty += math.log(oddsOfA)
-      except: 
-        penalty = float("-Inf")
+#      try: 
+      penalty += math.log(oddsOfA)
+#      except: 
+#        penalty = float("-Inf")
     elif Y_test_letter[g_test[0]] == "B":
-      try: 
-        penalty += math.log(oddsOfB)
-      except: 
-        penalty = float("-Inf")
+#      try: 
+      penalty += math.log(oddsOfB)
+#      except: 
+#        penalty = float("-Inf")
     elif Y_test_letter[g_test[0]] == "C":
-      try: 
-        penalty += math.log(oddsOfA)
-      except: 
-        penalty = float("-Inf")
+#      try: 
+      penalty += math.log(oddsOfC)
+#      except: 
+#        penalty = float("-Inf")
 
   return penalty
 
@@ -530,11 +530,11 @@ n = int(sys.argv[1])
 
 #print bruteForceSearchOverTheLambdas(n)
 
-print go(int(sys.argv[1]), 0, False)
+#print go(int(sys.argv[1]), 0, False)
 
 #classic functions: norm.cdf, cumLogistic
 
-#print useLinRegToPredictGaussians(n, norm.cdf)
+print useLinRegToPredictGaussians(n, norm.cdf)
 
 #print get_cutoffs()
 #get_cutoffs()
