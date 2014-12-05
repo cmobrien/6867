@@ -484,7 +484,9 @@ Despite the lack of direct comparison with regression, we can observe some gener
 
 The weights of all the assignments tend to be very similar. Recall that the values of the features already take into account the fact that different assignments have different weights in their final grades, so we expect these weights to be roughly equal.
 
-We do see some variety among the weights, although we believe this is because there is some noise introduced by the fact that these assignments had different variances (and the variances differed slightly among years). For example, most students perform very well on problem set 1. Thus, a student's score on problem set 1 does not give us much information about their final grade. We believe this is why we tend to see a much lower weight on the first problem set. 
+We do see some variety among the weights, although we believe this is because there is some noise introduced by the fact that these assignments had different variances (and the variances differed slightly among years). For example, most students perform very well on problem set 1. Thus, a student's score on problem set 1 does not give us much information about their final grade. We believe this is why we tend to see a much lower weight on the first problem set.
+
+A few of these weights have very unexpected values in the end. For example, the fact that the course 6 feature weight is higher than the feature weight on the final exam when all 9 assignments are considered is certainly unnerving. We attribute strange behavior like this to overfitting the training data. While we do not experiment with this idea in this paper, future work might try adding a regularization weight to ordered logit/probit in order to minimize the effects of overfitting.
 
 \begin{figure}
 \centering
@@ -655,7 +657,9 @@ hoping that these values would always be around 1. The results after 3 assignmen
 It appears that after only 3 assignments, our model was slightly too confident in predicting its values, while after 9 assignments it was slightly too modest. However, none of the averages are particularly far from 1, which gives us an indication that our distributions are a good fit for our data.
 
 
-\section{Fixed Cutoff Gaussian Probability Estimation}
+\section{Fixed Cutoff Gaussian Probability}
+\vspace*{-0.4em}
+\section{Estimation}
 
 
 \begin{figure*}
@@ -707,10 +711,6 @@ It appears that after only 3 assignments, our model was slightly too confident i
 \caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments that we include as features. Each graph shows the results using FCGEP and probit (replicated from Figure 10 for comparison).}
 \end{figure}
 
-\section{Fixed-Cutoff Gaussian Probability Estimation}
-
-\subsection{Motivation}
-
 Predicting final score and letter grade are both nice, but neither is difficult to get a reasonable handle on. As has been previously discussed, past scores are an excellent predictor of future scores, with the personal statistics only adding minor variations. And classification also is easy to get approximately right--just take the final score prediction, and sort it by percentile into an A bin, a B bin, or a C bin, also as previously described. \\
 
 Because both of these problems are so easy to roughly solve, finding accurate solutions to them is less impressive than it otherwise might be. Moreover, it isn't exactly what students care most about. If a 6.006 student had done six percentage points above average on the first midterm, she would have no trouble deducing that her expected overall score in the class would be about six percent above the average, or that the likeliest grade for her to get in the class was an A. But neither is exactly the thing she is likely to be wondering; most likely, if she is asking herself a question related to what her grade in 6.006 is going to be, she is wondering what the \emph{odds} are that she'll get an A. 60\%? 80\%? 95\%? Naturally, the answer for this specific student depends in large part on her past academic record, since that determines her prior for what grade she'll get in 6.006. But assuming that her past academic record roughly matches the grade distribution of 6.006 (that is, in her past classes, her grades were split roughly 40/40/20) then it's quite possible for us to answer her question--and if her background is different from the grade distribution of 6.006, it's easy for her to generate the actual probabilities that apply to her, simply by multiplying ther true prior by the posterior we generate for her. \\
@@ -752,6 +752,20 @@ We also tried FCPGE, but with the assumption that true final score would be logi
 
 \section{Discussion}
 
+We began by solving the simple numerical prediction problem. However, realizing that it is not numerical scores that interest students, we moved on to solving the letter prediction problem. But predicting the final scores of students still seemed to be lacking. Certainly a student not only wants to know what the TA's think their final grade will be, but how likely it is. Thus, we also focused on the letter distribution problem.
 
+Solving numerical prediction involved feeding our data into ridge regression, for which we know the closed form solution. We then developed a scheme for solving the letter prediction problem using our solutions to ridge regression. This method turned out to perform just as well as any other methods we tried. Finally, we developed a method for solving the letter distribution problem using the results of ridge regression, which we named FCPGE. For the most part, this method performed very well. However, the nature of this solution lead to overconfidence, which ultimately lead to an incorrect assignment of zero probability to an event.
+
+To solve the letter prediction and distribution problems, we also implemented ordered logit and probit, which are more obvious models for this problem. These two models produced essentially identical results. Interestingly, they did not seem to perform any better than our makeshift methods based off of regression. However, when solving the letter prediction problem, these models did have the benefit that they never assigned zero probability to any event, and thus never suffered the infinite loss incurred by FCPGE.
+
+In the end, we have a few general lessons learned from all of our experimentation. First, we know that we can, in fact, make fairly accurate predictions about student grades from an early point in the semester. Even after only quiz 1, we can predict final grades with $\sim65\%$ accuracy. After quiz 2, we have $\sim80\%$ accuracy.
+
+It is interesting that the 6.006 policy is to traditionally keep the grading process very opaque as to not make any false promises, when it seems that we could offer the students much more useful advice as to their standing in the class.
+
+We also learned that all of our more complicated models were not able to really perform any better than simple linear regression. We think this reflects the unpredictability of both the students and the professors. Some students are always going to perform very far from our early expectation, and we will not be able to accurately predict their final scores. Similarly, some professor will choose thresholds for the class that differ significantly from other semesters, and we cannot model this behavior.
+
+A surprising result is that problem sets seem to matter proportionally as much as the quizzes, even early on in the semester. After the first quiz, 1/3 of the students overall problem set grade is determined, but only 2/7 of the overall test grade is determined. As a result we speculated that quiz 1 would matter more than the problem sets proportionally, although we did not see this trend. In fact, we sometimes saw the problem sets mattered even more than quizzes in early predictions.
+
+Our experimentation did not result in a model emerging as the obvious best model for this problem. However, we saw multiple models converge to almost the exact same results, suggesting that we were approaching the best error rates we could hope to achieve.
 
 \end{document}

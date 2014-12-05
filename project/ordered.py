@@ -21,22 +21,21 @@ def get_error(X, Y_letter, w, mA, mB):
   for x in As:
     term = 1 - norm.cdf(mA - dot(x, w))
     if term > THRESHOLD:
-      A_term += math.log(term)
+      A_term -= math.log(term)
   B_term = 0
   for x in Bs:
     term = norm.cdf(mA - dot(x, w)) - norm.cdf(mB - dot(x, w))
     if term > THRESHOLD:
-      B_term += math.log(term)
+      B_term -= math.log(term)
   C_term = 0
   for x in Cs:
     term = norm.cdf(mB - dot(x, w))
     if term > THRESHOLD:
-      C_term += math.log(term)
+      C_term -= math.log(term)
 
   return A_term + B_term + C_term
 
 X, Y = get_train(9)
-X = [[1] + x for x in X]
 Y_letter = [y[1] for y in Y]
 
 def e(w):
@@ -44,7 +43,7 @@ def e(w):
   mB = w[-1]
   return get_error(X, Y_letter, w[:-2], mA, mB)
 
-w = (fmin_bfgs(e, [0, 1, 1, 1, 1, 1, 1, 1, 1, 1] + [0] * (len(X[0]) - 10) + [3, -10], epsilon = 0.1, maxiter = 2))
+w = (fmin_bfgs(e, [1, 1, 1, 1, 1, 1, 1, 1, 1] + [0] * (len(X[0]) - 8) + [3, -10], epsilon = 0.1))
 print w
   
 def print_weights(w):
