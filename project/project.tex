@@ -293,11 +293,39 @@ However, this approach is somewhat unnatural, in that the weight vector is being
 
 $$E(w) = \sum_i e^{(i)} + \lambda ||w||^2$$
 
-where $e^{(i)} = 1$ if $c(x^{(i)} \cdot w) = y^{(i)}$ and $e^{(i)} = 0$ if $c(x^{(i)} \cdot w) \not{=} y^{(i)}$, with $c(s)$ defined as above.    \\
+where $e^{(i)} = 1$ if $c(x^{(i)} \cdot w) = y^{(i)}$ and $e^{(i)} = 0$ if $\mu(x^{(i)} \cdot w) \not{=} y^{(i)}$, with $\mu(s)$ defined as above.    \\
 
 This error function is not nicely differentiable the way the ordinary goal function for ridge regression is. Therefore, we could not find a closed form for the solution; instead, we performed a gradient descent over the $w$ values, in an attempt to find a local minimum whose values will hopefully not be far from those of the global minimum. To do this gradient descent, we used the fmin_bfgs package from scipy.\\
 
 To our mild surprise, the results of the gradient descent did not yield materially different results from the MSE minimization, either in terms of the observed mean-squared-error (which would have expected the previous method to perform better at) or in terms of the number of errors in classification in the test set (which we would have expected the previous method to perform worse at). The new method misclassified 14 students with access to every assignment grade and 126 students with access to no assignment grades. A more complete description of its performance is visible in the figure below. % TODO deal
+
+\section{Fixed-Cutoff Gaussian Probability Estimation}
+
+\subsection{Motivation}
+
+Predicting final score and letter grade are both nice, but neither is difficult to get a reasonable handle on. As has been previously discussed, past scores are an excellent predictor of future scores, with the personal statistics only adding minor variations. And classification also is easy to get approximately right--just take the final score prediction, and sort it by percentile into an A bin, a B bin, or a C bin, also as previously described. \\
+
+Because both of these problems are so easy to roughly solve, finding accurate solutions to them is less impressive than it otherwise might be. Moreover, it isn't exactly what students care most about. If a 6.006 student had done six percentage points above average on the first midterm, she would have no trouble deducing that her expected overall score in the class would be about six percent above the average, or that the likeliest grade for her to get in the class was an A. But neither is exactly the thing she is likely to be wondering; most likely, if she is asking herself a question related to what her grade in 6.006 is going to be, she is wondering what the \emph{odds} are that she'll get an A. 60\%? 80\%? 95\%? Naturally, the answer for this specific student depends in large part on her past academic record, since that determines her prior for what grade she'll get in 6.006. But assuming that her past academic record roughly matches the grade distribution of 6.006 (that is, in her past classes, her grades were split roughly 40/40/20) then it's quite possible for us to answer her question--and if her background is different from the grade distribution of 6.006, it's easy for her to generate the actual probabilities that apply to her, simply by multiplying ther true prior by the posterior we generate for her. \\
+
+It was, in fact, this question that motivated us to pursue this topic in the first place. How might we answer it? By making a few assumptions, it's straightforward for us to adapt the methods described previously to the new problem. \\
+
+\subsection{Implementation}
+
+First, we take our MSE-minimized predictions from the previous section, and we assume that they are noisy. In particular, we assume that the true final score students will receive is normally distributed around the prediction we made. \\
+
+We don't yet know what the variance of this gaussian noise is; however, we can estimate it, by further assuming that the variance of this gaussian noise is independent of what our prediction for the score is. Then, we can produce an estimate $\hat{\sigma}$ of the variance of the distribution in terms of our predictions $\hat{y}^{(i)}$ and the true values $y^{i}$ in the training and validation sets by using the formula:
+
+$$\hat{\sigma}^2 = \frac{\sum_i^n (\hat{y^{(i)}} - y^{(i)})^2}{n}$$
+
+Put more simply, we are taking the observed variance of our prediction's error in the training and validation sets, and using that observed variance as our estimated variance for the Gaussian noise around our predictions. \\
+
+Now that we have a probability distribution over the possible numerical grades that our hypothetical student will get, we can turn those probabilities over letter grades via the cutoffs we used for letter-grade prediction. In other words, assuming our B/C cutoff (the $20^{\textrm{th}}$-percentile score) is $\mu_B$ and our A/B cutoff (the $60^{\textrm{th}}$-percentile score) is $\mu_A$, we estimate that the probability that the aforementioned student gets an A, a B, or a C is given by the following formulas:
+
+$$P(y = A) = \Phi(\frac{\hat{y}-\mu_A}{\hat{\sigma}}
+$$P(y = B) = \Phi(\frac{\mu_A-\hat{y}}{\hat{\sigma}}) - \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
+$$P(y = C) = \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
+
+
 
 \section{Ordered Logit/Probit}
 
