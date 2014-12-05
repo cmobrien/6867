@@ -534,7 +534,7 @@ n = int(sys.argv[1])
 
 #classic functions: norm.cdf, cumLogistic
 
-print useLinRegToPredictGaussians(n, norm.cdf)
+#print useLinRegToPredictGaussians(n, norm.cdf)
 
 #print get_cutoffs()
 #get_cutoffs()

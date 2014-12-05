@@ -169,9 +169,109 @@ The indirect effect of past grades on final score represents the fact that one's
 
 Students' final scores can't help but depend linearly on binary variables such as gender, or membership in a major. The notion that students' final scores depend linearly on their year, however, is more dubious. One might realistically imagine that being a freshman is different from being a sophomore, junior, or senior, for instance, perhaps because letter grades are hidden for freshmen's first semesters at MIT, or perhaps alternately because taking 6.006 as a freshman signals a particular enthusiasm for the study of algorithms that taking 6.006 as a sophomore, junior, or senior simply might not indicate. \\
 
-We looked at the average scores of freshmen, sophomores, juniors, and seniors, and found that the A/B/C distribution went 61\%/24\%/14\% for freshmen, 44\%/42\%/14\% for sophomores, 32\%/39\%/29\% for juniors, and 30\%/30\%/39\% for seniors. This progression is perhaps not exactly linearly; we felt, however, that it was close enough to linear to warrant inclusion of year as a continuous variable in its own right, and not as four binary variables, into our model. \\
+We looked at the average scores of freshmen, sophomores, juniors, and seniors, and found that the A/B/C distribution went 61\%/24\%/14\% for freshmen, 44\%/42\%/14\% for sophomores, 32\%/39\%/29\% for juniors, and 30\%/30\%/39\% for seniors. This progression is perhaps not exactly linear; we felt, however, that it was close enough to linear to warrant inclusion of year as a continuous variable in its own right, and not as four binary variables, into our model. \\
 
 Because all of the features have a linear or nearly-linear relationship with the number we seek to predict, linear regression is a good tool to use to solve this problem.
+
+\section{Implementation}
+
+Our implementation uses ridge regression to predict students' numerical final scores as a function of the feature vectors. We make use of the ordinary least-squares method for solving a matrix equation to get the vector of weights, which allows us to map from feature vectors to predicted final score values. \\
+
+Let $n$ be the number of students in our data set, and let $d$ be the dimensionality of our feature vectors. (If we were doing prediction knowing only the scores on the first three assignments, $d$ would be 8: three features for being course 6, course 8, or course 18, one feature for gender, one feature for year, and one feature for each of the three assignments.) Let $X$ be the $n \times d$ matrix of feature vectors, and let $Y$ be the be the $n \times 1$ vector of true final scores. \\
+
+%Let $X'$ be the feature matrix, but with 1's (in order to be able to properly calculate the offset $x_0$) prepended to each of the matrix's rows. $X'$ is therefore an $n \times (d+1)$ matrix. \\
+
+Let $Z$ be the \emph{centralized} data matrix; in other words, just as $X$ is a matrix of feature vectors $x^{(i)}$, $Z$ is a matrix of normalized feature vectors $z^{(i)}$, where each vector $z^{(i)}$ is defined in terms of $X$ as follows: 
+
+$$z^{(i)} = x_j^{(i)} - x_j$$
+
+Similarly, we defined a centralized result matrix $Y_c$ with
+
+$$y_c^{(i)} = y^{(i)} - \bar{y}$$
+
+As described in the class notes on regression, the least-squares-optimal value for the weight vector assuming quadratic regularization is given by:
+
+$$w = (Z^T Z + \lambda I)^{-1} Z^T Y_c$$
+
+The offset $w_0$ is in turn given by:
+
+$$W_0 = (\bar{y} - W^T\bar{X})$$
+
+
+
+\begin{figure*}
+\centering
+\begin{tabular}{c c}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/mse.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/num_errors.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/mse_percentage.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/num_errors_percentage.png}
+	\caption{CAPTION}
+\end{subfigure}
+\end{tabular}
+\caption{TEST}
+\end{figure*}
+
+\begin{figure}
+\includegraphics[width = 3in]{plots/gaussian.png}
+\caption{CAPTION}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tabular}{| c || c | c | c |}
+\hline
+ &\multicolumn{3}{ c |}{Weights}\\
+\hline
+Feature & 3 & 6 & 9 \\
+\hline
+\hline
+Problem Set 1 & $$  & $$  & $$ \\
+\hline
+Problem Set 2 & $$  & $$ & $$ \\
+\hline
+Quiz 1	       & $$  &  $$ & $$ \\ 
+\hline
+Problem Set 3 & $-$          & $$ & $$ \\
+\hline 
+Problem Set 4 & $-$          & $$ & $$  \\
+\hline
+Quiz 2	       & $-$          & $$ & $$ \\
+\hline
+Problem Set 5 & $-$          & $-$& $$\\
+\hline
+Problem Set 6 & $-$          & $-$& $$ \\
+\hline
+Final		       & $-$          & $-$& $$\\
+\hline
+Fall		       & $$ & $$ & $$ \\
+\hline
+Male		       & $$  & $$ & $$ \\
+\hline
+Year 		       & $$ & $$ & $$\\
+\hline
+Course 6	       & $$  & $$ & $$ \\
+\hline
+Course 8	       & $$  & $$ & $$ \\
+\hline
+Course 18       & $$  & $$ & $$ \\
+\hline
+\end{tabular}
+\caption{THIS SHOULD BE FILLED IN TO HAVE THE WEIGHTS FROM MSE REGRESSION AFTER EACH OF 3, 6, 9 ASSIGNMENTS}
+\end{figure}
 
 \section{Ordered Logit/Probit}
 
@@ -244,6 +344,14 @@ Thus, to perform ordered logit, we simply need to replace occurrences of $\Phi$ 
 \[P(y = B) = F \left (\mu_A - x \cdot w \right ) - F \left (\mu_B - x \cdot w \right )\]
 \[P(y = C) = F \left (\mu_B - x \cdot w \right ).\]
 From here, the form of equation xx is unchanged.
+
+\subsection{Choosing a Model}
+
+It's difficult to tell which of the ordered probit or logit models will be more suitable for the data. It depends on knowing how future student grades depend on past student grades. To get a sense for this distribution, we graphed it.
+
+Consider the point in the semester after which we know 3 student grades (two problem sets and a quiz). For each student in the training set, we computed our best guess of their average at that point in the semester (using ridge regression). We then subtracted their final numerical average in the class. The result is the amount that their average changed. Figure xx shows histograms of these values at the beginning of the semester, after 3 assignments, after 6 assignments, and after 9 assignments.
+
+The distributions seem relatively Gaussian, with smaller standard deviations as the semester progresses. This is what we would expect, since later in the semester, much less of the grade is unknown. We also notice that the curves tend to be centered slightly to the left of the origin. 
 
 \subsection{Applying To Our Data}
 
@@ -397,32 +505,32 @@ Again, we notice that even with no assignments included in the features, our ord
 \centering
 \begin{tabular}{c c}
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit3dist.png}
-	\caption{CAPTION}
-\end{subfigure}
-&
-\begin{subfigure}[b]{3in}
 	\includegraphics[width=3in]{plots/probit3dist.png}
 	\caption{CAPTION}
 \end{subfigure}
-\\
+&
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit6dist.png}
+	\includegraphics[width=3in]{plots/1pro3.png}
 	\caption{CAPTION}
 \end{subfigure}
-&
+\\
 \begin{subfigure}[b]{3in}
 	\includegraphics[width=3in]{plots/probit6dist.png}
 	\caption{CAPTION}
 \end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1pro6.png}
+	\caption{CAPTION}
+\end{subfigure}
 \\
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit9dist.png}
+	\includegraphics[width=3in]{plots/probit9dist.png}
 	\caption{CAPTION}
 \end{subfigure}
 &
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/probit9dist.png}
+	\includegraphics[width=3in]{plots/1pro9.png}
 	\caption{CAPTION}
 \end{subfigure}
 \end{tabular}
@@ -469,9 +577,44 @@ We're also interested in how the maximum likelihoods differed between the ordere
 
 Finally, we can see how the maximum likelihoods changes throughout the semester. The general trend we see is that as time passes, the models assign higher probabilities to the ones they ultimately classified as correct, and lower probabilities to the ones they ultimately classified as incorrect. This is expected behavior. As the model receives more information, it is given more reason to be sure of the answers that it has classified correctly, and more reason to be unsure of the ones classified incorrectly.
 
-FIGURE OUT WHERE TO PUT IN GAUSSIAN GRAPH
-
 \section{Distributions with Regression}
+
+
+\begin{figure*}
+\centering
+\begin{tabular}{c c}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam3dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam3.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam6dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam6.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam9dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam9.png}
+	\caption{CAPTION}
+\end{subfigure}
+\end{tabular}
+\caption{TEST}
+\end{figure*}
 
 \section{Discussion}
 
