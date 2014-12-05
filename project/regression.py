@@ -38,7 +38,7 @@ def dot(x1, x2):
   assert len(x1) == len(x2)
   return sum([x1[i] * x2[i] for i in range(len(x1))])
 
-def predict(x, y, w):
+def predict(x, w):
   return w[0] + dot(x, w[1:])
 
 def roundToNearestMultipleOf(x, d):
@@ -54,13 +54,14 @@ def roundToNearestMultipleOf(x, d):
     return multiple*d
 
 def get_guesses(X, Y, w):
-  As = len([y for y in Y if y[1] == 'A'])
-  Bs = len([y for y in Y if y[1] == 'B'])
-  Cs = len([y for y in Y if y[1] == 'C'])
-  G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
+  As = len([y for y in Y if y[1] == 'A'])*len(X)/float(len(Y))
+  Bs = len([y for y in Y if y[1] == 'B'])*len(X)/float(len(Y))
+  Cs = len([y for y in Y if y[1] == 'C'])*len(X)/float(len(Y))
+    
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
   G.sort(key = lambda x: x[1])
   c = 0
-  P = [''] * (As + Bs + Cs)
+  P = [''] * len(X)
   for i, g in G:
     if c < Cs:
       P[i] = 'C'
@@ -108,6 +109,9 @@ class GradDescender:
 
 def calculate_error(guess, actual):
   error = 0
+  
+  print len(guess), len(actual)
+  
   assert len(guess) == len(actual)
   for i in range(len(guess)):
     if guess[i] != actual[i]:
@@ -171,7 +175,7 @@ def go(n, lamda, return_MSE=False):
   print "VALIDATE: ", calculate_error(get_guesses(X_val, Y_val, w), Y_val_letter) 
   MSE_val_error = MSE(X_val, Y_val_numerical, w)
   print "VALIDATE: ", MSE_val_error
-  print "TEST: ", calculate_error(get_guesses(X_test, Y_test, w), Y_test_letter)
+  print "TEST: ", calculate_error(get_guesses(X_test, Y + Y_val, w), Y_test_letter)
   MSE_test_error = MSE(X_test, Y_test_numerical, w)
   print "TEST: ", MSE_test_error
 
@@ -195,12 +199,136 @@ def give_me_the_WEIGHTS_son(n):
 def cumLogistic(x):
   return 1./(1+math.exp(-x))
 
+def makePrettyGaussianPicture():
+  
+  xList = []
+  yList1 = []
+  yList2 = []
+  yList3 = []
+  yList4 = []
+  
+  X, Y = get_train(0)
+  Y_numerical = [[y[0]] for y in Y]
+
+  w = give_me_the_WEIGHTS_son(n)
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  errorDict = {}
+  
+  bucketSize = 5
+  
+  for a in range(-50, 50, bucketSize):
+    errorDict[a] = 0
+
+  estimatedSigma = 0 
+
+  for g in G:
+    error = g[1] - Y_numerical[g[0]]
+    estimatedSigma += error ** 2
+  
+    errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
+  
+  items = errorDict.items()
+  items.sort(key = lambda x: x[0])
+  
+  xList = [x[0] for x in items]
+  yList1 = [x[1] for x in items]
+  
+  X, Y = get_train(3)
+  Y_numerical = [[y[0]] for y in Y]
+
+  w = give_me_the_WEIGHTS_son(3)
+  print X[i], w
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  errorDict = {}
+  
+  bucketSize = 5
+  
+  for a in range(-50, 50, bucketSize):
+    errorDict[a] = 0
+
+  estimatedSigma = 0 
+
+  for g in G:
+    print g[1], Y_numerical[g[0]]
+    error = g[1] - Y_numerical[g[0]]
+    estimatedSigma += error ** 2
+  
+    errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
+    
+  items = errorDict.items()
+  items.sort(key = lambda x: x[0])
+
+  xList = [x[0] for x in items]
+  yList2 = [x[1] for x in items]
+  
+  X, Y = get_train(6)
+  Y_numerical = [[y[0]] for y in Y]
+
+  w = give_me_the_WEIGHTS_son(6)
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  errorDict = {}
+  
+  bucketSize = 5
+  
+  for a in range(-50, 50, bucketSize):
+    errorDict[a] = 0
+
+  estimatedSigma = 0 
+
+  for g in G:
+    error = g[1] - Y_numerical[g[0]]
+    estimatedSigma += error ** 2
+  
+    errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
+    
+  items = errorDict.items()
+  items.sort(key = lambda x: x[0])
+
+  xList = [x[0] for x in items]
+  yList3 = [x[1] for x in items]
+  
+  X, Y = get_train(9)
+  Y_numerical = [[y[0]] for y in Y]
+
+  w = give_me_the_WEIGHTS_son(9)
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
+  G.sort(key = lambda x: x[1])
+
+  errorDict = {}
+  
+  bucketSize = 5
+  
+  for a in range(-50, 50, bucketSize):
+    errorDict[a] = 0
+
+  estimatedSigma = 0 
+
+  for g in G:
+    error = g[1] - Y_numerical[g[0]]
+    estimatedSigma += error ** 2
+  
+    errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
+    
+  items = errorDict.items()
+  items.sort(key = lambda x: x[0])
+
+  xList = [x[0] for x in items]
+  yList4 = [x[1] for x in items]
+  
+  return (xList, yList1, yList2, yList3, yList4)
+
 def useLinRegToPredictGaussians(n, f):
   X, Y = get_train(n)
   Y_numerical = [[y[0]] for y in Y]
 
   w = give_me_the_WEIGHTS_son(n)
-  G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
   G.sort(key = lambda x: x[1])
 
   errorDict = {}
@@ -245,7 +373,7 @@ def useLinRegToPredictGaussians(n, f):
   X_test, Y_test = get_test(n)
   Y_test_letter = [y[1] for y in Y_test]
   
-  G_test = [(i, predict(X_test[i], Y_test[i], w)) for i in range(len(X_test))]
+  G_test = [(i, predict(X_test[i], w)) for i in range(len(X_test))]
   G_test.sort(key = lambda x: x[0])
   
 #  print G_test
@@ -278,7 +406,7 @@ def useLinRegToPredictGaussians(n, f):
 def useLinRegToPredictDistributions(n):
   X, Y = get_train(n)
   w = give_me_the_WEIGHTS_son(n)
-  G = [(i, predict(X[i], Y[i], w)) for i in range(len(X))]
+  G = [(i, predict(X[i], w)) for i in range(len(X))]
   G.sort(key = lambda x: x[1])
 
   Y_letter = [y[1] for y in Y]
@@ -381,10 +509,12 @@ def bruteForceSearchOverTheLambdas(n):
 highPoint = 1000
  
 n = int(sys.argv[1])
-lowVal = go(n, 0, True)
-highVal = go(n, highPoint, True)
+#lowVal = go(n, 0, True)
+#highVal = go(n, highPoint, True)
 
-print binarySearchOverTheLambdas(n, highPoint, 0, highVal, lowVal)
+#print makePrettyGaussianPicture()
+
+#print binarySearchOverTheLambdas(n, highPoint, 0, highVal, lowVal)
 
 #print bruteForceSearchOverTheLambdas(n)
 
@@ -392,7 +522,7 @@ print binarySearchOverTheLambdas(n, highPoint, 0, highVal, lowVal)
 
 #classic functions: norm.cdf, cumLogistic
 
-#print useLinRegToPredictGaussians(n, norm.cdf)
+print useLinRegToPredictGaussians(n, norm.cdf)
 
 #print get_cutoffs()
 #get_cutoffs()
