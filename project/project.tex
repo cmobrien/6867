@@ -159,9 +159,81 @@ To capture their gender in a feature, we included a binary variable indicating i
 
 In the next section, we will discuss our implementation of regression, and how it allowed us to solve the numerical prediction and letter prediction problems. In the following section, we will discuss the ordered logit and probit models, and how they solved the letter prediction and letter distribution problems.
 
-
-
 \section{Regression}
+
+\begin{figure*}
+\centering
+\begin{tabular}{c c}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/mse.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/num_errors.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/mse_percentage.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/num_errors_percentage.png}
+	\caption{CAPTION}
+\end{subfigure}
+\end{tabular}
+\caption{TEST}
+\end{figure*}
+
+\begin{figure}
+\includegraphics[width = 3in]{plots/gaussian.png}
+\caption{CAPTION}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tabular}{| c || c | c | c |}
+\hline
+ &\multicolumn{3}{ c |}{Weights}\\
+\hline
+Feature & 3 & 6 & 9 \\
+\hline
+\hline
+Problem Set 1 & $$  & $$  & $$ \\
+\hline
+Problem Set 2 & $$  & $$ & $$ \\
+\hline
+Quiz 1	       & $$  &  $$ & $$ \\ 
+\hline
+Problem Set 3 & $-$          & $$ & $$ \\
+\hline 
+Problem Set 4 & $-$          & $$ & $$  \\
+\hline
+Quiz 2	       & $-$          & $$ & $$ \\
+\hline
+Problem Set 5 & $-$          & $-$& $$\\
+\hline
+Problem Set 6 & $-$          & $-$& $$ \\
+\hline
+Final		       & $-$          & $-$& $$\\
+\hline
+Fall		       & $$ & $$ & $$ \\
+\hline
+Male		       & $$  & $$ & $$ \\
+\hline
+Year 		       & $$ & $$ & $$\\
+\hline
+Course 6	       & $$  & $$ & $$ \\
+\hline
+Course 8	       & $$  & $$ & $$ \\
+\hline
+Course 18       & $$  & $$ & $$ \\
+\hline
+\end{tabular}
+\caption{THIS SHOULD BE FILLED IN TO HAVE THE WEIGHTS FROM MSE REGRESSION AFTER EACH OF 3, 6, 9 ASSIGNMENTS}
+\end{figure}
 
 \section{Ordered Logit/Probit}
 
@@ -234,6 +306,14 @@ Thus, to perform ordered logit, we simply need to replace occurrences of $\Phi$ 
 \[P(y = B) = F \left (\mu_A - x \cdot w \right ) - F \left (\mu_B - x \cdot w \right )\]
 \[P(y = C) = F \left (\mu_B - x \cdot w \right ).\]
 From here, the form of equation xx is unchanged.
+
+\subsection{Choosing a Model}
+
+It's difficult to tell which of the ordered probit or logit models will be more suitable for the data. It depends on knowing how future student grades depend on past student grades. To get a sense for this distribution, we graphed it.
+
+Consider the point in the semester after which we know 3 student grades (two problem sets and a quiz). For each student in the training set, we computed our best guess of their average at that point in the semester (using ridge regression). We then subtracted their final numerical average in the class. The result is the amount that their average changed. Figure xx shows histograms of these values at the beginning of the semester, after 3 assignments, after 6 assignments, and after 9 assignments.
+
+The distributions seem relatively Gaussian, with smaller standard deviations as the semester progresses. This is what we would expect, since later in the semester, much less of the grade is unknown. We also notice that the curves tend to be centered slightly to the left of the origin. 
 
 \subsection{Applying To Our Data}
 
@@ -387,32 +467,32 @@ Again, we notice that even with no assignments included in the features, our ord
 \centering
 \begin{tabular}{c c}
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit3dist.png}
-	\caption{CAPTION}
-\end{subfigure}
-&
-\begin{subfigure}[b]{3in}
 	\includegraphics[width=3in]{plots/probit3dist.png}
 	\caption{CAPTION}
 \end{subfigure}
-\\
+&
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit6dist.png}
+	\includegraphics[width=3in]{plots/1pro3.png}
 	\caption{CAPTION}
 \end{subfigure}
-&
+\\
 \begin{subfigure}[b]{3in}
 	\includegraphics[width=3in]{plots/probit6dist.png}
 	\caption{CAPTION}
 \end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1pro6.png}
+	\caption{CAPTION}
+\end{subfigure}
 \\
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/logit9dist.png}
+	\includegraphics[width=3in]{plots/probit9dist.png}
 	\caption{CAPTION}
 \end{subfigure}
 &
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/probit9dist.png}
+	\includegraphics[width=3in]{plots/1pro9.png}
 	\caption{CAPTION}
 \end{subfigure}
 \end{tabular}
@@ -459,9 +539,44 @@ We're also interested in how the maximum likelihoods differed between the ordere
 
 Finally, we can see how the maximum likelihoods changes throughout the semester. The general trend we see is that as time passes, the models assign higher probabilities to the ones they ultimately classified as correct, and lower probabilities to the ones they ultimately classified as incorrect. This is expected behavior. As the model receives more information, it is given more reason to be sure of the answers that it has classified correctly, and more reason to be unsure of the ones classified incorrectly.
 
-FIGURE OUT WHERE TO PUT IN GAUSSIAN GRAPH
-
 \section{Distributions with Regression}
+
+
+\begin{figure*}
+\centering
+\begin{tabular}{c c}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam3dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam3.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam6dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam6.png}
+	\caption{CAPTION}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/adam9dist.png}
+	\caption{CAPTION}
+\end{subfigure}
+&
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/1adam9.png}
+	\caption{CAPTION}
+\end{subfigure}
+\end{tabular}
+\caption{TEST}
+\end{figure*}
 
 \section{Discussion}
 
