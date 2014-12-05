@@ -314,7 +314,17 @@ In addition to this overall effect on the columns of the table, we can observe s
 
 All of these effects, of course, are dwarfed by the predictive effect of early assignments on later ones. This is entirely unsurprising; as discussed earlier, the best predictor of final score is, to first order, performance up until this point.
 
-There is one more feature that deserves mention here, and that is the effect on score of getting zeros on problem sets. We theorized early on that getting zeros on problem sets would actually have a substantial \emph{positive} effect on predicted score, because a zero on a problem set does not carry the same predictive weight that poor scores on assignments otherwise might. Put otherwise, most low scores on assignments tend to signal a relatively poor understanding of the material, whereas a zero on a problem set might instead be signaling some unlikely event which prevented the student from completing that particular problem set. We see that this theory is more or less borne out by the data, with the positive effect of problem set zeros beginning strong and quickly becoming very weak as the predictive effect of problem sets diminishes with time.
+%There is one more feature that deserves mention here, and that is the effect on score of getting zeros on problem sets. We theorized early on that getting zeros on problem sets would actually have a substantial \emph{positive} effect on predicted score, because a zero on a problem set does not carry the same predictive weight that poor scores on assignments otherwise might. Put otherwise, most low scores on assignments tend to signal a relatively poor understanding of the material, whereas a zero on a problem set might instead be signaling some unlikely event which prevented the student from completing that particular problem set. We see that this theory is more or less borne out by the data, with the positive effect of problem set zeros beginning strong and quickly becoming very weak as the predictive effect of problem sets diminishes with time.
+
+%However, this approach is somewhat unnatural, in that the weight vector is being optimized to minimize MSE, but is being used to predict letter grades. It would seem to make more sense to optimize the weight vector to minimize the number of errors in letter grade classification, if that is what it is going to eventually be used for. Therefore, we seek to minimize the following error function:
+
+%$$E(w) = \sum_i e^{(i)} + \lambda ||w||^2$$
+
+%where $e^{(i)} = 1$ if $c(x^{(i)} \cdot w) = y^{(i)}$ and $e^{(i)} = 0$ if $\mu(x^{(i)} \cdot w) \not{=} y^{(i)}$, with $\mu(s)$ defined as above.    \\
+
+%This error function is not nicely differentiable the way the ordinary goal function for ridge regression is. Therefore, we could not find a closed form for the solution; instead, we performed a gradient descent over the $w$ values, in an attempt to find a local minimum whose values will hopefully not be far from those of the global minimum. To do this gradient descent, we used the fmin\_bfgs package from scipy.\\
+
+%To our mild surprise, the results of the gradient descent did not yield materially different results from the MSE minimization, either in terms of the observed mean-squared-error (which would have expected the previous method to perform better at) or in terms of the number of errors in classification in the test set (which we would have expected the previous method to perform worse at). The new method misclassified 14 students with access to every assignment grade and 126 students with access to no assignment grades. A more complete description of its performance is visible in the figure below. % TODO deal
 
 \section{Ordered Logit/Probit}
 
@@ -697,6 +707,51 @@ It appears that after only 3 assignments, our model was slightly too confident i
 \caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments that we include as features. Each graph shows the results using FCGEP and probit (replicated from Figure 10 for comparison).}
 \end{figure}
 
+\section{Fixed-Cutoff Gaussian Probability Estimation}
+
+\subsection{Motivation}
+
+Predicting final score and letter grade are both nice, but neither is difficult to get a reasonable handle on. As has been previously discussed, past scores are an excellent predictor of future scores, with the personal statistics only adding minor variations. And classification also is easy to get approximately right--just take the final score prediction, and sort it by percentile into an A bin, a B bin, or a C bin, also as previously described. \\
+
+Because both of these problems are so easy to roughly solve, finding accurate solutions to them is less impressive than it otherwise might be. Moreover, it isn't exactly what students care most about. If a 6.006 student had done six percentage points above average on the first midterm, she would have no trouble deducing that her expected overall score in the class would be about six percent above the average, or that the likeliest grade for her to get in the class was an A. But neither is exactly the thing she is likely to be wondering; most likely, if she is asking herself a question related to what her grade in 6.006 is going to be, she is wondering what the \emph{odds} are that she'll get an A. 60\%? 80\%? 95\%? Naturally, the answer for this specific student depends in large part on her past academic record, since that determines her prior for what grade she'll get in 6.006. But assuming that her past academic record roughly matches the grade distribution of 6.006 (that is, in her past classes, her grades were split roughly 40/40/20) then it's quite possible for us to answer her question--and if her background is different from the grade distribution of 6.006, it's easy for her to generate the actual probabilities that apply to her, simply by multiplying ther true prior by the posterior we generate for her. \\
+
+It was, in fact, this question that motivated us to pursue this topic in the first place. How might we answer it? By making a few assumptions, it's straightforward for us to adapt the methods described previously to the new problem. \\
+
+\subsection{Implementation}
+
+In this section, we describe the implementation of Fixed-Cutoff Gaussian Probability Estimation (FCPGE), a method for estimating the probabilities of getting an A, B, or C, that relies heavily on the linear regression methods discussed earlier in the paper. We created it initially as a benchmark against which to verify the successful performance of ordered probit/logit; it turned out to be an interesting algorithm in its own right.\\
+
+First, we take our MSE-minimized predictions from the section on linear regression, and we assume that they are noisy. In particular, we assume that the true final score students will receive is normally distributed around the prediction we made. \\
+
+We don't yet know what the variance of this gaussian noise is; however, we can estimate it, by further assuming that the variance of this gaussian noise is independent of what our prediction for the score is. Then, we can produce an estimate $\hat{\sigma}$ of the variance of the distribution in terms of our predictions $\hat{y}^{(i)}$ and the true values $y^{i}$ in the training and validation sets by using the formula:
+
+$$\hat{\sigma}^2 = \frac{\sum_i^n (\hat{y^{(i)}} - y^{(i)})^2}{n}$$
+
+Put more simply, we are taking the observed variance of our prediction's error in the training and validation sets, and using that observed variance as our estimated variance for the Gaussian noise around our predictions. \\
+
+Now that we have a probability distribution over the possible numerical grades that our hypothetical student will get, we can turn those probabilities over letter grades via the cutoffs we used for letter-grade prediction in the linear regression section. In other words, assuming our B/C cutoff (the $20^{\textrm{th}}$-percentile score) is $\mu_B$ and our A/B cutoff (the $60^{\textrm{th}}$-percentile score) is $\mu_A$, we estimate that the probability that the aforementioned student gets an A, a B, or a C is given by the following formulas:
+
+$$P(y = A) = \Phi(\frac{\hat{y}-\mu_A}{\hat{\sigma}} $$
+$$P(y = B) = \Phi(\frac{\mu_A-\hat{y}}{\hat{\sigma}}) - \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
+$$P(y = C) = \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
+
+\section{Results}
+
+Fixed-Cutoff Gaussian Probability Estimation turned out to be a very successful method for coming up with probability distributions over letter grades. It did well enough to outperform the more established Ordered Logit and Probit methods, with a few caveats. \\
+
+For a detailed comparison of FCGPE with Ordered Probit, see Figure xx. % TODO figure name
+ Note that FCPGE has a consistently lower negative log likelihood, suggesting that it is making the more accurate predictions, until we hit eight or nine assignments, at which point FCPGE's negative log likelihood suddenly spikes to infinity. This is because unlike Ordered Probit, FCPGE uses fixed cutoffs. In other words, FCPGE assumes that there is a 100\% chance that the cutoffs will be exactly where they were in the average of the previous semesters. When there are few enough assignments included, this plainly false assumption doesn't cause any problems, because there's enough uncertainty in the final grade to give the predictions near the grade cutoffs sufficiently cautious. When eight or nine assignments are included, however, FCGPE suddenly makes predictions with extremely high confidence, and the false assumption that the cutoffs are precisely known dominates considerations. A single highly overconfident prediction, made on the assumption that the cutoff will be where it was last year, is enough to make the negative log likelihood reach extreme heights. \\
+
+To solve this problem, the next step would likely be to get many samples of where the cutoffs were in past semesters, to get a sense of what the probability distribution over the cutoff locations might look like. However, to do this accurately, we'd need access to substantially more semester data than we had. \\
+
+FCGPE's edge over Ordered Probit appears to mostly manifest itself in more aggressive predictions, which are on average warranted (until nine assignments, when they weren't). See Figure xx % TODO figure name
+for a comparison of the aggressiveness of predictions made by Ordered Probit and by FCGPE, compared to how often those predictions should have been right. From the figure, it is apparent that FCPGE (before it collapses) makes predictions whose probabilities are more well-matched to the actual rate of occurrence of the predicted event than Ordered Probit (in other words, the things that FCPGE predicted would happen 80\% of the time tended to happen about 80\% of the time, whereas the things that Ordered Probit predicted would happen 80\% of the time tended to happen a little more often than that). 
+
+We also tried FCPGE, but with the assumption that true final score would be logistically, not normally, distributed about the predicted final scores. We found that this led to predictions that were much too timid, and a negative log likelihood that was substantially less impressive than either the original version of FCPGE, or either of Ordered Probit or Logit.
+
+
 \section{Discussion}
+
+
 
 \end{document}
