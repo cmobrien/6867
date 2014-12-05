@@ -159,9 +159,19 @@ To capture their gender in a feature, we included a binary variable indicating i
 
 In the next section, we will discuss our implementation of regression, and how it allowed us to solve the numerical prediction and letter prediction problems. In the following section, we will discuss the ordered logit and probit models, and how they solved the letter prediction and letter distribution problems.
 
-
-
 \section{Regression}
+
+\subsection{Motivation}
+
+Linear regression is a very natural approach for solving the numerical prediction problem. The numerical prediction problem involves predicting a single continuous value (a student's final score) as a function of the student's past grades in the class, and personal information about the student, such as year, gender, and major. Moreover, it seems very plausible that the student's final score depends \emph{linearly} on the feature values. Consider grades, for example; we can separate the effect of previous grades into a direct effect and an indirect effect. The direct effect of past grades on final score represents the fact that higher previous grades give you a better final score simply because the final score is partly based on the previous grades. Plainly, this effect is linear (it says so right in the syllabus!) \\
+
+The indirect effect of past grades on final score represents the fact that one's past performance in the class is predictive of future performance. While it is less obvious that this effect is linear, this seems to us to be the most likely interpretation. Consider: the best prediction of how a student will do in the class in the future, to first order, is how they've done in the past. (In fact, it's roughly this times 2/3, because of regression to the mean; and this estimate, of course, ignores the student's personal information. Assuming that a student's performance on assignments is their ``talent'' plus some additive gaussian noise, and talent is normally distributed in the course, talent will depend linearly on past performance, which implies that future performance will depend linearly on past performance). \\
+
+Students' final scores can't help but depend linearly on binary variables such as gender, or membership in a major. The notion that students' final scores depend linearly on their year, however, is more dubious. One might realistically imagine that being a freshman is different from being a sophomore, junior, or senior, for instance, perhaps because letter grades are hidden for freshmen's first semesters at MIT, or perhaps alternately because taking 6.006 as a freshman signals a particular enthusiasm for the study of algorithms that taking 6.006 as a sophomore, junior, or senior simply might not indicate. \\
+
+We looked at the average scores of freshmen, sophomores, juniors, and seniors, and found that the A/B/C distribution went 61\%/24\%/14\% for freshmen, 44\%/42\%/14\% for sophomores, 32\%/39\%/29\% for juniors, and 30\%/30\%/39\% for seniors. This progression is perhaps not exactly linearly; we felt, however, that it was close enough to linear to warrant inclusion of year as a continuous variable in its own right, and not as four binary variables, into our model. \\
+
+Because all of the features have a linear or nearly-linear relationship with the number we seek to predict, linear regression is a good tool to use to solve this problem.
 
 \section{Ordered Logit/Probit}
 

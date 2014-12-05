@@ -210,7 +210,8 @@ def makePrettyGaussianPicture():
   X, Y = get_train(0)
   Y_numerical = [[y[0]] for y in Y]
 
-  w = give_me_the_WEIGHTS_son(n)
+  w = give_me_the_WEIGHTS_son(0)
+  #print len(X[0]), len(w)
   G = [(i, predict(X[i], w)) for i in range(len(X))]
   G.sort(key = lambda x: x[1])
 
@@ -310,7 +311,9 @@ def makePrettyGaussianPicture():
   estimatedSigma = 0 
 
   for g in G:
+
     error = g[1] - Y_numerical[g[0]]
+#    print error
     estimatedSigma += error ** 2
   
     errorDict[roundToNearestMultipleOf(error[0],bucketSize)] += 1
@@ -393,11 +396,20 @@ def useLinRegToPredictGaussians(n, f):
     
     
     if Y_test_letter[g_test[0]] == "A":
-      penalty += math.log(oddsOfA)
+      try: 
+        penalty += math.log(oddsOfA)
+      except: 
+        penalty = float("-Inf")
     elif Y_test_letter[g_test[0]] == "B":
-      penalty += math.log(oddsOfB)
+      try: 
+        penalty += math.log(oddsOfB)
+      except: 
+        penalty = float("-Inf")
     elif Y_test_letter[g_test[0]] == "C":
-      penalty += math.log(oddsOfC)
+      try: 
+        penalty += math.log(oddsOfA)
+      except: 
+        penalty = float("-Inf")
 
   return penalty
 
