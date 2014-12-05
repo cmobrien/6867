@@ -74,8 +74,6 @@
 
 \maketitle
 
-\section{Abstract}
-
 \renewcommand*{\arraystretch}{1.5}
 
 \section{Introduction}
@@ -161,7 +159,47 @@ In the next section, we will discuss our implementation of regression, and how i
 
 \section{Regression}
 
-\begin{figure*}[t!]
+\subsection{Motivation}
+
+Linear regression is a very natural approach for solving the numerical prediction problem. The numerical prediction problem involves predicting a single continuous value (a student's final score) as a function of the student's past grades in the class, and personal information about the student, such as year, gender, and major. Moreover, it seems very plausible that the student's final score depends \emph{linearly} on the feature values. Consider grades, for example; we can separate the effect of previous grades into a direct effect and an indirect effect. The direct effect of past grades on final score represents the fact that higher previous grades give you a better final score simply because the final score is partly based on the previous grades. Plainly, this effect is linear (it says so right in the syllabus!) \\
+
+The indirect effect of past grades on final score represents the fact that one's past performance in the class is predictive of future performance. While it is less obvious that this effect is linear, this seems to us to be the most likely interpretation. Consider: the best prediction of how a student will do in the class in the future, to first order, is how they've done in the past. (In fact, it's roughly this times 2/3, because of regression to the mean; and this estimate, of course, ignores the student's personal information. Assuming that a student's performance on assignments is their ``talent'' plus some additive gaussian noise, and talent is normally distributed in the course, talent will depend linearly on past performance, which implies that future performance will depend linearly on past performance). \\
+
+Students' final scores can't help but depend linearly on binary variables such as gender, or membership in a major. The notion that students' final scores depend linearly on their year, however, is more dubious. One might realistically imagine that being a freshman is different from being a sophomore, junior, or senior, for instance, perhaps because letter grades are hidden for freshmen's first semesters at MIT, or perhaps alternately because taking 6.006 as a freshman signals a particular enthusiasm for the study of algorithms that taking 6.006 as a sophomore, junior, or senior simply might not indicate. \\
+
+We looked at the average scores of freshmen, sophomores, juniors, and seniors, and found that the A/B/C distribution went 61\%/24\%/14\% for freshmen, 44\%/42\%/14\% for sophomores, 32\%/39\%/29\% for juniors, and 30\%/30\%/39\% for seniors. This progression is perhaps not exactly linear; we felt, however, that it was close enough to linear to warrant inclusion of year as a continuous variable in its own right, and not as four binary variables, into our model. \\
+
+Because all of the features have a linear or nearly-linear relationship with the number we seek to predict, linear regression is a good tool to use to solve this problem.
+
+\section{Implementation}
+
+Our implementation uses ridge regression to predict students' numerical final scores as a function of the feature vectors. We make use of the ordinary least-squares method for solving a matrix equation to get the vector of weights, which allows us to map from feature vectors to predicted final score values.
+
+Let $n$ be the number of students in our data set, and let $d$ be the dimensionality of our feature vectors. (If we were doing prediction knowing only the scores on the first three assignments, $d$ would be 8: three features for being course 6, course 8, or course 18, one feature for gender, one feature for year, and one feature for each of the three assignments.) Let $X$ be the $n \times d$ matrix of feature vectors, and let $Y$ be the be the $n \times 1$ vector of true final scores.
+
+%Let $X'$ be the feature matrix, but with 1's (in order to be able to properly calculate the offset $x_0$) prepended to each of the matrix's rows. $X'$ is therefore an $n \times (d+1)$ matrix. \\
+
+Let $Z$ be the \emph{centralized} data matrix; in other words, just as $X$ is a matrix of feature vectors $x^{(i)}$, $Z$ is a matrix of normalized feature vectors $z^{(i)}$, where each vector $z^{(i)}$ is defined in terms of $X$ as follows: 
+
+$$z^{(i)} = x_j^{(i)} - x_j$$
+
+Similarly, we defined a centralized result matrix $Y_c$ with
+
+$$y_c^{(i)} = y^{(i)} - \bar{y}$$
+
+As described in the class notes on regression, the least-squares-optimal value for the weight vector assuming quadratic regularization is given by:
+
+$$w = (Z^T Z + \lambda I)^{-1} Z^T Y_c$$
+
+The offset $w_0$ is in turn given by:
+
+$$W_0 = (\bar{y} - W^T\bar{X})$$
+
+\subsection{Results}
+
+When we ran ridge regression on past semesters' data, we got the following values for the weight vector's entries. Note that we ran the regression after knowing 0, 3, 6, and 9 of the assignments' values, respectively, before predicting final score. 
+
+\begin{figure*}
 \centering
 \begin{tabular}{c c}
 \begin{subfigure}[b]{3in}
@@ -189,46 +227,57 @@ In the next section, we will discuss our implementation of regression, and how i
 
 \begin{figure}
 \centering
-\begin{tabular}{| c || c | c | c |}
+\begin{tabular}{| c || c | c | c | c |}
 \hline
- &\multicolumn{3}{ c |}{Weights}\\
+ &\multicolumn{4}{ c |}{Weights}\\
 \hline
-\# Assignments & 3 & 6 & 9 \\
+\# Assignments & 0 & 3 & 6 & 9 \\
 \hline
+$w_0$ & $5.04$ & $-1.00$ & $-0.07$ & $0.00$ \\ 
 \hline
-Problem Set 1 & $$  & $$  & $$ \\
+Problem Set 1 & $-$ & $2.44$  & $1.11$  & $1.00$ \\
 \hline
-Problem Set 2 & $$  & $$ & $$ \\
+Problem Set 2 & $-$ & $4.04$  & $0.85$ & $1.00$ \\
 \hline
-Quiz 1	       & $$  &  $$ & $$ \\ 
+Quiz 1	      & $-$ & $2.49$  &  $1.53$ & $1.00$ \\ 
 \hline
-Problem Set 3 & $-$          & $$ & $$ \\
+Problem Set 3 & $-$ & $-$          & $1.94$ & $1.00$ \\
 \hline 
-Problem Set 4 & $-$          & $$ & $$  \\
+Problem Set 4 & $-$ & $-$          & $1.99$ & $1.00$  \\
 \hline
-Quiz 2	       & $-$          & $$ & $$ \\
+Quiz 2	       & $-$ & $-$          & $1.79$ & $1.00$ \\
 \hline
-Problem Set 5 & $-$          & $-$& $$\\
+Problem Set 5 & $-$ & $-$          & $-$& $1.00$\\
 \hline
-Problem Set 6 & $-$          & $-$& $$ \\
+Problem Set 6 & $-$ & $-$          & $-$& $1.00$ \\
 \hline
-Final		       & $-$          & $-$& $$\\
+Final		& $-$       & $-$          & $-$& $1.00$\\
 \hline
-Fall		       & $$ & $$ & $$ \\
+Pset-zeros   & $-$ & $4.89$ & $-0.08$ & $0.00$ \\
 \hline
-Male		       & $$  & $$ & $$ \\
+Fall		&  $0.62$     & $0.98$ & $1.49$ & $0.00$ \\
 \hline
-Year 		       & $$ & $$ & $$\\
+Male		&  $1.00$     & $1.41$  & $0.26$ & $0.00$ \\
 \hline
-Course 6	       & $$  & $$ & $$ \\
+Year 		&  $-2.82$   & $-1.06$ & $-0.16$ & $0.00$\\
 \hline
-Course 8	       & $$  & $$ & $$ \\
+Course 6	&  $-0.34$    & $1.80$  & $0.03$ & $0.00$ \\
 \hline
-Course 18       & $$  & $$ & $$ \\
+Course 8	&  $0.45$  &  $1.57$  &  $0.40$  &  $0.00$ \\
+\hline
+Course 18       & $2.00$ & $2.58$  & $0.17$ & $0.00$ \\
 \hline
 \end{tabular}
 \caption{Each column represents the weights returned by ridge regression with the optimal value of $\lambda$, using the number of assignments specified in the column head as features. }
 \end{figure}
+
+Looking at the above results, there are a few noteworthy trends. The first is that weights tend to decrease in absolute value as one progresses across the table from left to right; the weights for assignments tend towards one, and the weights for personal statistics tend towards zero. This is comforting, because the theory we had was that assignments would have weights of more than one and personal statistics would have non-zero weights because both the early assignment scores and the personal statistics have some predictive power over future assignments. As the number of future assignments decreases, then, one would naturally expect this predictive effect to decrease and the direct effect of assignment grades being factored into final grades to increase. \\
+
+In addition to this overall effect on the columns of the table, we can observe some interesting trends no rows. Taking the class in the fall, being male, and being a physics major all appear to give a small advantage in 6.006; being a math major, and being a freshman rather than a junior or a senior both appear to confer a somewhat more important advantage. \\
+
+All of these effects, of course, are dwarfed by the predictive effect of early assignments on later ones. This is entirely unsurprising; as discussed earlier, the best predictor of final score is, to first order, performance up until this point. \\
+
+There is one more feature that deserves mention here, and that is the effect on score of getting zeros on problem sets. We theorized early on that getting zeros on problem sets would actually have a substantial \emph{positive} effect on predicted score, because a zero on a problem set does not carry the same predictive weight that poor scores on assignments otherwise might. Put otherwise, most low scores on assignments tend to signal a relatively poor understanding of the material, whereas a zero on a problem set might instead be signaling simple laziness. We see that this theory is more or less borne out by the data, with the positive effect of problem set zeros beginning strong and quickly becoming very weak as the predictive effect of problem sets diminishes with time.
 
 \section{Ordered Logit/Probit}
 

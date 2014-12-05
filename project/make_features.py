@@ -41,7 +41,6 @@ def get_data(n, filename):
   with open(filename, 'rU') as csvfile:
     r = csv.reader(csvfile, delimiter = ",")
     rows = [row for row in r]
-
     if n == 0:
       assignments = []
     if n == 1:
