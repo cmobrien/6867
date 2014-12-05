@@ -203,22 +203,22 @@ When we ran ridge regression on past semesters' data, we got the following value
 \centering
 \begin{tabular}{c c}
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/mse.png}
+	\includegraphics[width=3in]{plots/1.png}
 	\caption{MSE v. number of assignments}
 \end{subfigure}
 &
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/num_errors.png}
+	\includegraphics[width=3in]{plots/2.png}
 	\caption{Number of errors v. number of assignments}
 \end{subfigure}
 \\
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/mse_percentage.png}
+	\includegraphics[width=3in]{plots/3.png}
 	\caption{MSE v. percentage of final grade}
 \end{subfigure}
 &
 \begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/num_errors_percentage.png}
+	\includegraphics[width=3in]{plots/4.png}
 	\caption{Number of errors v. percentage of final grade}
 \end{subfigure}
 \end{tabular}
@@ -412,6 +412,14 @@ Next, we applied these models to our data in order to predict student letter gra
 Figure xx(a) shows the number of misclassified students as a function of the number of assignments included as features. To properly read this graph, keep in mind the order of assignments:
 \[PS1, PS2, Q1, PS3, PS4, Q2, PS5, PS6, F\]
 We are not surprised to see that we see the largest drops in number of misclassified students after the third, sixth, and ninth assignments, as these assignments make up the largest proportions of student grades.
+
+Figure xx(a) can be directly compared to Figure xx(b), where we also graphed the number of errors versus number of assignments, for when we were using numerical prediction to solve letter prediction. The graphs are nearly identical, so we can see that using ordered logit/probit to predict grades has about the same error rate as using regression. Similarly, we can directly compare Figures xx(b) and xx(d).
+
+We will also note that not only do these models all make almost exactly the same \textit{number} of errors, but they also tend to misclassify almost the exact same set of students. This is not surprising, given that when students do unexpected things, we tend to make the wrong prediction about them. For example, consider a student who does very well in the class until the final, and then performs very poorly on the final. All of our models will almost certainly misclassify this point.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This section should maybe be moved to regression?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This graph is slightly misleading, as it should obviously be the case that the assignments which make up the largest percentages of their grades give us the most information. In Figure xx(b), we see the same curves, but plotted against the percentage of the final grade which had been determined after that assignment.
 
@@ -645,6 +653,19 @@ It appears that after only 3 assignments, our model was slightly too confident i
 \end{tabular}
 \caption{Visualizations of the maximum likelihood values when finding distributions using FCGPE. The left column shows a histogram of students who had a maximum likelihood value (bucketed to 5\%), for both students we could classify correctly and those we couldn't. The right column shows the ratio of the maximum likelihood value to the percentage of students with that value that we could guess correctly. The dotted line show the average, which we want to be close to 1.}
 \end{figure*}
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/fcgpe.png}
+	\caption{Number of errors v. number of assignments}
+\end{subfigure}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/fcgpe_percentage.png}
+	\caption{Number of errors v. percentage of final grade}
+\end{subfigure}
+\caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments that we include as features. Each graph shows the results using FCGEP and probit (replicated from Figure xx for comparison).}
+\end{figure}
 
 \section{Discussion}
 
