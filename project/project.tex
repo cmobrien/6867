@@ -78,9 +78,9 @@
 
 \section{Introduction}
 
-Say that you are a student in a large introductory class, like 6.006. Halfway through the semester, you'd really like to know: \textit{How likely is it that I get an A in this class?}
+Say that you are a student in a large introductory class, like 6.006. Partway through the semester, you'd really like to know: \textit{How likely is it that I get an A in this class?}
 
-As TAÕs for 6.006, we field questions like this all the time. We answer them with a very practiced response, something like: \textit{We cannot make any predictions about final grades before all assignments are graded}. We say this because we do not want to risk making an incorrect prediction and having the student complain at the end of the semester. However, this is basically a blatant lie. In fact, we think that given a student's grades halfway through the semester, we can make a fairly accurate prediction as to what their final grade in the course will be.
+As TAÕs for 6.006, we field questions like this all the time. We answer them with a very practiced response, something like: \textit{We cannot make any predictions about final grades before all assignments are graded}. We say this because we do not want to risk making an incorrect prediction and having the student complain at the end of the semester. However, this is basically a blatant lie. In fact, we think that given a student's grades partway through the semester, we can make a fairly accurate prediction as to what their final grade in the course will be.
 
 Our work will focus on 6.006, \textit{Introduction to Algorithms}. For the past five years, very little about the class has changed. Each semester, there are 9 assignments: 6 problem sets, 2 quizzes, and a final exam. A student's final numerical grade is weighted as 5\% per problem set, 20\% per quiz, and 30\% for the final exam.
 
@@ -131,11 +131,11 @@ Figure 1 displays information about our dataset. In particular, Figure 1(a) show
 
 \end{figure*}
 
-We would like for our models to be able to predict scores not just in these six semesters, but in future semesters. When this is being used in the future, the test data will consist of students from a single semester, and the goal will be to predict their final grades before we actually know them. As such, we randomly chose a single semester of the six to represent our test data. The test data consists of 196 students. The other five semesters, consisting of 938 students in total, were combined and used as training and validation data.
+We would like for our models to be able to predict scores not just in these six semesters, but in future semesters. When this is being used in the future, the test data will consist of students from a single semester, and the goal will be to predict their final grades before we actually know them. As such, we randomly chose a single semester of the six to represent our test data. The test data consists of 196 students. The other five semesters, consisting of 938 students in total, were combined and randomly split into training and validation data.
 
 \subsection{Features}
 
-The first, most obvious features to include were the assignment grades. For each assignment (of the assignments being considered at the time), we included as a feature the difference between the student's score and the mean.  We considered dividing by the standard deviation of the assignment (to get the $z$-score), but we realized this has a key flaw. The weighted sum of the $z$-scores of assignments is not equal to the $z$-score of the weighted sum of raw scores. The result is that when students are sorted by weighted sum of $z$-scores, we no longer have the property that grades obey hard thresholds, as described above.
+The first, most obvious features to include were the assignment grades. For each assignment (of the assignments being considered at the time), we included as a feature the difference between the student's score and the mean.  We considered dividing by the standard deviation of the assignment (to get the $z$-score), but we realized this has a key flaw. The weighted sum of the $z$-scores of assignments is not equal to the $z$-score of the weighted sum of raw scores. The result is that when students are sorted by weighted sum of $z$-scores, we no longer have the property that grades obey hard thresholds.
 
 This is perhaps an interesting issue to consider about the way that we assign grades. Say that Alice scores 20 points below average on a test with a very high variance and 20 points above average on a test with very low variance. Bob, on the other hand, scores 20 points above average on the high variance test and 20 points below average on the low variance test. It seems clear that Alice is performing better in the class, yet by our current grading scheme, both students have the same overall score.
 
@@ -151,7 +151,7 @@ For the remainder of our features, we included personal data about the students.
 
 For five students, we were unable to locate their information. For these students, we guessed their gender (with fairly high confidence) based on their names, and assigned their graduation year and major based on the most likely values. We could have used a more sophisticated method here, but because there were so few students in question, it would have been very unlikely to make any difference.
 
-To capture their gender in a feature, we included a binary variable indicating if the student was male. To capture their graduation year, we included a feature containing the undergraduate school year in which they took the class (e.g., 1, 2, 3, or 4). The few graduate students in the class were considered a 5. Finally, to capture major, we included three binary features, indicating if the student was course 6, course 8, or course 18. Students with double majors had both corresponding features on. While we would have liked to consider the binary features for all other majors, the data was too sparse for us to believe we could get a real signal from it.
+To capture gender in a feature, we included a binary variable indicating if the student was male. To capture graduation year, we included a feature containing the undergraduate school year in which the student took the class (e.g., 1, 2, 3, or 4). The few graduate students in the class were considered a 5. Finally, to capture major, we included three binary features, indicating if the student was course 6, course 8, or course 18. Students with double majors had both corresponding features on. While we would have liked to consider the binary features for all other majors, the data was too sparse for us to believe we could get a real signal from it.
 
 \subsection{Roadmap}
 
@@ -169,24 +169,29 @@ If we want a more precise understanding of the best prediction of how a student 
 
 Our argument proceeds as follows. We assume that each student has some level of inherent ``talent'' $t$ that affects their performance on assignments. We assume that talent is normally distributed among the students in the class, with standard deviation $\sigma_t$. 
 
-We assume that a student's performance on assignments is going to be equal to their talent, along with some additive gaussian noise with standard deviation $\sigma_s$. Let $S$ be the random variable representing this student's performance on an assignment. The student's probability of getting some score $s$ on that assignment is then given as follows (all scores, talents, and additive noise are centered around 0):
-
-$$Pr(S = s) = \frac{1}{\sqrt{2\pi(\sigma_s^2 + \sigma_t^2)}}e^{-\frac{1}{2}\frac{x^2}{\sigma_s^2+\sigma_t^2}}$$
-
+We assume that a student's performance on assignments is going to be equal to their talent, along with some additive Gaussian noise with standard deviation $\sigma_s$. Let $S$ be the random variable representing this student's performance on an assignment, and $T$ be a random variable representing the student's talent. The student's probability of getting some score $s$ on that assignment is then given as follows (all scores, talents, and additive noise are centered around 0):
+%
+$$Pr(S = s) = \frac{1}{\sqrt{2\pi(\sigma_s^2 + \sigma_t^2)}}\cdot \exp\left \{\frac{-s^2}{2(\sigma_s^2+\sigma_t^2)} \right\}$$
+%
 However, this is not exactly what we want to know. What we want to know is, given that the student got some score $s$ on a past assignment, what is the likeliest value for their talent to have? The likelihood that they got a score $s$ on an assignment, as a function of $t$ and $s$, is given by
-
+%
 $$Pr(S = s) \sim Pr(T = t) Pr(S = s | T = t)$$ 
-$$Pr(S = s) \sim e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}$$
-
+$$Pr(S = s) \sim \exp\left \{\frac{-t^2}{2\sigma_t^2}\right \}\cdot \exp\left \{\frac{-(s-t)^2}{2\sigma_s^2}\right \}$$
+%
 We want to find the value for $t$ that maximizes the likelihood. To do this, we take the derivative with respect to $t$ of the above likelihood, and set it equal to zero.
 
-$$\frac{d}{dt} (e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}) = 0$$
-$$(\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2})(e^{-\frac{t^2}{2\sigma_t^2}} e^{-\frac{(s-t)^2}{2\sigma_s^2}}) = 0$$
-$$(\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2}) = 0$$
-$$(t(\sigma_s^2+\sigma_t^2) - s\sigma_t^2) = 0$$
-$$t = s \frac{\sigma_t^2}{\sigma_s^2+\sigma_t^2}$$
-
-Talent does indeed depend linearly on past exam score, with a constant multiplicative factor of $\frac{\sigma_t^2}{\sigma_s^2+\sigma_t^2}$ representing the effect of regression to the mean. 
+\begin{equation*}
+\begin{split}
+& \frac{d}{dt} \left(\exp\left \{\frac{-t^2}{2\sigma_t^2}\right \}\cdot \exp\left \{\frac{-(s-t)^2}{2\sigma_s^2}\right \} \right) \\
+&=  \left (\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2}\right )\\
+& \times \left (\exp\left \{\frac{-t^2}{2\sigma_t^2}\right \}\cdot \exp\left \{\frac{-(s-t)^2}{2\sigma_s^2}\right \} \right)\\
+\end{split}
+\end{equation*}
+We can see that this will only ever be 0 when we have
+\[\frac{t}{\sigma_t^2} + \frac{t-s}{\sigma_s^2} = 0.\]
+Solving for $t$ yields
+\[t = s \frac{\sigma_t^2}{\sigma_s^2+\sigma_t^2}.\]
+Talent does indeed depend linearly on past exam score, with a constant multiplicative factor of $\sigma_t^2/(\sigma_s^2+\sigma_t^2)$, representing the effect of regression to the mean. 
 
 Because likely future score plainly depends directly on talent, it follows that future score will depend linearly on past score, according to our assumptions. We therefore argue that our use of linear regression in this case is justified.
 
@@ -228,7 +233,9 @@ We implemented this solution using Python.
 
 \subsection{Results}
 
-We performed ridge regression on our training data, using the validation data to optimize $\lambda$. Figure 2(a) shows the resulting MSE as a function of the number of assignments used as feature vectors (for now, ignore the green line in this Figure). We can see that as we include more assignments, our MSE decreases, with the most noticeable decreases after each of the quizzes.
+We performed ridge regression on our training data, using the validation data to optimize $\lambda$. Figure 2(a) shows the resulting MSE as a function of the number of assignments used as feature vectors (for now, ignore the green line in this Figure). To properly read this graph, keep in mind the order of assignments:
+\[PS1, PS2, Q1, PS3, PS4, Q2, PS5, PS6, F\]
+We can see that as we include more assignments, our MSE decreases, with the most noticeable decreases after each of the quizzes.
 
 \begin{figure*}[t!]
 \centering
@@ -260,20 +267,24 @@ This graph is slightly misleading, as it should obviously be the case that the a
 
 We notice that the amount that our error decreases is not quite linear in the number of percentage points which we include in the features. This implies that as we know more about student grades, each additional percentage point tells us less information than the previous. It is also interesting to note that problem set percentage points improve our predictions by just as much as quiz percentage points. In other words, the amount by which our error decreases after a problem set appears to be about one-quarter the amount by which our error decreases after a quiz.
 
-As noted above, regression is extremely well-suited to predicting numerical scores. Predicting letter grades, however, is perhaps a slightly more awkward fit, since linear regression is not properly designed for classification.
+\subsubsection{Predicting Letter Grades}
+
+As noted bofore, regression is extremely well-suited to predicting numerical scores. Predicting letter grades, however, is perhaps a slightly more awkward fit, since linear regression is not properly designed for classification.
 
 In order to use linear regression to predict letter grades, the simplest conversion is to take the predicted final scores returned by the ridge regression as described above, and sort the scores into $A$, $B$, and $C$ bins according to the proportion of $A$'s, $B$'s, and $C$'s from the training and validation data.
 
 In the training and validation data, we find that there are $41.0\%$ $A$'s, $41.7\%$ $B$'s, and $17.3\%$ $C$'s. Thus, we take the final scores predicted by the ridge regression, and we assign the predicted scores of the students to letter grades according to whether they belong to the top $41.0\%$ of predicted scores (in which case we predict an $A$), the bottom $17.3\%$ of predicted scores (in which case we predict a $C$) or the middle $41.7\%$ of predicted scores (in which case we predict a B).
 
-Using this method, we do reasonably well, misclassifying 8 students when we have access to every assignment grade and 126 students when we have access to none of them. The misclassification rate of this algorithm throughout the semester is displayed as a function of the number of assignments used as features in Figure 2(b). As before, we also show the same curve plotted against the percentage of the final grade determined at that point (in Figure 2(d)).
+Using this method, we do reasonably well, misclassifying 8 students from the test set when we have access to every assignment grade and 126 students when we have access to none of them. The misclassification rate of this algorithm throughout the semester is displayed as a function of the number of assignments used as features in Figure 2(b). As before, we also show the same curve plotted against the percentage of the final grade determined at that point (in Figure 2(d)).
 
 The trends in the number of misclassified points is very similar to that of MSE. We notice that the curve is slightly more jagged, but this is an obvious ramification of the fact that this measure is not as smooth as MSE.
+
+\subsubsection{Minimizing Number of Errors}
 
 While using this approach seems to work reasonably well, it is somewhat unnatural. The weight vector is being optimized to minimize MSE, but is being used to predict letter grades. It would seem to make more sense to optimize the weight vector to minimize the number of errors in letter grade classification, if that is what it is going to eventually be used for. Therefore, we seek to solve
 %
 $$\min_{w, w_0} \sum_{i=1}^n I\{\hat{y}^{(i)} \neq y^{(i)}\} + \lambda ||w||^2,$$
-where $\hat{y}^{(i)}$ represents the grade that we predict for the student based on sorting them by final score and assigning grades according to percentages in the training and validation sets.
+where $\hat{y}^{(i)}$ represents the grade that we predict for the student based on sorting them by final score and assigning grades according to percentages in the training and validation sets. Note that throughout the paper we use $y^{(i)}$ to mean both the students final numerical score and their letter grade. It will be obvious from the context which we are referring to.
 
 This error function is not nicely differentiable the way the ordinary objective function for ridge regression is. Therefore, we could not find a closed form for the solution. Instead, we performed a gradient descent over $w$ and $w_0$ in an attempt to find a local minimum whose values will hopefully not be far from those of the global minimum. Again, we implemented this in Python, using \texttt{fmin\_bfgs} for gradient descent.
 
@@ -326,6 +337,7 @@ Course 18       & $2.00$ & $2.58$  & $0.17$ & $0.00$ \\
 \caption{Each column represents the weights returned by ridge regression with the optimal value of $\lambda$, using the number of assignments specified in the column head as features. }
 \end{figure}
 
+\subsubsection{Feature Weights}
 Since ridge regression seemed to provide better results across the board, we proceed with ridge regression from this point forward. Next, we take a look at the actual weights produced by ridge regression, to see how important it believes the various features are.
 
 Figure 3 shows the resulting weight vectors from using ridge regression at various points throughout the semester. Specifically, it shows the results after 0 assignments (based only on personal information), 3 assignments (right after the first quiz), 6 assignments (after the second quiz), and 9 assignments (after the final). 
@@ -367,7 +379,7 @@ These techniques are very similar, so at first we will not differentiate between
    \end{cases}.
 \end{equation}
 
-Note the lack of $w_0$ term above. We can see that if we chose to include a $w_0$ term, it would simply result in each $\mu$ being offset by $w_0$ as well, leading to an equivalent result. Thus, without limiting our model, we can omit $w_0$.
+Note the lack of $w_0$ term above. We can see that if we chose to include a $w_0$ term, it would simply result in each $\mu$ being offset by $w_0$ as well, leading to an equivalent result. Thus, without limiting our model, we can omit $w_0$. Next, we see how the two methods differ.
 
 \begin{figure*}[t!]
 \centering
@@ -384,6 +396,7 @@ Note the lack of $w_0$ term above. We can see that if we chose to include a $w_0
 \end{tabular}
 \caption{The CDF and PDF of Gaussian and logistic distributions with mean $0$ and standard deviation $1$.}
 \end{figure*}
+
 
 \subsection{Ordered Probit}
 
@@ -413,9 +426,9 @@ Of all the students that we eventually assign an $A$, we would like to maximize 
 where
 \begin{equation*}
 \begin{split}
-L(w, \mu_A, \mu_B) &= \prod_{\hat{y}^{(i)} = A} P(y = A)\\
-&\times \prod_{\hat{y}^{(i)} = B} P(y = B)\\
-&\times \prod_{\hat{y}^{(i)} = C} P(y = C)
+L(w, \mu_A, \mu_B) &= \prod_{\hat{y}^{(i)} = A} P(y^{(i)} = A)\\
+&\times \prod_{\hat{y}^{(i)} = B} P(y^{(i)} = B)\\
+&\times \prod_{\hat{y}^{(i)} = C} P(y^{(i)} = C)
 \end{split}
 \end{equation*}
 To solve this problem, we instead try to minimize the negative log-likelihood. So, our optimization problem is now
@@ -423,9 +436,9 @@ To solve this problem, we instead try to minimize the negative log-likelihood. S
 where
 \begin{equation}
 \begin{split}
--\log{L(w, \mu_A, \mu_B)} =& -\sum_{\hat{y}^{(i)} = A} \log{P(y = A)}\\
-&- \sum_{\hat{y}^{(i)} = B} \log{P(y = B)}\\
-&- \sum_{\hat{y}^{(i)} = C} \log{P(y = C)}.
+-\log{L(w, \mu_A, \mu_B)} =& -\sum_{\hat{y}^{(i)} = A} \log{P(y^{(i)} = A)}\\
+&- \sum_{\hat{y}^{(i)} = B} \log{P(y^{(i)} = B)}\\
+&- \sum_{\hat{y}^{(i)} = C} \log{P(y^{(i)} = C)}.
 \end{split}
 \end{equation}
 
@@ -484,9 +497,7 @@ Next, we applied these models to our data in order to predict student letter gra
 \caption{Depicts the test error as we increase the number of assignments that we include as features. Each graph shows the results using each of the ordered logit and ordered probit models.}
 \end{figure}
 
-Figure 6(a) shows the number of misclassified students as a function of the number of assignments included as features. To properly read this graph, keep in mind the order of assignments:
-\[PS1, PS2, Q1, PS3, PS4, Q2, PS5, PS6, F\]
-We are not surprised to see that we see the largest drops in number of misclassified students after the third, sixth, and ninth assignments, as these assignments make up the largest proportions of student grades.
+Figure 6(a) shows the number of misclassified students as a function of the number of assignments included as features. We are not surprised to see that we see the largest drops in number of misclassified students after the third, sixth, and ninth assignments, as these assignments make up the largest proportions of student grades.
 
 Figure 6(a) can be directly compared to Figure 2(b), where we also graphed the number of errors versus number of assignments, for when we were using numerical prediction to solve letter prediction. The graphs are nearly identical, so we can see that using ordered logit/probit to predict grades has about the same error rate as using regression. Similarly, we can directly compare Figures 6(b) and 2(d).
 
@@ -513,13 +524,13 @@ We do see some variety among the weights, although we believe this is because th
 
 A few of these weights have very unexpected values in the end. For example, the fact that the course 6 feature weight is higher than the feature weight on the final exam when all 9 assignments are considered is certainly unnerving. We attribute strange behavior like this to overfitting the training data. While we do not experiment with this idea in this paper, future work might try adding a regularization weight to ordered logit/probit in order to minimize the effects of overfitting.
 
-\begin{figure}
+\begin{figure}[t!]
 \centering
 \begin{tabular}{| c || c | c | c | c |}
 \hline
  &\multicolumn{4}{ c |}{Weights}\\
 \hline
-Feature & 0 & 3 & 6 & 9 \\
+\# Assignments & 0 & 3 & 6 & 9 \\
 \hline
 \hline
 Problem Set 1 & $-$ & $0.17$  & $0.16$  & $0.36$ \\
@@ -569,15 +580,7 @@ With this in mind, perhaps finding the number of misclassified students is not t
 
 While we chose to minimize the negative log likelihood (as opposed to just maximizing the likelihood), primarily for mathematical convenience, the value of this function has some interesting properties. In some sense, we can think of it as a penalty function for an assignment of distributions. A lower penalty corresponds to a better distribution. 
 
-We notice that if we assign a student a $0\%$ chance of receiving a grade that they eventually receive, then our penalty is $\infty$. This is desirable, because if we are ever so sure that a student has a $0\%$ chance of receiving a grade, and we end up being wrong, our predictor is clearly doing a very poor job (note that our algorithm will never assign a probability of $0\%$, just arbitrarily small probabilities).
-
-We also notice that if we guess their grade correctly with $100\%$ certainly, we suffer no penalty. This also seems appropriate. If we are entirely sure of a student's final grade, then we should not be penalized for our guess.
-
-Figure 8 shows the minimum values of the negative log likelihoods after each assignment is due, for both ordered logit and probit. Interestingly, they produce nearly identical results. This is good news, because it means that the distributional assumptions are not driving the result. As in Figure 6, we show both the curves as a function of the number of assignments completed (in Figure 8(a)), and as a function of percentage of the grade completed (in Figure 8(b)). 
-
-In Figure 8(b), we also observe that the value of the slope decreases slightly as we determine more of their final grades. Again, this points to the fact that as we move through the semester, each additional determined percentage point tells us less than the previous.
-
-\begin{figure}
+\begin{figure}[t!]
 \centering
 \begin{subfigure}[b]{3in}
 	\includegraphics[width=3in]{plots/ordered_score.png}
@@ -589,6 +592,14 @@ In Figure 8(b), we also observe that the value of the slope decreases slightly a
 \end{subfigure}
 \caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments used as features. Each graph shows the results using each of the ordered logit and ordered probit models.}
 \end{figure}
+
+We notice that if we assign a student a $0\%$ chance of receiving a grade that they eventually receive, then our penalty is $\infty$. This is desirable, because if we are ever so sure that a student has a $0\%$ chance of receiving a grade, and we end up being wrong, our predictor is clearly doing a very poor job (note that our algorithm will never assign a probability of $0\%$, just arbitrarily small probabilities).
+
+We also notice that if we guess their grade correctly with $100\%$ certainly, we suffer no penalty. This also seems appropriate. If we are entirely sure of a student's final grade, then we should not be penalized for our guess.
+
+Figure 8 shows the minimum values of the negative log likelihoods after each assignment is due, for both ordered logit and probit. Interestingly, they produce nearly identical results. This is good news, because it means that the distributional assumptions are not driving the result. As in Figure 6, we show both the curves as a function of the number of assignments completed (in Figure 8(a)), and as a function of percentage of the grade completed (in Figure 8(b)). 
+
+In Figure 8(b), we also observe that the value of the slope decreases slightly as we determine more of their final grades. Again, this points to the fact that as we move through the semester, each additional determined percentage point tells us less than the previous.
 
 In our training data, we observe $41.0\%$ $A$'s, $41.7\%$ $B$'s, and $17.3\%$ $C$'s. We could trivially assign each student in the test set this probability distribution. In the test set, there are 83 $A$'s, 74 $B$'s, and 39 $C$'s. Using this assignment, the negative log likelihood would be
 \[- 83 \cdot \log(0.410) - 74 \cdot \log(0.417) - 39 \cdot \log(0.173)\]
@@ -671,21 +682,102 @@ There are a few interesting trends we can see from these graphs. First, we look 
 
 We can also see how the maximum likelihoods change throughout the semester. The general trend we see is that as time passes, the models assign higher probabilities to the ones they ultimately classified as correct, and lower probabilities to the ones they ultimately classified as incorrect. This is expected behavior. As the model receives more information, it is given more reason to be sure of the answers that it has classified correctly, and more reason to be unsure of the ones classified incorrectly.
 
-Next let us focus on Figure10(b). Consider a group of students who we assigned maximum likelihood around $70\%$. We would expect to classify about $70\%$ of them correctly, and $30\%$ of them incorrectly. If we classified more than $70\%$ of them correctly, then we might suspect that we were being too modest, and we should have resorted being more than $70\%$ about them.
+Next let us focus on Figure10(b). Consider a group of students who we assigned maximum likelihood around $70\%$. We would expect to classify about $70\%$ of them correctly, and $30\%$ of them incorrectly. If we classified more than $70\%$ of them correctly, then we might suspect that we were being too modest, and we should have reported being more than $70\%$ confident about them.
 
-Let $S_{0.7}^C$ represent the set of students which we classified correctly who had a maximum likelihood around $70\%$ (specifically, we mean $\pm 2.5\%$). Similarly, define $S_{0.7}^I$ for students who were classified incorrectly. We would hope it be the case that
-\[\frac{S_{0.7}^C}{S_{0.7}^C + S_{0.7}^I} \approx 0.7.\]
+Let $N_{0.7}^C$ represent the number of students which we classified correctly who had a maximum likelihood around $70\%$ (specifically, we mean $\pm 2.5\%$). Similarly, define $N_{0.7}^I$ for students who were classified incorrectly. We would hope it be the case that
+\[\frac{N_{0.7}^C}{N_{0.7}^C + N_{0.7}^I} \approx 0.7.\]
 In fact, we would want this to be the case for all values of the maximum likelihood $M$. To check this, we plotted
-\[\frac{S_{M}^C}{S_{M}^C + S_{M}^I} \cdot \frac{1}{M},\]
-hoping that these values would always be around 1. The results after 3 assignments are shown in Figure 10(b) (and after 6 and 9 assignments in Figures 10(d) and (f)). The dotted line shows the average (weighted by the number of points in that set) value.
+\[\frac{N_{M}^C}{N_{M}^C + N_{M}^I} \cdot \frac{1}{M},\]
+hoping that these values would always be around 1. The results after 3 assignments are shown in Figure 10(b) (and after 6 and 9 assignments in Figures 10(d) and (f)). The dotted line shows the average (weighted by the number of points in that range) value.
 
 It appears that after only 3 assignments, our model was slightly too confident in predicting its values, while after 9 assignments it was slightly too modest. However, none of the averages are particularly far from 1, which gives us an indication that our distributions are a good fit for our data.
+
+Next, we consider a method for solving the grade distribution problem using results from regression.
 
 
 \section{Fixed Cutoff Gaussian Probability}
 \vspace*{-0.4em}
 \section{Estimation}
 
+%Predicting final score and letter grade are both nice, but neither is difficult to get a reasonable handle on. As has been previously discussed, past scores are an excellent predictor of future scores, with the personal statistics only adding minor variations. And classification also is easy to get approximately right--just take the final score prediction, and sort it by percentile into an A bin, a B bin, or a C bin, also as previously described. \\
+
+%Because both of these problems are so easy to roughly solve, finding accurate solutions to them is less impressive than it otherwise might be. Moreover, it isn't exactly what students care most about. If a 6.006 student had done six percentage points above average on the first midterm, she would have no trouble deducing that her expected overall score in the class would be about six percent above the average, or that the likeliest grade for her to get in the class was an A. But neither is exactly the thing she is likely to be wondering; most likely, if she is asking herself a question related to what her grade in 6.006 is going to be, she is wondering what the \emph{odds} are that she'll get an A. 60\%? 80\%? 95\%? Naturally, the answer for this specific student depends in large part on her past academic record, since that determines her prior for what grade she'll get in 6.006. But assuming that her past academic record roughly matches the grade distribution of 6.006 (that is, in her past classes, her grades were split roughly 40/40/20) then it's quite possible for us to answer her question--and if her background is different from the grade distribution of 6.006, it's easy for her to generate the actual probabilities that apply to her, simply by multiplying ther true prior by the posterior we generate for her. \\
+
+%It was, in fact, this question that motivated us to pursue this topic in the first place. How might we answer it? By making a few assumptions, it's straightforward for us to adapt the methods described previously to the new problem. \\
+
+While the ordered logit/probit methods worked nicely, we really could not say much about their performance without having another method to compare them to. As such, we developed a method which we call Fixed-Cutoff Gaussian Probability Estimation (FCGPE). It relies heavily on the linear regression methods discussed earlier in the paper. Developed as a benchmark for ordered logit/probit, it turned out to be an interesting algorithm in its own right.
+
+First, we take our numerical predictions obtained from ridge regression, and we assume that they are noisy. In particular, we assume that the true final score students will receive is normally distributed around the prediction we made. This is equivalent to the assumption that we made when performing ordered probit.
+
+Here, instead of setting the variance of this Gaussian to a fixed 1 and scaling other parameters accordingly, we estimate $\sigma$. To solve this estimation problem, we first need to assume that the variance of the Gaussian noise is independent of what our prediction for the score is (note that we implicitly made this assumption in ordered probit as well).
+
+Now, we can produce an estimate $\hat{\sigma}$ of the variance of the distribution in terms of our predictions $\hat{y}^{(i)}$ and the true values $y^{(i)}$ in the training and validation sets by using the formula
+%
+$$\hat{\sigma}^2 = \frac{1}{n} \cdot \sum_i^n (\hat{y}^{(i)} - y^{(i)})^2$$
+%
+Put more simply, we are taking the observed variance of our prediction's error in the training and validation sets, and using that observed variance as our estimated variance for the Gaussian noise around our predictions.
+
+Recall how we solved the letter prediction problem in the regression section. We sorted all of the students by their predicted grades, and assigned final scores according to the distribution of final scores in the training and validation sets (also recall that this distribution was $41.0\%$ $A$'s, $41.7\%$ $B$'s, and $17.3\%$ $C$'s).
+
+Using this same idea, we fix the cutoff for an $A$, $\mu_A$, at exactly the top $41.0^{th}$ percentile. Similarly, the cutoff for a $B$, $\mu_B$, at the bottom $17.3^{rd}$ percentile. With these fixed cutoffs for $A$'a, $B$'s, and $C$'s, we can now use the same probability distributions we used in the ordered probit section. Namely,
+%
+%Now that we have a probability distribution over the possible numerical grades that our hypothetical student will get, we can turn these probabilities over letter grades via the cutoffs we used for letter-grade prediction in the linear regression section. In other words, assuming our B/C cutoff (the $20^{\textrm{th}}$-percentile score) is $\mu_B$ and our A/B cutoff (the $60^{\textrm{th}}$-percentile score) is $\mu_A$, we estimate that the probability that the aforementioned student gets an A, a B, or a C is given by the following formulas:
+\begin{equation*}
+\begin{split} P(y = A) &= \Phi \left (\frac{\hat{y}-\mu_A}{\hat{\sigma}} \right )\\
+P(y = B) &= \Phi \left (\frac{\mu_A-\hat{y}}{\hat{\sigma}} \right ) - \Phi \left (\frac{\mu_B-\hat{y}}{\hat{\sigma}} \right)\\
+P(y = C) &= \Phi \left (\frac{\mu_B-\hat{y}}{\hat{\sigma}} \right).
+\end{split}
+\end{equation*}
+
+\subsection{Results}
+
+Fixed-Cutoff Gaussian Probability Estimation turned out to be a very successful method for calculating probability distributions over letter grades. It did well enough to outperform the more established ordered logit and probit methods, with a few caveats.
+
+First, to get a feel for how FCGPE compared to ordered probit, recall the students shown in Figure 9, who took 6.006 during a spring semester. Ben is a senior in course 6, who has scored average on all assignments so far. Jeremy is a freshmen in course 6, also scoring average on all assignments. Paul is a freshman in course 6, who scored average on the first two problem sets and $10\%$ above average on the first quiz. 
+
+Figure 11 shows the distributions for the same students, calculated using FCGPE. We see that it follows the same general trends as ordered probit. We see that Ben is less likely to receive an $A$ than Jeremy, despite having all the same scores so far in the class. Paul, having scored above average on the quiz, is more likely to receive a higher grade. We can see that FCGPE tends to make slightly bolder predictions than ordered probit.
+
+\begin{figure}
+\centering
+\begin{tabular}{|c | c | c | c |}
+\hline
+Student & $P(y = A)$ & $P(y = B)$ & $P(y = C)$\\
+\hline
+Ben & $18.1\%$ & $72.0\%$ & $9.9\%$\\
+\hline
+Jeremy & $35.5\%$ & $61.1\%$ & $3.4\%$\\
+\hline
+Paul & $68.3\%$ & $31.2\%$ & $0.5\%$\\
+\hline
+\end{tabular}
+\caption{The probability distributions predicted by ordered probit for students described in \textit{Understanding the Distributions} section.}
+\end{figure}
+
+
+\begin{figure}[t!]
+\centering
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/fcgpe.png}
+	\caption{Number of errors v. number of assignments}
+\end{subfigure}
+\begin{subfigure}[b]{3in}
+	\includegraphics[width=3in]{plots/fcgpe_percentage.png}
+	\caption{Number of errors v. percentage of final grade}
+\end{subfigure}
+\caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments that we include as features. Each graph shows the results using FCGEP and probit (replicated from Figure 10 for comparison).}
+\end{figure}
+
+To see how they compared in a more general sense, see Figure 12. Here, as in Figure 8, we plot the negative log likelihood as a function of both number of assignments (Figure 12(a)) and percentage of final grade (Figure 12(b)). For comparison, we include the ordered probit curve from Figure 8 in these graphs as well. 
+
+%For a detailed comparison of FCGPE with Ordered Probit, see Figure xx. % TODO figure name
+
+Note that FCPGE has a consistently lower negative log likelihood, suggesting that it is making the more accurate predictions, until we reach the final, at which point FCPGE's negative log likelihood suddenly spikes to infinity. 
+
+This is because unlike ordered probit, FCGPE uses fixed cutoffs. In other words, FCPGE assumes that there is a $100\%$ chance that the cutoffs will be exactly where they were in the average of the previous semesters. When there are few enough assignments included, this plainly false assumption doesn't cause any problems, because there's enough uncertainty in the final grade to give the predictions near the grade cutoffs sufficient caution. 
+
+However, when all nine assignments are included, FCGPE suddenly makes predictions with extremely high confidence, and the false assumption that the cutoffs are precisely known dominates considerations. A single highly overconfident prediction, made on the assumption that the cutoff will be where it was last year, is enough to make the negative log likelihood reach extreme heights.
+
+To solve this problem, the next step would likely be to get many samples of where the cutoffs were in past semesters, to get a sense of what the probability distribution over the cutoff locations might look like. However, to do this accurately, we would need access to substantially more semester data than we had.
 
 \begin{figure*}
 \centering
@@ -723,56 +815,15 @@ It appears that after only 3 assignments, our model was slightly too confident i
 \caption{Visualizations of the maximum likelihood values when finding distributions using FCGPE. The left column shows a histogram of students who had a maximum likelihood value (bucketed to 5\%), for both students we could classify correctly and those we couldn't. The right column shows the ratio of the maximum likelihood value to the percentage of students with that value that we could guess correctly. The dotted line show the average, which we want to be close to 1.}
 \end{figure*}
 
-\begin{figure}
-\centering
-\begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/fcgpe.png}
-	\caption{Number of errors v. number of assignments}
-\end{subfigure}
-\begin{subfigure}[b]{3in}
-	\includegraphics[width=3in]{plots/fcgpe_percentage.png}
-	\caption{Number of errors v. percentage of final grade}
-\end{subfigure}
-\caption{Depicts the value of the minimum negative log likelihood as we increase the number of assignments that we include as features. Each graph shows the results using FCGEP and probit (replicated from Figure 10 for comparison).}
-\end{figure}
+FCGPE's edge over ordered probit appears to mostly manifest itself in more aggressive predictions, which are on average warranted (until nine assignments, when they were not). Figure 13 replicates Figure 10 using FCGPE instead of ordered probit. Looking at the graphs in the left column, we can see the FCGPE tends to make more confident predictions than ordered probit, especially after all nine assignments are included.
 
-Predicting final score and letter grade are both nice, but neither is difficult to get a reasonable handle on. As has been previously discussed, past scores are an excellent predictor of future scores, with the personal statistics only adding minor variations. And classification also is easy to get approximately right--just take the final score prediction, and sort it by percentile into an A bin, a B bin, or a C bin, also as previously described. \\
+From the column on the right, we see that FCGPE does a better job of keeping the ratio of maximum likelihood to percentage correct closer to 1, as we discussed is desirable. This tells us that FCGPE is using roughly the right amount of confidence, with the exception of overconfidence at the end. 
 
-Because both of these problems are so easy to roughly solve, finding accurate solutions to them is less impressive than it otherwise might be. Moreover, it isn't exactly what students care most about. If a 6.006 student had done six percentage points above average on the first midterm, she would have no trouble deducing that her expected overall score in the class would be about six percent above the average, or that the likeliest grade for her to get in the class was an A. But neither is exactly the thing she is likely to be wondering; most likely, if she is asking herself a question related to what her grade in 6.006 is going to be, she is wondering what the \emph{odds} are that she'll get an A. 60\%? 80\%? 95\%? Naturally, the answer for this specific student depends in large part on her past academic record, since that determines her prior for what grade she'll get in 6.006. But assuming that her past academic record roughly matches the grade distribution of 6.006 (that is, in her past classes, her grades were split roughly 40/40/20) then it's quite possible for us to answer her question--and if her background is different from the grade distribution of 6.006, it's easy for her to generate the actual probabilities that apply to her, simply by multiplying ther true prior by the posterior we generate for her. \\
 
-It was, in fact, this question that motivated us to pursue this topic in the first place. How might we answer it? By making a few assumptions, it's straightforward for us to adapt the methods described previously to the new problem. \\
+%See Figure xx % TODO figure name
+%for a comparison of the aggressiveness of predictions made by Ordered Probit and by FCGPE, compared to how often those predictions should have been right. From the figure, it is apparent that FCPGE (before it collapses) makes predictions whose probabilities are more well-matched to the actual rate of occurrence of the predicted event than Ordered Probit (in other words, the things that FCPGE predicted would happen 80\% of the time tended to happen about 80\% of the time, whereas the things that Ordered Probit predicted would happen 80\% of the time tended to happen a little more often than that). 
 
-\subsection{Implementation}
-
-In this section, we describe the implementation of Fixed-Cutoff Gaussian Probability Estimation (FCPGE), a method for estimating the probabilities of getting an A, B, or C, that relies heavily on the linear regression methods discussed earlier in the paper. We created it initially as a benchmark against which to verify the successful performance of ordered probit/logit; it turned out to be an interesting algorithm in its own right.\\
-
-First, we take our MSE-minimized predictions from the section on linear regression, and we assume that they are noisy. In particular, we assume that the true final score students will receive is normally distributed around the prediction we made. \\
-
-We don't yet know what the variance of this gaussian noise is; however, we can estimate it, by further assuming that the variance of this gaussian noise is independent of what our prediction for the score is. Then, we can produce an estimate $\hat{\sigma}$ of the variance of the distribution in terms of our predictions $\hat{y}^{(i)}$ and the true values $y^{i}$ in the training and validation sets by using the formula:
-
-$$\hat{\sigma}^2 = \frac{\sum_i^n (\hat{y^{(i)}} - y^{(i)})^2}{n}$$
-
-Put more simply, we are taking the observed variance of our prediction's error in the training and validation sets, and using that observed variance as our estimated variance for the Gaussian noise around our predictions. \\
-
-Now that we have a probability distribution over the possible numerical grades that our hypothetical student will get, we can turn those probabilities over letter grades via the cutoffs we used for letter-grade prediction in the linear regression section. In other words, assuming our B/C cutoff (the $20^{\textrm{th}}$-percentile score) is $\mu_B$ and our A/B cutoff (the $60^{\textrm{th}}$-percentile score) is $\mu_A$, we estimate that the probability that the aforementioned student gets an A, a B, or a C is given by the following formulas:
-
-$$P(y = A) = \Phi(\frac{\hat{y}-\mu_A}{\hat{\sigma}} $$
-$$P(y = B) = \Phi(\frac{\mu_A-\hat{y}}{\hat{\sigma}}) - \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
-$$P(y = C) = \Phi(\frac{\mu_B-\hat{y}}{\hat{\sigma}})$$
-
-\section{Results}
-
-Fixed-Cutoff Gaussian Probability Estimation turned out to be a very successful method for coming up with probability distributions over letter grades. It did well enough to outperform the more established Ordered Logit and Probit methods, with a few caveats. \\
-
-For a detailed comparison of FCGPE with Ordered Probit, see Figure xx. % TODO figure name
- Note that FCPGE has a consistently lower negative log likelihood, suggesting that it is making the more accurate predictions, until we hit eight or nine assignments, at which point FCPGE's negative log likelihood suddenly spikes to infinity. This is because unlike Ordered Probit, FCPGE uses fixed cutoffs. In other words, FCPGE assumes that there is a 100\% chance that the cutoffs will be exactly where they were in the average of the previous semesters. When there are few enough assignments included, this plainly false assumption doesn't cause any problems, because there's enough uncertainty in the final grade to give the predictions near the grade cutoffs sufficiently cautious. When eight or nine assignments are included, however, FCGPE suddenly makes predictions with extremely high confidence, and the false assumption that the cutoffs are precisely known dominates considerations. A single highly overconfident prediction, made on the assumption that the cutoff will be where it was last year, is enough to make the negative log likelihood reach extreme heights. \\
-
-To solve this problem, the next step would likely be to get many samples of where the cutoffs were in past semesters, to get a sense of what the probability distribution over the cutoff locations might look like. However, to do this accurately, we'd need access to substantially more semester data than we had. \\
-
-FCGPE's edge over Ordered Probit appears to mostly manifest itself in more aggressive predictions, which are on average warranted (until nine assignments, when they weren't). See Figure xx % TODO figure name
-for a comparison of the aggressiveness of predictions made by Ordered Probit and by FCGPE, compared to how often those predictions should have been right. From the figure, it is apparent that FCPGE (before it collapses) makes predictions whose probabilities are more well-matched to the actual rate of occurrence of the predicted event than Ordered Probit (in other words, the things that FCPGE predicted would happen 80\% of the time tended to happen about 80\% of the time, whereas the things that Ordered Probit predicted would happen 80\% of the time tended to happen a little more often than that). 
-
-We also tried FCPGE, but with the assumption that true final score would be logistically, not normally, distributed about the predicted final scores. We found that this led to predictions that were much too timid, and a negative log likelihood that was substantially less impressive than either the original version of FCPGE, or either of Ordered Probit or Logit.
+We also tried FCPGE, but with the assumption that true final score would be logistically, not normally, distributed about the predicted final scores, as is assumed with ordered logit.  We found that this led to predictions that were too timid, and a negative log likelihood that was substantially less impressive than either the original version of FCPGE, or either of ordered logit or probit. 
 
 
 \section{Discussion}
@@ -789,7 +840,7 @@ It is interesting that the 6.006 policy is to traditionally keep the grading pro
 
 We also learned that all of our more complicated models were not able to really perform any better than simple linear regression. We think this reflects the unpredictability of both the students and the professors. Some students are always going to perform very far from our early expectation, and we will not be able to accurately predict their final scores. Similarly, some professor will choose thresholds for the class that differ significantly from other semesters, and we cannot model this behavior.
 
-A surprising result is that problem sets seem to matter proportionally as much as the quizzes, even early on in the semester. After the first quiz, 1/3 of the students overall problem set grade is determined, but only 2/7 of the overall test grade is determined. As a result we speculated that quiz 1 would matter more than the problem sets proportionally, although we did not see this trend. In fact, we sometimes saw the problem sets mattered even more than quizzes in early predictions.
+A surprising result is that problem sets seem to matter proportionally as much as the quizzes, even early on in the semester. After the first quiz, 1/3 of the students' overall problem set grade is determined, but only 2/7 of the overall test grade is determined. As a result we speculated that quiz 1 would matter more than the problem sets proportionally, although we did not see this trend. In fact, we sometimes saw the problem sets mattered even more than quizzes in early predictions.
 
 Our experimentation did not result in a model emerging as the obvious best model for this problem. However, we saw multiple models converge to almost the exact same results, suggesting that we were approaching the best error rates we could hope to achieve.
 
